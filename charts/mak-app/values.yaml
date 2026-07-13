@@ -1,0 +1,20 @@
+# 기본 애플리케이션 설정
+replicaCount: 1
+
+image:
+  repository: yimjongwon/hub-app
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+# 💡 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
+resources:
+  requests:
+    cpu: "200m"
+    memory: "256Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+service:
+  type: ClusterIP
+  port: 80
