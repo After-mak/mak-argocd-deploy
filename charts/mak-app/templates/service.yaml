@@ -1,16 +1,29 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: mak-app
+  name: mak-app-active
   labels:
     app: mak-app
 spec:
   # values.yaml의 service.type (ClusterIP)을 동적으로 주입
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}      # 서비스가 외부(또는 다른 팟)로부터 받을 포트 (80)
-      targetPort: 80                         # deployment.yaml에 정의된 컨테이너 내부 포트 (80)
+    - port: {{ .Values.service.port }}  # 서비스가 외부(또는 다른 팟)로부터 받을 포트 (80)
+      targetPort: 80                    # deployment.yaml에 정의된 컨테이너 내부 포트 (80)
       protocol: TCP
   selector:
-    # Deployment의 matchLabels와 정확히 일치시켜서 팟들을 연결합니다.
+    # matchLabels와 정확히 일치
+    app: mak-app
+---
+# 2. k6로 부하를 쏴서 성능을 검증할 신규 테스트 서비스 (Green)
+apiVersion: v1
+kind: Service
+metadata:
+  name: mak-app-preview # previewService와 이름 일치시키기
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
     app: mak-app

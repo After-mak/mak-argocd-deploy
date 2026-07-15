@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: mak-app-rollout
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: mak-app
+  strategy:
+    canary:
+      # 1. 블루그린의 격리 개념을 카나리에 이식합니다.
+      activeService: mak-app-active     # 현재 사용자들이 접속하는 실 서비스 (Blue)
+      previewService: mak-app-preview   # k6 부하 테스트를 마음껏 쏠 타겟 서비스 (Green)
+      trafficRouting:
+        alb:
+          ingress: mak-app-ingress      # AWS ALB Ingress 제어 
+          servicePort: 80
+      # 2. 시연 및 k6 부하 분석을 위해 스텝을 튜닝합니다.
+      steps:
+        # [Step 1] 신규 버전(Green)이 뜨면 일단 10%의 트래픽만 흘립니다.
+        - setWeight: 10
+        # [Step 2] 락(Pause)을 걸어 무기한 대기 상태로 만듭니다.
+        #'mak-app-preview' 주소로 k6 스트레스 테스트를 강하게 쏴보면서 성능과 리소스 추이를 분석합니다!
+        - pause: {}
+        # [Step 3] 검증이 끝나 승인(Promote)하면 50%로 트래픽을 올려 안정성을 재검증합니다.
+        - setWeight: 50
+        - pause: { duration: 300s }  
+        # [Step 4] 최종 100%로 전환되어 완전한 스위칭(Blue ➡️ Green)이 완료됩니다.
+  template:
+    metadata:
+      labels:
+        app: mak-app
+    spec:
+      containers:
+        - name: mak-container
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "{{ .Values.resources.requests.cpu }}"     
+              memory: "{{ .Values.resources.requests.memory }}" 
+            limits:
+              cpu: "{{ .Values.resources.limits.cpu }}"      
+              memory: "{{ .Values.resources.limits.memory }}"    
