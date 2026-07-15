@@ -2,7 +2,7 @@
 replicaCount: 3
 image:
   repository: yimjongwon/hub-app
-  tag: "0.9"
+  tag: "1.1"
   pullPolicy: IfNotPresent
 # 💡 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
 resources:
