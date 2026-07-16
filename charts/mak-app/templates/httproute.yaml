@@ -1,0 +1,20 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: mak-app-route # rollout.yaml의 httpRouteName과 반드시 일치 
+  namespace: default
+spec:
+  parentRefs:
+  - name: external-gateway      # 게이트웨이 리소스 이름    
+    namespace: nginx-gateway    # 게이트웨이 네임스페이스
+  hostnames:
+  - "mak-app.my-domain.com"     # 실서비스 접속용 도메인
+  rules:
+  - backendRefs:
+    # Argo Rollouts가 이 두 백엔드의 Weight(가중치) 비율을 롤아웃 상태에 따라 직접 뺏고 주며 자동 조절합니다!
+    - name: mak-app-active
+      port: 80
+      weight: 100               # 초기 상태는 Active 100%
+    - name: mak-app-preview
+      port: 80
+      weight: 0                 # 초기 상태는 Preview 0%

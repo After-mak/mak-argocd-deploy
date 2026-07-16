@@ -10,13 +10,15 @@ spec:
   strategy:
     canary:
       # 1. 블루그린의 격리 개념을 카나리에 이식합니다.
-      activeService: mak-app-active     # 현재 사용자들이 접속하는 실 서비스 (Blue)
-      previewService: mak-app-preview   # k6 부하 테스트를 마음껏 쏠 타겟 서비스 (Green)
+      activeService: mak-app-active     # 실 서비스 (Blue)
+      previewService: mak-app-preview   # k6 부하 테스트 타겟 (Green)
+      # ========================================================
+      # AWS ALB Ingress 대신 K8s Gateway API 연동 설정
+      # ========================================================
       trafficRouting:
-        alb:
-          ingress: mak-app-ingress      # AWS ALB Ingress 제어 
-          servicePort: 80
-      # 2. 시연 및 k6 부하 분석을 위해 스텝을 튜닝합니다.
+        gateway:
+          # 배포할 HTTPRoute 명세서의 이름
+          httpRouteName: mak-app-route
       steps:
         # [Step 1] 신규 버전(Green)이 뜨면 일단 10%의 트래픽만 흘립니다.
         - setWeight: 10
