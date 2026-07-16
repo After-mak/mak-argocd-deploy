@@ -15,3 +15,6 @@ resources:
 service:
   type: ClusterIP
   port: 80
+# KEDA 및 애플리케이션 연동용 Redis 정보
+redis:
+  password: "redis"

@@ -40,6 +40,12 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 80
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret       
+                  key: redis-password      
           resources:
             requests:
               cpu: "{{ .Values.resources.requests.cpu }}"     
