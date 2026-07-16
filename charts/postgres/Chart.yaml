@@ -1,0 +1,6 @@
+apiVersion: v2
+name: cnpg-postgres
+description: postgres db
+type: application
+version: 0.1.0 # chart 의 버전 
+appVersion: "15.0.0" # application 의 버전

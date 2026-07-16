@@ -1,0 +1,36 @@
+# init.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pg-db-secret
+type: Opaque
+stringData:
+  username: scott
+  password: tiger
+  database: scott_db
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pg-db-init-sql
+data:
+  init.sql: |
+    SET ROLE scott;
+    DO $$ 
+    BEGIN
+        -- [1] 기존 회원(member) 테이블 초기화 로직
+        IF NOT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'member') THEN
+            CREATE TABLE member(num SERIAL PRIMARY KEY, name VARCHAR(20), addr TEXT);
+            INSERT INTO member (name, addr) VALUES('kim', 'seoul');
+            INSERT INTO member (name, addr) VALUES('lee', 'pusan');
+        END IF;
+        -- [2] 신규 이미지 정보(image_info) 테이블 초기화 로직 (EFS 연동용)
+        IF NOT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'image_info') THEN
+            CREATE TABLE image_info (
+                img_id SERIAL PRIMARY KEY,
+                original_name VARCHAR(255) NOT NULL,
+                saved_name VARCHAR(255) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        END IF;
+    END $$;

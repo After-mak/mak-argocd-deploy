@@ -1,0 +1,26 @@
+# cnpg-cluster.yaml
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: mak-pg-cluster
+spec:
+  instances: 2 # Primary 1대 + Replica 2대 (총 3대의 파드와 3개의 EBS 디스크가 자동 생성됨)
+
+  storage:
+    # AWS EBS gp3는 성능 보장을 위해 보통 10Gi 이상을 할당합니다.
+    size: 2Gi 
+    # 테라폼으로 만든 EBS 클래스 이름을 적습니다!
+    storageClass: ebs-gp3 
+
+  bootstrap:
+    initdb:
+      database: scott_db
+      owner: scott
+      secret:
+        name: pg-db-secret
+      postInitApplicationSQLRefs:
+        configMapRefs:
+          - name: pg-db-init-sql
+            key: init.sql
+            
+  imageName: ghcr.io/cloudnative-pg/postgresql:15
