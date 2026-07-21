@@ -1,8 +1,8 @@
 # 기본 애플리케이션 설정
 replicaCount: 3
 image:
-  repository: yimjongwon/hub-app
-  tag: "1.6"
+  repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi
+  tag: "v0.1.0"
   pullPolicy: IfNotPresent
 # 💡 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
 resources:
