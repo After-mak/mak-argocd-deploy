@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sample-fastapi-config
+  labels:
+    {{- include "sample-fastapi.labels" . | nindent 4 }}
+data:
+  REDIS_HOST: {{ required "redis.host must be supplied by Terraform/Argo CD" .Values.redis.host | quote }}
+  REDIS_PORT: {{ .Values.redis.port | quote }}
+  REDIS_DB: {{ .Values.redis.db | quote }}
+  REDIS_SSL: {{ .Values.redis.ssl | quote }}
+  REDIS_SSL_CERT_REQS: {{ .Values.redis.sslCertReqs | quote }}
+  REDIS_QUEUE_KEY: {{ .Values.redis.queueKey | quote }}
+  REDIS_CONNECT_TIMEOUT: {{ .Values.redis.connectTimeout | quote }}
+  REDIS_SOCKET_TIMEOUT: {{ .Values.redis.socketTimeout | quote }}
+  REDIS_HEALTH_CHECK_INTERVAL: {{ .Values.redis.healthCheckInterval | quote }}
+  REDIS_RETRY_ATTEMPTS: {{ .Values.redis.retryAttempts | quote }}
+  WORKER_PROCESSING_SECONDS: {{ .Values.worker.processingSeconds | quote }}
+  WORKER_METRICS_PORT: {{ .Values.worker.metricsPort | quote }}

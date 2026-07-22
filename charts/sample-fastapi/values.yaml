@@ -1,0 +1,49 @@
+image:
+  repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi
+  tag: "v0.1.0"
+  pullPolicy: IfNotPresent
+
+redis:
+  # Terraform의 Argo CD Application이 실제 ElastiCache Endpoint로 덮어씁니다.
+  host: ""
+  port: 6379
+  db: 0
+  ssl: true
+  sslCertReqs: required
+  queueKey: dev:sample:queue
+  connectTimeout: 5
+  socketTimeout: 5
+  healthCheckInterval: 30
+  retryAttempts: 2
+
+fastapi:
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    # Service는 80으로 노출하고 Pod의 이름 있는 http 포트(8000)로 전달합니다.
+    port: 80
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+worker:
+  replicaCount: 1
+  processingSeconds: 0.25
+  metricsPort: 9100
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+serviceMonitor:
+  # Prometheus Operator CRD가 설치된 뒤 true로 변경합니다.
+  enabled: true
+  interval: 15s
+  scrapeTimeout: 10s

@@ -1,0 +1,37 @@
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: sample-fastapi
+  labels:
+    {{- include "sample-fastapi.labels" . | nindent 4 }}
+    monitoring: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sample-fastapi
+      app.kubernetes.io/component: api
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: {{ .Values.serviceMonitor.interval }}
+      scrapeTimeout: {{ .Values.serviceMonitor.scrapeTimeout }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: sample-worker
+  labels:
+    {{- include "sample-fastapi.labels" . | nindent 4 }}
+    monitoring: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sample-fastapi
+      app.kubernetes.io/component: worker
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: {{ .Values.serviceMonitor.interval }}
+      scrapeTimeout: {{ .Values.serviceMonitor.scrapeTimeout }}
+{{- end }}
