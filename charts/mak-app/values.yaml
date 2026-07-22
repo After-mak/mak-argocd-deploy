@@ -1,8 +1,8 @@
 # 기본 애플리케이션 설정
 replicaCount: 3
 image:
-  repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi
-  tag: "v0.1.0"
+  repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ecr
+  tag: "1.0"
   pullPolicy: IfNotPresent
 # 💡 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
 resources:
@@ -15,6 +15,10 @@ resources:
 service:
   type: ClusterIP
   port: 80
-# KEDA 및 애플리케이션 연동용 Redis 정보
+# Redis 연결 설정
 redis:
-  password: "redis"
+  host: "redis"      # K8s 내 Redis 서비스 이름 (또는 AWS ElastiCache 엔드포인트)
+  port: 6379
+  db: 0
+  password: "redis"          # Redis 비밀번호
+  tlsEnabled: false          # 로컬/K8s 내부는 false, ElastiCache TLS 사용 시 true

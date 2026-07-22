@@ -41,11 +41,23 @@ spec:
           ports:
             - containerPort: 80
           env:
+            # 1. 일반 접속 정보 (values.yaml 매핑)
+            - name: REDIS_HOST
+              value: {{ .Values.redis.host | quote }}
+            - name: REDIS_PORT
+              value: {{ .Values.redis.port | quote }}
+            - name: REDIS_DB
+              value: {{ .Values.redis.db | quote }}
+            - name: REDIS_TLS_ENABLED
+              value: {{ .Values.redis.tlsEnabled | quote }}
+
+            # 2. 비밀번호 (Secret 참조)
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: redis-secret       
-                  key: redis-password      
+                  key: REDIS_PASSWORD    
+          
           resources:
             requests:
               cpu: "{{ .Values.resources.requests.cpu }}"     

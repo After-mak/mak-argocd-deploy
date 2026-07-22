@@ -8,7 +8,7 @@ spec:
   - name: external-gateway      # 게이트웨이 리소스 이름    
     namespace: nginx-gateway    # 게이트웨이 네임스페이스
   hostnames:
-  - "mak-app.my-domain.com"     # 실서비스 접속용 도메인
+  - "tuby.shop"     # 실서비스 접속용 도메인
   rules:
   - backendRefs:
     # Argo Rollouts가 이 두 백엔드의 Weight(가중치) 비율을 롤아웃 상태에 따라 직접 뺏고 주며 자동 조절합니다!
