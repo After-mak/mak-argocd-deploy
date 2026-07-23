@@ -1,8 +1,75 @@
-# This should work on Kubernetes deployments that have LoadBalancer support
+# --------------------------------------------------
+# 1. Gateway 리소스 (AWS ALB 생성 및 SSL/도메인 처리)
+# --------------------------------------------------
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: yelb-gateway
+  namespace: yelb
+  annotations:
+    # ALB Target Type을 IP 모드로 설정 (NodePort 30000~32767 없이 Pod IP로 직접 전달)
+    alb.ingress.kubernetes.io/target-type: "ip"
+    # ExternalDNS 연동 (tuby.shop Route53 레코드 자동 생성)
+    external-dns.alpha.kubernetes.io/hostname: "tuby.shop"
+spec:
+  gatewayClassName: aws-alb  # 클러스터의 AWS Load Balancer Controller GatewayClass 이름
+  listeners:
+  - name: https
+    protocol: HTTPS
+    port: 443
+    hostname: "tuby.shop"
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: "arn:aws:acm:ap-northeast-2:372666940978:certificate/26fc326a-e04d-40df-b0af-8f678f421f7a" # 실제 ACM ARN 입력
+---
+# --------------------------------------------------
+# 2. HTTPRoute 리소스 (tuby.shop/ 요청 -> yelb-ui:80)
+# --------------------------------------------------
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: yelb-ui-route
+  namespace: yelb
+spec:
+  parentRefs:
+  - name: yelb-gateway
+  hostnames:
+  - "tuby.shop"
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: yelb-ui
+      port: 80
+---
+# --------------------------------------------------
+# 3. Services (모두 ClusterIP로 변경!)
+# --------------------------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: yelb-ui
+  namespace: yelb
+  labels:
+    app: yelb-ui
+    tier: frontend
+spec:
+  type: ClusterIP  # 💡 LoadBalancer에서 ClusterIP로 변경
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: yelb-ui
+    tier: frontend
+---
 apiVersion: v1
 kind: Service
 metadata:
   name: redis-server
+  namespace: yelb
   labels:
     app: redis-server
     tier: cache
@@ -18,6 +85,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: yelb-db
+  namespace: yelb
   labels:
     app: yelb-db
     tier: backenddb
@@ -33,6 +101,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: yelb-appserver
+  namespace: yelb
   labels:
     app: yelb-appserver
     tier: middletier
@@ -44,48 +113,20 @@ spec:
     app: yelb-appserver
     tier: middletier
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: yelb-ui
-  labels:
-    app: yelb-ui
-    tier: frontend
-  annotations:
-    # 💡 인터넷 접속이 가능한 Public LoadBalancer로 지정하는 핵심 옵션
-    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
-    # 💡 ExternalDNS가 이 주소를 보고 Route 53 레코드를 자동으로 자동 생성함
-    external-dns.alpha.kubernetes.io/hostname: "tuby.shop"
-    # ACM에서 발급받은 SSL 인증서 ARN 주소 추가
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:ap-northeast-2:372666940978:certificate/xxxx-xxxx"
-    # HTTPS 포트 지정
-    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
-spec:
-  type: LoadBalancer
-  ports:
-  - name: http
-    port: 80
-    protocol: TCP
-    targetPort: 80
-  # 🚨 [여기 추가!] 443 포트 및 SSL 오프로딩 타깃 지정
-  - name: https
-    port: 443
-    protocol: TCP
-    targetPort: 80
-  selector:
-    app: yelb-ui
-    tier: frontend
----
+# --------------------------------------------------
+# 4. Deployments (기존과 동일)
+# --------------------------------------------------
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: yelb-ui
+  namespace: yelb
 spec:
   replicas: 1
   selector:
-    matchLabels: 
+    matchLabels:
       app: yelb-ui
-      tier: frontend    
+      tier: frontend
   template:
     metadata:
       labels:
@@ -94,7 +135,7 @@ spec:
     spec:
       containers:
       - name: yelb-ui
-        image:  mreferre/yelb-ui:0.10
+        image: mreferre/yelb-ui:0.10
         ports:
         - containerPort: 80
 ---
@@ -102,10 +143,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis-server
+  namespace: yelb
 spec:
   replicas: 1
   selector:
-    matchLabels: 
+    matchLabels:
       app: redis-server
       tier: cache
   template:
@@ -124,10 +166,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: yelb-db
+  namespace: yelb
 spec:
   replicas: 1
   selector:
-    matchLabels: 
+    matchLabels:
       app: yelb-db
       tier: backenddb
   template:
@@ -138,7 +181,7 @@ spec:
     spec:
       containers:
       - name: yelb-db
-        image:  mreferre/yelb-db:0.6
+        image: mreferre/yelb-db:0.6
         ports:
         - containerPort: 5432
 ---
@@ -146,10 +189,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: yelb-appserver
+  namespace: yelb
 spec:
   replicas: 1
   selector:
-    matchLabels: 
+    matchLabels:
       app: yelb-appserver
       tier: middletier
   template:
@@ -160,10 +204,6 @@ spec:
     spec:
       containers:
       - name: yelb-appserver
-        image:  mreferre/yelb-appserver:0.7
+        image: mreferre/yelb-appserver:0.7
         ports:
         - containerPort: 4567
-
-
-
-
