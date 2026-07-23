@@ -66,11 +66,13 @@ spec:
             - name: CONTACTS_SERVICE_ADDR
               value: "contacts:8080"
             - name: USERSERVICE_SERVICE_ADDR
-              value: "localhost:8080"
+              value: "userservice:8080"
             - name: USERSERVICE_API_ADDR
-              value: "localhost:8080"      # 프론트엔드가 백엔드(/users, /login)를 자기 자신으로 호출
+              value: "userservice:8080"
             - name: USERSERVICE_URL
-              value: "http://localhost:8080"
+              value: "http://userservice:8080"
+            - name: LOGIN_URI
+              value: "http://userservice:8080/login"
             - name: ENV_PLATFORM
               value: "gcp"                 # 플랫폼 스타일 오류 방지
 
