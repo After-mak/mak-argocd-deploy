@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userservice
+  namespace: default
+  labels:
+    app: userservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userservice
+  template:
+    metadata:
+      labels:
+        app: userservice
+    spec:
+      containers:
+        - name: userservice
+          image: gcr.io/bank-of-anthos-ci/userservice:v0.5.1
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: ACCOUNT_DATABASE_SERVICE_ADDR
+              value: "accounts-db:5432"
+            - name: DB_USER
+              value: "postgres"
+            - name: DB_PASS
+              value: "password" # accounts-db 비밀번호와 일치시켜야 합니다.
+            - name: PUB_KEY_PATH
+              value: "/etc/jwt/jwtcert.pem"
+          volumeMounts:
+            - name: jwt-key-vol
+              mountPath: "/etc/jwt"
+              readOnly: true
+      volumes:
+        - name: jwt-key-vol
+          configMap:
+            name: jwt-public-key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: userservice
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: userservice
+  ports:
+    - port: 8080
+      targetPort: 8080
