@@ -7,7 +7,7 @@ data:
   init.sql: |
     -- Create users table
     CREATE TABLE IF NOT EXISTS users (
-        user_id VARCHAR(32) PRIMARY KEY,
+        accountid VARCHAR(32) PRIMARY KEY,
         username VARCHAR(32) UNIQUE NOT NULL,
         passhash VARCHAR(256) NOT NULL,
         firstname VARCHAR(32) NOT NULL,
@@ -32,10 +32,10 @@ data:
     );
 
     -- Insert demo users (password: 'password123' hashed or demo users)
-    INSERT INTO users (user_id, username, passhash, firstname, lastname, email, birthday, street_address, zip_code, state, ssn)
+    INSERT INTO users (accountid, username, passhash, firstname, lastname, email, birthday, street_address, zip_code, state, ssn)
     VALUES 
     ('1000000000', 'testuser', '$2b$12$e/91.N4mE/cM8j.W3wH07e3W.yP1kE5lQ8gG3Kz8L2A7m6M8A9bC6', 'Test', 'User', 'testuser@example.com', '1990-01-01', '123 Main St', '12345', 'CA', '000-00-0000')
-    ON CONFLICT (user_id) DO NOTHING;
+    ON CONFLICT (accountid) DO NOTHING;
 
     INSERT INTO accounts (account_id, user_id, account_type, routing_number, balance)
     VALUES 
