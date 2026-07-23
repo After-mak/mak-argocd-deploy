@@ -1,6 +1,6 @@
 image:
   repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi
-  tag: "v0.1.18"
+  tag: "v0.1.19"
   pullPolicy: IfNotPresent
 
 redis:
