@@ -69,6 +69,12 @@ spec:
               value: "userservice:8080"
             - name: USERSERVICE_API_ADDR
               value: "userservice:8080"
+            - name: CONTACTS_API_ADDR
+              value: "contacts:8080"
+            - name: TRANSACTIONS_API_ADDR
+              value: "transactionhistory:8080"
+            - name: BALANCES_API_ADDR
+              value: "balancereader:8080"
             - name: USERSERVICE_URL
               value: "http://userservice:8080"
             - name: LOGIN_URI
