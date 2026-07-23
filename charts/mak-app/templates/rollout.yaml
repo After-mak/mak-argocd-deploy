@@ -44,6 +44,10 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            # KeyError 해결을 위한 트레이싱 옵션
+            - name: ENABLE_TRACING
+              value: "false"
+
             # [필수] 공개키 경로 설정 (TypeError 해결)
             - name: PUB_KEY_PATH
               value: "/etc/jwt/jwtcert.pem"
@@ -88,7 +92,7 @@ spec:
                 secretKeyRef:
                   name: redis-secret       
                   key: REDIS_PASSWORD    
-                  
+
           # 💡 [추가] ConfigMap 볼륨 마운트
           volumeMounts:
             - name: jwt-key-vol
