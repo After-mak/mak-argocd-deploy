@@ -6,7 +6,7 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: mak-app
+      app: frontend
   strategy:
     canary:
       # 1. 블루그린의 격리 개념을 카나리에 이식합니다.
@@ -32,14 +32,17 @@ spec:
   template:
     metadata:
       labels:
-        app: mak-app
+        app: frontend
+        application: bank-of-anthos
+        team: frontend
+        tier: web
     spec:
       containers:
         - name: mak-container
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 8000
+            - containerPort: 8080
           env:
             # 1. 일반 접속 정보 (values.yaml 매핑)
             - name: REDIS_HOST

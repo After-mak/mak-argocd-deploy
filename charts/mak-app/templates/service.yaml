@@ -3,16 +3,16 @@ kind: Service
 metadata:
   name: mak-app-active
   labels:
-    app: mak-app
+    app: frontend                       # 💡 Bank of Anthos frontend 파드의 라벨에 맞춤
 spec:
   type: {{ .Values.service.type }}      # ClusterIP
   ports:
     - port: {{ .Values.service.port }}  # 서비스가 외부(또는 다른 팟)로부터 받을 포트 (80)
-      targetPort: 8000                    # deployment.yaml에 정의된 컨테이너 내부 포트 (8000)
+      targetPort: 8080                  # 컨테이너 내부 포트 (8080)
       protocol: TCP
   selector:
     # matchLabels와 정확히 일치
-    app: mak-app
+    app: frontend
 ---
 # k6로 부하를 쏴서 성능을 검증할 신규 테스트 서비스 (Green)
 apiVersion: v1
