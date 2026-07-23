@@ -23,6 +23,8 @@ spec:
           env:
             - name: PORT
               value: "8080"
+            - name: ENABLE_TRACING    # 필수 환경변수
+              value: "false"
             - name: ACCOUNT_DATABASE_SERVICE_ADDR
               value: "accounts-db:5432"
             - name: DB_USER
