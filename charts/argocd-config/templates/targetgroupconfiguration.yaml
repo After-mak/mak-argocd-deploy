@@ -1,14 +1,17 @@
+{{- range .Values.httpRoutes }}
+---
 apiVersion: gateway.k8s.aws/v1beta1
 kind: TargetGroupConfiguration
 metadata:
-  name: argocd-server-tg-config
-  namespace: argocd
+  name: {{ .name }}-tg-config
+  namespace: {{ .namespace }}
 spec:
   targetReference:
     group: ""
     kind: Service
-    name: argocd-server
+    name: {{ .serviceName }}
   defaultConfiguration:
     targetType: ip           
     protocol: HTTP
     protocolVersion: HTTP1
+{{- end }}
