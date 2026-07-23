@@ -25,12 +25,21 @@ spec:
               value: "8080"
             - name: ENABLE_TRACING    # 필수 환경변수
               value: "false"
+            # DB 연결 관련 환경변수 풀세트
             - name: ACCOUNT_DATABASE_SERVICE_ADDR
               value: "accounts-db:5432"
+            - name: DB_HOST
+              value: "accounts-db"
+            - name: DB_PORT
+              value: "5432"
             - name: DB_USER
               value: "postgres"
             - name: DB_PASS
-              value: "password" # accounts-db 비밀번호와 일치시켜야 합니다.
+              value: "password"
+            - name: DB_NAME
+              value: "postgres"
+            - name: DB_DATABASE
+              value: "postgres"
             - name: TOKEN_EXPIRY_SECONDS
               value: "86400"
             - name: PRIV_KEY_PATH
