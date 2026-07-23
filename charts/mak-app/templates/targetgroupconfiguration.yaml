@@ -27,3 +27,4 @@ spec:
     targetType: ip           
     protocol: HTTP
     protocolVersion: HTTP1
+
