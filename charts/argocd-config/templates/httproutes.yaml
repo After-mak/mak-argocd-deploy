@@ -1,0 +1,18 @@
+{{- range .Values.httpRoutes }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ .name }}
+  namespace: {{ .namespace }}
+spec:
+  parentRefs:
+    - name: {{ $.Values.gatewayName | default "my-gateway" }}
+      namespace: {{ $.Values.gatewayNamespace | default "default" }}
+  hostnames:
+    - {{ .hostname | quote }}
+  rules:
+    - backendRefs:
+        - name: {{ .serviceName }}
+          port: {{ .port }}
+{{- end }}
