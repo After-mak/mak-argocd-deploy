@@ -1,8 +1,8 @@
 # 기본 애플리케이션 설정
 replicaCount: 3
 image:
-  repository: us-central1-docker.pkg.dev/google-samples/bank-of-anthos/frontend
-  tag: v0.6.5
+  repository: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/frontend
+  tag: v0.6.10
   pullPolicy: IfNotPresent
 # 💡 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
 resources:
