@@ -1,0 +1,20 @@
+namespace: yelb
+
+ui:
+  image: mreferre/yelb-ui:v1
+  replicas: 2
+
+appserver:
+  image: mreferre/yelb-appserver:v1
+  replicas: 2
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 50
+
+db:
+  image: mreferre/yelb-db:v1
+
+redis:
+  image: redis:4.0.2
