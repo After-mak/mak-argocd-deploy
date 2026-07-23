@@ -42,7 +42,7 @@ spec:
       volumes:
         - name: jwt-key-vol
           secret:
-            name: jwt-key
+            secretName: jwt-key
 ---
 apiVersion: v1
 kind: Service
