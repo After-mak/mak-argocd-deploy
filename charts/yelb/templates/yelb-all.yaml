@@ -51,6 +51,9 @@ metadata:
   labels:
     app: yelb-ui
     tier: frontend
+  annotations:
+    # 💡 인터넷 접속이 가능한 Public LoadBalancer로 지정하는 핵심 옵션
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
 spec:
   type: LoadBalancer
   ports:
