@@ -15,5 +15,10 @@ data:
   REDIS_SOCKET_TIMEOUT: {{ .Values.redis.socketTimeout | quote }}
   REDIS_HEALTH_CHECK_INTERVAL: {{ .Values.redis.healthCheckInterval | quote }}
   REDIS_RETRY_ATTEMPTS: {{ .Values.redis.retryAttempts | quote }}
+  QUEUE_MAX_RETRIES: {{ .Values.queue.maxRetries | quote }}
+  QUEUE_VISIBILITY_TIMEOUT_SECONDS: {{ .Values.queue.visibilityTimeoutSeconds | quote }}
+  QUEUE_RECOVERY_INTERVAL_SECONDS: {{ .Values.queue.recoveryIntervalSeconds | quote }}
+  QUEUE_COMPLETED_TTL_SECONDS: {{ .Values.queue.completedTtlSeconds | quote }}
   WORKER_PROCESSING_SECONDS: {{ .Values.worker.processingSeconds | quote }}
+  WORKER_JOB_TIMEOUT_SECONDS: {{ .Values.worker.jobTimeoutSeconds | quote }}
   WORKER_METRICS_PORT: {{ .Values.worker.metricsPort | quote }}

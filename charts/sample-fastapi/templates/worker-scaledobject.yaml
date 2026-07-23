@@ -14,6 +14,13 @@ spec:
   cooldownPeriod: {{ .Values.worker.autoscaling.cooldownPeriod }}
   minReplicaCount: {{ .Values.worker.autoscaling.minReplicaCount }}
   maxReplicaCount: {{ .Values.worker.autoscaling.maxReplicaCount }}
+  {{ if .Values.worker.autoscaling.scaleDown.enabled }}
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          stabilizationWindowSeconds: {{ .Values.worker.autoscaling.scaleDown.stabilizationWindowSeconds }}
+  {{ end }}
   triggers:
     - type: prometheus
       metadata:

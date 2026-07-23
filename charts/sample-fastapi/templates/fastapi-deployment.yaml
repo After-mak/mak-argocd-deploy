@@ -32,6 +32,11 @@ spec:
           envFrom:
             - configMapRef:
                 name: sample-fastapi-config
+            {{ with .Values.loadTest.existingSecret }}
+            - secretRef:
+                name: {{ . | quote }}
+                optional: true
+            {{ end }}
           resources:
             {{- toYaml .Values.fastapi.resources | nindent 12 }}
           securityContext:

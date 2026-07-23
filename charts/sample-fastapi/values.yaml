@@ -16,6 +16,16 @@ redis:
   healthCheckInterval: 30
   retryAttempts: 2
 
+queue:
+  maxRetries: 3
+  visibilityTimeoutSeconds: 60
+  recoveryIntervalSeconds: 10
+  completedTtlSeconds: 86400
+
+loadTest:
+  # Secret 값은 Git에 저장하지 않습니다. 배포 전에 이 이름의 Kubernetes Secret을 생성합니다.
+  existingSecret: sample-fastapi-load-test
+
 fastapi:
   replicaCount: 1
   service:
@@ -33,6 +43,7 @@ fastapi:
 worker:
   replicaCount: 1
   processingSeconds: 0.25
+  jobTimeoutSeconds: 30
   metricsPort: 9100
   autoscaling:
     enabled: true
@@ -40,6 +51,11 @@ worker:
     maxReplicaCount: 3
     pollingInterval: 10
     cooldownPeriod: 60
+    scaleDown:
+      # false는 Kubernetes HPA 기본 300초 안정화 시간을 유지합니다.
+      # 비교 테스트 시 true로 바꾸면 3→1 축소 안정화 시간을 60초로 명시합니다.
+      enabled: false
+      stabilizationWindowSeconds: 60
     prometheus:
       serverAddress: http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090
       query: >-
