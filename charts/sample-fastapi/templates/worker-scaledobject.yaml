@@ -1,0 +1,24 @@
+{{- if .Values.worker.autoscaling.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: sample-worker
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "sample-fastapi.labels" . | nindent 4 }}
+    app.kubernetes.io/component: worker
+spec:
+  scaleTargetRef:
+    name: sample-worker
+  pollingInterval: {{ .Values.worker.autoscaling.pollingInterval }}
+  cooldownPeriod: {{ .Values.worker.autoscaling.cooldownPeriod }}
+  minReplicaCount: {{ .Values.worker.autoscaling.minReplicaCount }}
+  maxReplicaCount: {{ .Values.worker.autoscaling.maxReplicaCount }}
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: {{ required "worker.autoscaling.prometheus.serverAddress is required" .Values.worker.autoscaling.prometheus.serverAddress | quote }}
+        query: {{ required "worker.autoscaling.prometheus.query is required" .Values.worker.autoscaling.prometheus.query | quote }}
+        threshold: {{ required "worker.autoscaling.prometheus.threshold is required" .Values.worker.autoscaling.prometheus.threshold | quote }}
+        activationThreshold: {{ required "worker.autoscaling.prometheus.activationThreshold is required" .Values.worker.autoscaling.prometheus.activationThreshold | quote }}
+{{- end }}
