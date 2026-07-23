@@ -29,6 +29,10 @@ spec:
               value: "postgres"
             - name: DB_PASS
               value: "password" # accounts-db 비밀번호와 일치시켜야 합니다.
+            - name: TOKEN_EXPIRY_SECONDS
+              value: "86400"
+            - name: PRIV_KEY_PATH
+              value: "/etc/jwt/jwtkey.pem"
             - name: PUB_KEY_PATH
               value: "/etc/jwt/jwtcert.pem"
           volumeMounts:
@@ -38,7 +42,7 @@ spec:
       volumes:
         - name: jwt-key-vol
           configMap:
-            name: jwt-public-key
+            name: jwt-key
 ---
 apiVersion: v1
 kind: Service
