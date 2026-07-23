@@ -44,12 +44,33 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            # [필수] 공개키 경로 설정 (TypeError 해결)
+            - name: PUB_KEY_PATH
+              value: "/app/jwt-public-key/jwtcert.pem"
+            
+            # [필수] 마이크로서비스 및 외부 서비스 주소 설정
+            # (설정 안 할 경우 기본 서비스명이 들어가나, 서비스가 없으면 에러가 날 수 있음)
+            - name: ACCOUNT_DATABASE_SERVICE_ADDR
+              value: "accounts-db:5432"
+            - name: LEDGER_WRITER_SERVICE_ADDR
+              value: "ledgerwriter:8080"
+            - name: BALANCE_READER_SERVICE_ADDR
+              value: "balancereader:8080"
+            - name: TRANSACTION_HISTORY_SERVICE_ADDR
+              value: "transactionhistory:8080"
+            - name: CONTACTS_SERVICE_ADDR
+              value: "contacts:8080"
+            - name: USERSERVICE_SERVICE_ADDR
+              value: "userservice:8080"
+
 
             #  프론트엔드 앱 실행에 필수적인 PORT 및 프로메테우스 설정
             - name: PORT
               value: "8080"
             - name: ENABLE_PROMETHEUS
               value: "true"
+            - name: LOG_LEVEL
+              value: "info"
 
             # 1. 일반 접속 정보 (values.yaml 매핑)
             - name: REDIS_HOST
