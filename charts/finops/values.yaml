@@ -4,7 +4,7 @@ image:
   # AWS ECR 레지스트리 URI
   repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/finops-analyzer
   pullPolicy: Always
-  tag: "v0.1.5"
+  tag: "v0.1.6"
 
 service:
   type: ClusterIP
@@ -15,7 +15,7 @@ env:
   mockIntegration: "false"
   prometheusUrl: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
   chronosUrl: "http://chronos-model.monitoring.svc.cluster.local:8000"
-  krrUrl: "http://krr.monitoring.svc.cluster.local:8080"
+  krrUrl: "http://krr.finops.svc.cluster.local:8080"
   telegramBotToken: "8818476894:AAEEIiJvfmTBK5zNpF0_sv12DZmwz17k6kc"
   telegramChatId: "8753092843"
   autoSendTelegram: "true"
@@ -23,8 +23,8 @@ env:
 cronjob:
   enabled: true
   schedule: "0 3 * * *"  # 매일 새벽 3시 (Cron 표현식: 새벽 3시 0분)
-  targetDeployment: "payment-api"
-  targetNamespace: "prod"
+  targetDeployment: "sample-fastapi"
+  targetNamespace: "sample-fastapi"
 
 resources:
   limits:
