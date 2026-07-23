@@ -54,10 +54,22 @@ metadata:
   annotations:
     # 💡 인터넷 접속이 가능한 Public LoadBalancer로 지정하는 핵심 옵션
     service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+    # 💡 ExternalDNS가 이 주소를 보고 Route 53 레코드를 자동으로 자동 생성함
+    external-dns.alpha.kubernetes.io/hostname: "tuby.shop"
+    # ACM에서 발급받은 SSL 인증서 ARN 주소 추가
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:ap-northeast-2:372666940978:certificate/xxxx-xxxx"
+    # HTTPS 포트 지정
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
 spec:
   type: LoadBalancer
   ports:
-  - port: 80
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  # 🚨 [여기 추가!] 443 포트 및 SSL 오프로딩 타깃 지정
+  - name: https
+    port: 443
     protocol: TCP
     targetPort: 80
   selector:
