@@ -44,6 +44,8 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: USERSERVICE_SERVICE_ADDR
+              value: "localhost:8080"
             - name: USERSERVICE_API_ADDR
               value: "localhost:8080"      # 프론트엔드가 백엔드(/users, /login)를 자기 자신으로 호출
             - name: USERSERVICE_URL
