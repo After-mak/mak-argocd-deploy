@@ -41,7 +41,7 @@ spec:
               readOnly: true
       volumes:
         - name: jwt-key-vol
-          configMap:
+          secret:
             name: jwt-key
 ---
 apiVersion: v1
