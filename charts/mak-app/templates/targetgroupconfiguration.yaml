@@ -1,0 +1,29 @@
+apiVersion: gateway.k8s.aws/v1beta1
+kind: TargetGroupConfiguration
+metadata:
+  name: mak-app-active-tg-config
+  namespace: default
+spec:
+  targetReference:
+    group: ""
+    kind: Service
+    name: mak-app-active
+  defaultConfiguration:
+    targetType: ip           
+    protocol: HTTP
+    protocolVersion: HTTP1
+---
+apiVersion: gateway.k8s.aws/v1beta1
+kind: TargetGroupConfiguration
+metadata:
+  name: mak-app-preview-tg-config
+  namespace: default
+spec:
+  targetReference:
+    group: ""
+    kind: Service
+    name: mak-app-preview
+  defaultConfiguration:
+    targetType: ip           
+    protocol: HTTP
+    protocolVersion: HTTP1

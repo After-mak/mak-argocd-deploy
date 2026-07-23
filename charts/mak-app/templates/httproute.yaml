@@ -5,8 +5,8 @@ metadata:
   namespace: default
 spec:
   parentRefs:
-  - name: external-gateway      # 게이트웨이 리소스 이름    
-    namespace: nginx-gateway    # 게이트웨이 네임스페이스
+  - name: my-gateway      # 게이트웨이 리소스 이름    
+    namespace: default    # 게이트웨이 네임스페이스
   hostnames:
   - "tuby.shop"     # 실서비스 접속용 도메인
   rules:
