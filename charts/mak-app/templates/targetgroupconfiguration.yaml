@@ -11,7 +11,7 @@ spec:
   defaultConfiguration:
     targetType: ip           
     protocol: HTTP
-    protocolVersion: HTTP1\
+    protocolVersion: HTTP1
     healthCheck:                 # 헬스 체크 포트 및 경로 명시
       enabled: true
       intervalSeconds: 15
