@@ -44,6 +44,13 @@ spec:
           ports:
             - containerPort: 8080
           env:
+
+            #  프론트엔드 앱 실행에 필수적인 PORT 및 프로메테우스 설정
+            - name: PORT
+              value: "8080"
+            - name: ENABLE_PROMETHEUS
+              value: "true"
+
             # 1. 일반 접속 정보 (values.yaml 매핑)
             - name: REDIS_HOST
               value: {{ .Values.redis.host | quote }}
