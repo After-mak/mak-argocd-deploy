@@ -44,6 +44,12 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: USERSERVICE_API_ADDR
+              value: "localhost:8080"   # 같은 파드 내 다중 컨테이너인 경우
+              # 또는 내부 K8s 서비스 이름 지정 (예: "userservice:8080" 또는 "127.0.0.1:8080")
+            - name: ENV_PLATFORM
+              value: "gcp"              # 아까 로그에 나온 ENV_PLATFORM 경고도 함께 해결
+
             # KeyError 해결을 위한 트레이싱 옵션
             - name: ENABLE_TRACING
               value: "false"
