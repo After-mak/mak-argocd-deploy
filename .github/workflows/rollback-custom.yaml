@@ -1,17 +1,17 @@
-name: Custom Rollback Workflow
+name: Custom Tag Rollback Workflow
 
 on:
-  repository_dispatch:
-    types: [rollback-custom, rollback_custom, deploy-custom]
+  workflow_dispatch:
+    inputs:
+      target_tag:
+        description: 'Target tag to rollback'
+        required: false
+        default: 'v1.0.0'
 
 jobs:
   rollback:
     runs-on: ubuntu-latest
     steps:
-      - name: Check Out Repository
-        uses: actions/checkout@v3
-
-      - name: Triggered Event Log
+      - name: Execute Custom Rollback
         run: |
-          echo "🚀 Telegram / FastAPI에서 웹후크 신호를 수신했습니다!"
-          echo "Payload: ${{ toJson(github.event.client_payload) }}"
+          echo "🚀 Target Tag: ${{ github.event.inputs.target_tag }} 버전으로 롤백 진행"
