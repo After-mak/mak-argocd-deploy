@@ -44,14 +44,6 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: USERSERVICE_SERVICE_ADDR
-              value: "localhost:8080"
-            - name: USERSERVICE_API_ADDR
-              value: "localhost:8080"      # 프론트엔드가 백엔드(/users, /login)를 자기 자신으로 호출
-            - name: USERSERVICE_URL
-              value: "http://localhost:8080"
-            - name: ENV_PLATFORM
-              value: "gcp"                 # 플랫폼 스타일 오류 방지
 
             # KeyError 해결을 위한 트레이싱 옵션
             - name: ENABLE_TRACING
@@ -74,7 +66,13 @@ spec:
             - name: CONTACTS_SERVICE_ADDR
               value: "contacts:8080"
             - name: USERSERVICE_SERVICE_ADDR
-              value: "userservice:8080"
+              value: "localhost:8080"
+            - name: USERSERVICE_API_ADDR
+              value: "localhost:8080"      # 프론트엔드가 백엔드(/users, /login)를 자기 자신으로 호출
+            - name: USERSERVICE_URL
+              value: "http://localhost:8080"
+            - name: ENV_PLATFORM
+              value: "gcp"                 # 플랫폼 스타일 오류 방지
 
 
             #  프론트엔드 앱 실행에 필수적인 PORT 및 프로메테우스 설정
