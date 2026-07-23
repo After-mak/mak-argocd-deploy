@@ -45,8 +45,8 @@ spec:
             - containerPort: 8080
           env:
             # [필수] 공개키 경로 설정 (TypeError 해결)
-            - name: PUB_KEY_PATH
-              value: "/app/jwt-public-key/jwtcert.pem"
+            # - name: PUB_KEY_PATH
+            #   value: "/app/jwt-public-key/jwtcert.pem"
             
             # [필수] 마이크로서비스 및 외부 서비스 주소 설정
             # (설정 안 할 경우 기본 서비스명이 들어가나, 서비스가 없으면 에러가 날 수 있음)
