@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accounts-db
+  namespace: {{ .Release.Namespace | default "default" }}
+  labels:
+    app: accounts-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: accounts-db
+  template:
+    metadata:
+      labels:
+        app: accounts-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15-alpine
+          env:
+            - name: POSTGRES_DB
+              value: "postgres"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "password"
+          ports:
+            - containerPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: accounts-db
+  namespace: {{ .Release.Namespace | default "default" }}
+spec:
+  type: ClusterIP
+  selector:
+    app: accounts-db
+  ports:
+    - port: 5432
+      targetPort: 5432
