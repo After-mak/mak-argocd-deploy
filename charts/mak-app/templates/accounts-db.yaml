@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:15-alpine
+          image: gcr.io/bank-of-anthos-ci/accounts-db:v0.6.5
           env:
             - name: POSTGRES_DB
               value: "postgres"
