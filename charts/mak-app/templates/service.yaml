@@ -25,4 +25,5 @@ spec:
       targetPort: 8080
       protocol: TCP
   selector:
-    app: mak-app
+    # matchLabels와 정확히 일치
+    app: frontend
