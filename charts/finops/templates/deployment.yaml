@@ -29,8 +29,6 @@ spec:
               value: {{ .Values.env.prometheusUrl | quote }}
             - name: CHRONOS_URL
               value: {{ .Values.env.chronosUrl | quote }}
-            - name: KRR_URL
-              value: {{ .Values.env.krrUrl | quote }}
             - name: TELEGRAM_BOT_TOKEN
               value: {{ .Values.env.telegramBotToken | quote }}
             - name: TELEGRAM_CHAT_ID
