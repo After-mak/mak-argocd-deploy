@@ -1,0 +1,35 @@
+replicaCount: 1
+
+image:
+  # AWS ECR 레지스트리 URI
+  repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/finops-analyzer
+  pullPolicy: Always
+  tag: "v0.1.0"
+
+service:
+  type: ClusterIP
+  port: 8000
+
+env:
+  # 기본적으로 Mock 모드를 지원하며 실환경 배포 시 false로 지정
+  mockIntegration: "false"
+  prometheusUrl: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
+  chronosUrl: "http://chronos-model.monitoring.svc.cluster.local:8000"
+  krrUrl: "http://krr.finops.svc.cluster.local:8080"
+  telegramBotToken: "8818476894:AAEEIiJvfmTBK5zNpF0_sv12DZmwz17k6kc"
+  telegramChatId: "8753092843"
+  autoSendTelegram: "true"
+
+cronjob:
+  enabled: true
+  schedule: "0 3 * * *"  # 매일 새벽 3시 (Cron 표현식: 새벽 3시 0분)
+  targetDeployment: "sample-fastapi"
+  targetNamespace: "sample-fastapi"
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
