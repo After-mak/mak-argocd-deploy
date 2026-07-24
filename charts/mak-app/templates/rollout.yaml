@@ -108,13 +108,13 @@ spec:
                   name: redis-secret       
                   key: REDIS_PASSWORD    
 
-          # 💡 [추가] ConfigMap 볼륨 마운트
+          # ConfigMap 볼륨 마운트
           volumeMounts:
             - name: jwt-key-vol
               mountPath: "/etc/jwt"
               readOnly: true
 
-      # 💡 [추가] 볼륨 정의
+      # 볼륨 정의
       volumes:
         - name: jwt-key-vol
           secret:
