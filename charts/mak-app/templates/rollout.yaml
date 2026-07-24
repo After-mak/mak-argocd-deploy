@@ -117,8 +117,8 @@ spec:
       # 💡 [추가] 볼륨 정의
       volumes:
         - name: jwt-key-vol
-          configMap:
-            name: jwt-public-key
+          secret:
+            secretName: jwt-key
           
           resources:
             requests:
