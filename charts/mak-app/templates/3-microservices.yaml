@@ -139,6 +139,8 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: VERSION      
+              value: "v0.6.10"
             - name: PORT
               value: "8080"
           envFrom:
@@ -196,6 +198,8 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: VERSION      
+              value: "v0.6.10"
             - name: PORT
               value: "8080"
           envFrom:
@@ -255,6 +259,8 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: VERSION      
+              value: "v0.6.10"
             - name: PORT
               value: "8080"
           envFrom:
