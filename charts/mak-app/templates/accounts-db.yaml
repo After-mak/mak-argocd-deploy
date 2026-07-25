@@ -18,7 +18,7 @@ data:
         address VARCHAR(64) NOT NULL,
         zip VARCHAR(10) NOT NULL,
         state VARCHAR(32) NOT NULL,
-        ssn VARCHAR(11) NOT NULL,
+        ssn BYTEA NOT NULL,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -35,7 +35,7 @@ data:
     -- Insert demo users
     INSERT INTO users (accountid, username, passhash, firstname, lastname, email, birthday, timezone, address, zip, state, ssn)
     VALUES 
-    ('1000000000', 'testuser', '$2b$12$e/91.N4mE/cM8j.W3wH07e3W.yP1kE5lQ8gG3Kz8L2A7m6M8A9bC6', 'Test', 'User', 'testuser@example.com', '1990-01-01', 'America/Los_Angeles', '123 Main St', '12345', 'CA', '000-00-0000')
+    ('1000000000', 'testuser', '$2b$12$e/91.N4mE/cM8j.W3wH07e3W.yP1kE5lQ8gG3Kz8L2A7m6M8A9bC6', 'Test', 'User', 'testuser@example.com', '1990-01-01', 'America/Los_Angeles', '123 Main St', '12345', 'CA', '000-00-0000'::bytea)
     ON CONFLICT (accountid) DO NOTHING;
 
     INSERT INTO accounts (account_id, user_id, account_type, routing_number, balance)
