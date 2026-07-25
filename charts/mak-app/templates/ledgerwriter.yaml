@@ -18,6 +18,8 @@ spec:
         ports:
         - containerPort: 8080
         env:
+        - name: SPRING_AUTOCONFIGURATION_EXCLUDE
+          value: "com.google.cloud.spring.autoconfigure.trace.StackdriverTraceAutoConfiguration"
         - name: GOOGLE_CLOUD_PROJECT
           value: "test-project"
         - name: GCP_PROJECT_ID
