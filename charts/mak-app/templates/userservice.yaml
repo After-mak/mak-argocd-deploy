@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: userservice
-          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/userservice:v0.6.9
+          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/user-service:v0.6.9
           ports:
             - containerPort: 8080
           env:
