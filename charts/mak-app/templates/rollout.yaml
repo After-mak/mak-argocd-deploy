@@ -43,16 +43,21 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8080
+          resources:
+            requests:
+              cpu: "{{ .Values.resources.requests.cpu }}"     
+              memory: "{{ .Values.resources.requests.memory }}" 
+            limits:
+              cpu: "{{ .Values.resources.limits.cpu }}"      
+              memory: "{{ .Values.resources.limits.memory }}" 
           env:
-
             # KeyError 해결을 위한 트레이싱 옵션
             - name: ENABLE_TRACING
               value: "false"
-
             # [필수] 공개키 경로 설정 (TypeError 해결)
             - name: PUB_KEY_PATH
-              value: "/etc/jwt/jwtcert.pem"
-            
+              value: "/etc/jwt/jwtcert.pem"  
+                   
             # [필수] 마이크로서비스 및 외부 서비스 주소 설정
             # (설정 안 할 경우 기본 서비스명이 들어가나, 서비스가 없으면 에러가 날 수 있음)
             - name: ACCOUNT_DATABASE_SERVICE_ADDR
@@ -81,7 +86,6 @@ spec:
               value: "http://userservice:8080/login"
             - name: ENV_PLATFORM
               value: "gcp"                 # 플랫폼 스타일 오류 방지
-
 
             #  프론트엔드 앱 실행에 필수적인 PORT 및 프로메테우스 설정
             - name: PORT
@@ -120,10 +124,4 @@ spec:
           secret:
             secretName: jwt-key
           
-          resources:
-            requests:
-              cpu: "{{ .Values.resources.requests.cpu }}"     
-              memory: "{{ .Values.resources.requests.memory }}" 
-            limits:
-              cpu: "{{ .Values.resources.limits.cpu }}"      
-              memory: "{{ .Values.resources.limits.memory }}"    
+             
