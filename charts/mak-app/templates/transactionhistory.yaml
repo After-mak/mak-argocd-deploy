@@ -26,6 +26,12 @@ spec:
           value: "false"
         - name: ENABLE_METRICS
           value: "false"
+        - name: SPRING_CLOUD_GCP_CORE_ENABLED
+          value: "false"
+        - name: SPRING_CLOUD_GCP_LOGGING_ENABLED
+          value: "false"
+        - name: SPRING_CLOUD_GCP_METRICS_ENABLED
+          value: "false"
         envFrom:
         - configMapRef:
             name: environment-config
