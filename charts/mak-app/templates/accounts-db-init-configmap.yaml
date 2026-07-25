@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: accounts-db-init-script
+  namespace: {{ .Release.Namespace | default "default" }}
+data:
+  init.sql: |
+    -- Create users table
+    CREATE TABLE IF NOT EXISTS users (
+        accountid VARCHAR(32) PRIMARY KEY,
+        username VARCHAR(32) UNIQUE NOT NULL,
+        passhash BYTEA NOT NULL,
+        firstname VARCHAR(32) NOT NULL,
+        lastname VARCHAR(32) NOT NULL,
+        email VARCHAR(64) NOT NULL,
+        birthday DATE NOT NULL,
+        timezone VARCHAR(64) DEFAULT 'America/Los_Angeles',
+        address VARCHAR(64) NOT NULL,
+        zip VARCHAR(10) NOT NULL,
+        state VARCHAR(32) NOT NULL,
+        ssn VARCHAR(64) NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Create accounts table
+    CREATE TABLE IF NOT EXISTS accounts (
+        account_id VARCHAR(10) PRIMARY KEY,
+        user_id VARCHAR(32) REFERENCES users(accountid) ON DELETE CASCADE,
+        account_type VARCHAR(16) NOT NULL,
+        routing_number VARCHAR(9) NOT NULL,
+        balance INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Insert demo user (bcrypt passhash를 UTF8 bytea로 주입)
+    INSERT INTO users (accountid, username, passhash, firstname, lastname, email, birthday, timezone, address, zip, state, ssn)
+    VALUES 
+    (
+        '1000000000', 
+        'testuser', 
+        convert_to('$2b$12$eA32Ph8.M2o1r9uE0e2wI.vXU5A99k8J0X/3C19WqG7q', 'UTF8'), 
+        'Test', 
+        'User', 
+        'testuser@example.com', 
+        '1990-01-01', 
+        'America/Los_Angeles', 
+        '123 Main St', 
+        '12345', 
+        'CA', 
+        '000-00-0000'
+    )
+    ON CONFLICT (accountid) DO NOTHING;
+
+    INSERT INTO accounts (account_id, user_id, account_type, routing_number, balance)
+    VALUES 
+    ('1234567890', '1000000000', 'CHECKING', '123456789', 100000)
+    ON CONFLICT (account_id) DO NOTHING;
