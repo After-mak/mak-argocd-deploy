@@ -18,6 +18,24 @@ spec:
         ports:
         - containerPort: 8080
         env:
+        - name: SPRING_CLOUD_GCP_CORE_ENABLED
+          value: "false"
+        - name: SPRING_CLOUD_GCP_METRICS_ENABLED
+          value: "false"
+        - name: SPRING_CLOUD_GCP_TRACE_ENABLED
+          value: "false"
+        - name: PUB_KEY_PATH
+          value: "/etc/jwt/jwtcert.pem"
+        - name: LOCAL_ROUTING_NUM
+          value: "883745000"
+        - name: LEDGER_DB_ADDR
+          value: "ledger-db:5432"
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://ledger-db:5432/postgres"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "postgres"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "password"
         - name: VERSION
           value: "v0.5.11"
         - name: PORT
