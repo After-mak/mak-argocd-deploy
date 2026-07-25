@@ -3,10 +3,7 @@ kind: Deployment
 metadata:
   name: transactionhistory
   namespace: {{ .Release.Namespace | default "default" }}
-  labels:
-    app: transactionhistory
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: transactionhistory
@@ -16,33 +13,30 @@ spec:
         app: transactionhistory
     spec:
       containers:
-        - name: transactionhistory
-          image: gcr.io/bank-of-anthos-ci/transactionhistory:v0.5.11
-          ports:
-            - containerPort: 8080
-          env:
-            - name: PORT
-              value: "8080"
-            - name: VERSION
-              value: "v0.5.11"
-            - name: ENABLE_TRACING
-              value: "false"
-            - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://ledger-db:5432/postgres"
-            - name: DB_USER
-              value: "postgres"
-            - name: DB_PASSWORD
-              value: "password"
-            - name: PUB_KEY_PATH
-              value: "/etc/jwt/jwtcert.pem"
-          volumeMounts:
-            - name: jwt-key-vol
-              mountPath: "/etc/jwt"
-              readOnly: true
-      volumes:
+      - name: transactionhistory
+        image: gcr.io/bank-of-anthos-ci/transactionhistory:v0.5.11
+        ports:
+        - containerPort: 8080
+        env:
+        - name: VERSION
+          value: "v0.5.11"
+        - name: PORT
+          value: "8080"
+        - name: ENABLE_TRACING
+          value: "false"
+        envFrom:
+        - configMapRef:
+            name: environment-config
+        - configMapRef:
+            name: ledger-db-config
+        volumeMounts:
         - name: jwt-key-vol
-          secret:
-            secretName: jwt-key
+          mountPath: "/etc/jwt"
+          readOnly: true
+      volumes:
+      - name: jwt-key-vol
+        secret:
+          secretName: jwt-key
 ---
 apiVersion: v1
 kind: Service
@@ -54,5 +48,5 @@ spec:
   selector:
     app: transactionhistory
   ports:
-    - port: 8080
-      targetPort: 8080
+  - port: 8080
+    targetPort: 8080
