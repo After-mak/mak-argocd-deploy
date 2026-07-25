@@ -4,54 +4,61 @@ metadata:
   name: accounts-db-init-script
   namespace: {{ .Release.Namespace | default "default" }}
 data:
-  init.sql: |
-    -- Create users table
+  0-accounts-schema.sql: |
     CREATE TABLE IF NOT EXISTS users (
-        accountid VARCHAR(32) PRIMARY KEY,
-        username VARCHAR(32) UNIQUE NOT NULL,
-        passhash BYTEA NOT NULL,
-        firstname VARCHAR(32) NOT NULL,
-        lastname VARCHAR(32) NOT NULL,
-        email VARCHAR(64) NOT NULL,
-        birthday DATE NOT NULL,
-        timezone VARCHAR(64) DEFAULT 'America/Los_Angeles',
-        address VARCHAR(64) NOT NULL,
-        zip VARCHAR(10) NOT NULL,
-        state VARCHAR(32) NOT NULL,
-        ssn VARCHAR(64) NOT NULL,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      accountid CHAR(10) PRIMARY KEY,
+      username VARCHAR(64) UNIQUE NOT NULL,
+      passhash BYTEA NOT NULL,
+      firstname VARCHAR(64) NOT NULL,
+      lastname VARCHAR(64) NOT NULL,
+      birthday DATE NOT NULL,
+      timezone VARCHAR(8) NOT NULL,
+      address VARCHAR(64) NOT NULL,
+      state CHAR(2) NOT NULL,
+      zip VARCHAR(5) NOT NULL,
+      ssn CHAR(11) NOT NULL
     );
 
-    -- Create accounts table
-    CREATE TABLE IF NOT EXISTS accounts (
-        account_id VARCHAR(10) PRIMARY KEY,
-        user_id VARCHAR(32) REFERENCES users(accountid) ON DELETE CASCADE,
-        account_type VARCHAR(16) NOT NULL,
-        routing_number VARCHAR(9) NOT NULL,
-        balance INT NOT NULL DEFAULT 0,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    CREATE INDEX IF NOT EXISTS idx_users_accountid ON users (accountid);
+    CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);
+
+    CREATE TABLE IF NOT EXISTS contacts (
+      username VARCHAR(64) NOT NULL,
+      label VARCHAR(128) NOT NULL,
+      account_num CHAR(10) NOT NULL,
+      routing_num CHAR(9) NOT NULL,
+      is_external BOOLEAN NOT NULL,
+      FOREIGN KEY (username) REFERENCES users(username)
     );
 
-    -- Insert demo user (bcrypt passhash를 UTF8 bytea로 주입)
-    INSERT INTO users (accountid, username, passhash, firstname, lastname, email, birthday, timezone, address, zip, state, ssn)
-    VALUES 
-    (
-        '1000000000', 
-        'testuser', 
-        convert_to('$2b$12$eA32Ph8.M2o1r9uE0e2wI.vXU5A99k8J0X/3C19WqG7q', 'UTF8'), 
-        'Test', 
-        'User', 
-        'testuser@example.com', 
-        '1990-01-01', 
-        'America/Los_Angeles', 
-        '123 Main St', 
-        '12345', 
-        'CA', 
-        '000-00-0000'
-    )
-    ON CONFLICT (accountid) DO NOTHING;
+    CREATE INDEX IF NOT EXISTS idx_contacts_username ON contacts (username);
 
-    INSERT INTO accounts (account_id, user_id, account_type, routing_number, balance)
-    VALUES 
-    ('1234567890', '1000000000', 'CHECKING', '123456789', 100000)
-    ON CONFLICT (account_id) DO NOTHING;
+  1-load-testdata.sql: |
+    INSERT INTO users VALUES
+    ('1011226111', 'testuser', E'\\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Test', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
+    ('1033623433', 'alice', E'\\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Alice', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
+    ('1055757655', 'bob', E'\\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Bob', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
+    ('1077441377', 'eve', E'\\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Eve', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333')
+    ON CONFLICT DO NOTHING;
+
+    INSERT INTO contacts VALUES
+    ('testuser', 'Alice', '1033623433', '883745000', 'false'),
+    ('testuser', 'Bob', '1055757655', '883745000', 'false'),
+    ('testuser', 'Eve', '1077441377', '883745000', 'false'),
+    ('alice', 'Testuser', '1011226111', '883745000', 'false'),
+    ('alice', 'Bob', '1055757655', '883745000', 'false'),
+    ('alice', 'Eve', '1077441377', '883745000', 'false'),
+    ('bob', 'Testuser', '1011226111', '883745000', 'false'),
+    ('bob', 'Alice', '1033623433', '883745000', 'false'),
+    ('bob', 'Eve', '1077441377', '883745000', 'false'),
+    ('eve', 'Testuser', '1011226111', '883745000', 'false'),
+    ('eve', 'Alice', '1033623433', '883745000', 'false'),
+    ('eve', 'Bob', '1055757655', '883745000', 'false')
+    ON CONFLICT DO NOTHING;
+
+    INSERT INTO contacts VALUES
+    ('testuser', 'External Bank', '9099791699', '808889588', 'true'),
+    ('alice', 'External Bank', '9099791699', '808889588', 'true'),
+    ('bob', 'External Bank', '9099791699', '808889588', 'true'),
+    ('eve', 'External Bank', '9099791699', '808889588', 'true')
+    ON CONFLICT DO NOTHING;
