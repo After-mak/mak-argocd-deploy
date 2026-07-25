@@ -32,6 +32,10 @@ spec:
           value: "false"
         - name: SPRING_CLOUD_GCP_METRICS_ENABLED
           value: "false"
+        - name: SPRING_CLOUD_GCP_TRACE_ENABLED
+          value: "false"
+        - name: MANAGEMENT_TRACING_ENABLED
+          value: "false"
         envFrom:
         - configMapRef:
             name: environment-config
