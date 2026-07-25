@@ -1,64 +1,64 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: accounts-db-init-script
-  namespace: {{ .Release.Namespace | default "default" }}
-data:
-  0-accounts-schema.sql: |
-    CREATE TABLE IF NOT EXISTS users (
-      accountid CHAR(10) PRIMARY KEY,
-      username VARCHAR(64) UNIQUE NOT NULL,
-      passhash BYTEA NOT NULL,
-      firstname VARCHAR(64) NOT NULL,
-      lastname VARCHAR(64) NOT NULL,
-      birthday DATE NOT NULL,
-      timezone VARCHAR(8) NOT NULL,
-      address VARCHAR(64) NOT NULL,
-      state CHAR(2) NOT NULL,
-      zip VARCHAR(5) NOT NULL,
-      ssn CHAR(11) NOT NULL
-    );
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: accounts-db-init-script
+#   namespace: {{ .Release.Namespace | default "default" }}
+# data:
+#   0-accounts-schema.sql: |
+#     CREATE TABLE IF NOT EXISTS users (
+#       accountid CHAR(10) PRIMARY KEY,
+#       username VARCHAR(64) UNIQUE NOT NULL,
+#       passhash BYTEA NOT NULL,
+#       firstname VARCHAR(64) NOT NULL,
+#       lastname VARCHAR(64) NOT NULL,
+#       birthday DATE NOT NULL,
+#       timezone VARCHAR(8) NOT NULL,
+#       address VARCHAR(64) NOT NULL,
+#       state CHAR(2) NOT NULL,
+#       zip VARCHAR(5) NOT NULL,
+#       ssn CHAR(11) NOT NULL
+#     );
 
-    CREATE INDEX IF NOT EXISTS idx_users_accountid ON users (accountid);
-    CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);
+#     CREATE INDEX IF NOT EXISTS idx_users_accountid ON users (accountid);
+#     CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);
 
-    CREATE TABLE IF NOT EXISTS contacts (
-      username VARCHAR(64) NOT NULL,
-      label VARCHAR(128) NOT NULL,
-      account_num CHAR(10) NOT NULL,
-      routing_num CHAR(9) NOT NULL,
-      is_external BOOLEAN NOT NULL,
-      FOREIGN KEY (username) REFERENCES users(username)
-    );
+#     CREATE TABLE IF NOT EXISTS contacts (
+#       username VARCHAR(64) NOT NULL,
+#       label VARCHAR(128) NOT NULL,
+#       account_num CHAR(10) NOT NULL,
+#       routing_num CHAR(9) NOT NULL,
+#       is_external BOOLEAN NOT NULL,
+#       FOREIGN KEY (username) REFERENCES users(username)
+#     );
 
-    CREATE INDEX IF NOT EXISTS idx_contacts_username ON contacts (username);
+#     CREATE INDEX IF NOT EXISTS idx_contacts_username ON contacts (username);
 
-  1-load-testdata.sql: |
-    INSERT INTO users VALUES
-    ('1011226111', 'testuser', E'\\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Test', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
-    ('1033623433', 'alice', E'\\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Alice', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
-    ('1055757655', 'bob', E'\\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Bob', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
-    ('1077441377', 'eve', E'\\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Eve', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333')
-    ON CONFLICT DO NOTHING;
+#   1-load-testdata.sql: |
+#     INSERT INTO users VALUES
+#     ('1011226111', 'testuser', E'\\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Test', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
+#     ('1033623433', 'alice', E'\\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Alice', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
+#     ('1055757655', 'bob', E'\\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Bob', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
+#     ('1077441377', 'eve', E'\\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Eve', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333')
+#     ON CONFLICT DO NOTHING;
 
-    INSERT INTO contacts VALUES
-    ('testuser', 'Alice', '1033623433', '883745000', 'false'),
-    ('testuser', 'Bob', '1055757655', '883745000', 'false'),
-    ('testuser', 'Eve', '1077441377', '883745000', 'false'),
-    ('alice', 'Testuser', '1011226111', '883745000', 'false'),
-    ('alice', 'Bob', '1055757655', '883745000', 'false'),
-    ('alice', 'Eve', '1077441377', '883745000', 'false'),
-    ('bob', 'Testuser', '1011226111', '883745000', 'false'),
-    ('bob', 'Alice', '1033623433', '883745000', 'false'),
-    ('bob', 'Eve', '1077441377', '883745000', 'false'),
-    ('eve', 'Testuser', '1011226111', '883745000', 'false'),
-    ('eve', 'Alice', '1033623433', '883745000', 'false'),
-    ('eve', 'Bob', '1055757655', '883745000', 'false')
-    ON CONFLICT DO NOTHING;
+#     INSERT INTO contacts VALUES
+#     ('testuser', 'Alice', '1033623433', '883745000', 'false'),
+#     ('testuser', 'Bob', '1055757655', '883745000', 'false'),
+#     ('testuser', 'Eve', '1077441377', '883745000', 'false'),
+#     ('alice', 'Testuser', '1011226111', '883745000', 'false'),
+#     ('alice', 'Bob', '1055757655', '883745000', 'false'),
+#     ('alice', 'Eve', '1077441377', '883745000', 'false'),
+#     ('bob', 'Testuser', '1011226111', '883745000', 'false'),
+#     ('bob', 'Alice', '1033623433', '883745000', 'false'),
+#     ('bob', 'Eve', '1077441377', '883745000', 'false'),
+#     ('eve', 'Testuser', '1011226111', '883745000', 'false'),
+#     ('eve', 'Alice', '1033623433', '883745000', 'false'),
+#     ('eve', 'Bob', '1055757655', '883745000', 'false')
+#     ON CONFLICT DO NOTHING;
 
-    INSERT INTO contacts VALUES
-    ('testuser', 'External Bank', '9099791699', '808889588', 'true'),
-    ('alice', 'External Bank', '9099791699', '808889588', 'true'),
-    ('bob', 'External Bank', '9099791699', '808889588', 'true'),
-    ('eve', 'External Bank', '9099791699', '808889588', 'true')
-    ON CONFLICT DO NOTHING;
+#     INSERT INTO contacts VALUES
+#     ('testuser', 'External Bank', '9099791699', '808889588', 'true'),
+#     ('alice', 'External Bank', '9099791699', '808889588', 'true'),
+#     ('bob', 'External Bank', '9099791699', '808889588', 'true'),
+#     ('eve', 'External Bank', '9099791699', '808889588', 'true')
+#     ON CONFLICT DO NOTHING;

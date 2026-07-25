@@ -1,56 +1,56 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: userservice
-  namespace: default
-  labels:
-    app: userservice
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: userservice
-  template:
-    metadata:
-      labels:
-        app: userservice
-    spec:
-      containers:
-        - name: userservice
-          image: gcr.io/bank-of-anthos-ci/userservice:v0.5.11@sha256:1559cbd3a9c937c84d067c5599e38c68fb4357215fd9d8de9c80ae81bbba863a
-          ports:
-            - containerPort: 8080
-          env:
-            - name: PORT
-              value: "8080"
-            - name: ENABLE_TRACING    # 필수 환경변수
-              value: "false"
-            - name: ACCOUNTS_DB_URI
-              value: "postgresql://postgres:password@accounts-db:5432/postgres"
-            - name: TOKEN_EXPIRY_SECONDS
-              value: "86400"
-            - name: PRIV_KEY_PATH
-              value: "/etc/jwt/jwtkey.pem"
-            - name: PUB_KEY_PATH
-              value: "/etc/jwt/jwtcert.pem"
-          volumeMounts:
-            - name: jwt-key-vol
-              mountPath: "/etc/jwt"
-              readOnly: true
-      volumes:
-        - name: jwt-key-vol
-          secret:
-            secretName: jwt-key
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: userservice
-  namespace: default
-spec:
-  type: ClusterIP
-  selector:
-    app: userservice
-  ports:
-    - port: 8080
-      targetPort: 8080
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: userservice
+#   namespace: default
+#   labels:
+#     app: userservice
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: userservice
+#   template:
+#     metadata:
+#       labels:
+#         app: userservice
+#     spec:
+#       containers:
+#         - name: userservice
+#           image: gcr.io/bank-of-anthos-ci/userservice:v0.5.11@sha256:1559cbd3a9c937c84d067c5599e38c68fb4357215fd9d8de9c80ae81bbba863a
+#           ports:
+#             - containerPort: 8080
+#           env:
+#             - name: PORT
+#               value: "8080"
+#             - name: ENABLE_TRACING    # 필수 환경변수
+#               value: "false"
+#             - name: ACCOUNTS_DB_URI
+#               value: "postgresql://postgres:password@accounts-db:5432/postgres"
+#             - name: TOKEN_EXPIRY_SECONDS
+#               value: "86400"
+#             - name: PRIV_KEY_PATH
+#               value: "/etc/jwt/jwtkey.pem"
+#             - name: PUB_KEY_PATH
+#               value: "/etc/jwt/jwtcert.pem"
+#           volumeMounts:
+#             - name: jwt-key-vol
+#               mountPath: "/etc/jwt"
+#               readOnly: true
+#       volumes:
+#         - name: jwt-key-vol
+#           secret:
+#             secretName: jwt-key
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: userservice
+#   namespace: default
+# spec:
+#   type: ClusterIP
+#   selector:
+#     app: userservice
+#   ports:
+#     - port: 8080
+#       targetPort: 8080
