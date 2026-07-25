@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contacts
+  namespace: {{ .Release.Namespace | default "default" }}
+  labels:
+    app: contacts
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: contacts
+  template:
+    metadata:
+      labels:
+        app: contacts
+    spec:
+      containers:
+        - name: contacts
+          image: gcr.io/bank-of-anthos-ci/contacts:v0.5.11
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: ENABLE_TRACING
+              value: "false"
+            - name: ACCOUNTS_DB_URI
+              value: "postgresql://postgres:password@accounts-db:5432/postgres"
+            - name: PUB_KEY_PATH
+              value: "/etc/jwt/jwtcert.pem"
+          volumeMounts:
+            - name: jwt-key-vol
+              mountPath: "/etc/jwt"
+              readOnly: true
+      volumes:
+        - name: jwt-key-vol
+          secret:
+            secretName: jwt-key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: contacts
+  namespace: {{ .Release.Namespace | default "default" }}
+spec:
+  type: ClusterIP
+  selector:
+    app: contacts
+  ports:
+    - port: 8080
+      targetPort: 8080

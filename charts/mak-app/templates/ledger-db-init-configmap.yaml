@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ledger-db-init-script
+  namespace: {{ .Release.Namespace | default "default" }}
+data:
+  0_init_tables.sql: |
+    CREATE TABLE IF NOT EXISTS ledger (
+        transaction_id BIGINT PRIMARY KEY,
+        from_account CHAR(10) NOT NULL,
+        from_routing CHAR(9) NOT NULL,
+        to_account CHAR(10) NOT NULL,
+        to_routing CHAR(9) NOT NULL,
+        amount INT NOT NULL,
+        timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_ledger_from ON ledger (from_account, from_routing);
+    CREATE INDEX IF NOT EXISTS idx_ledger_to ON ledger (to_account, to_routing);

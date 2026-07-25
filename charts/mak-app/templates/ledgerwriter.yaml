@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ledgerwriter
+  namespace: {{ .Release.Namespace | default "default" }}
+  labels:
+    app: ledgerwriter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ledgerwriter
+  template:
+    metadata:
+      labels:
+        app: ledgerwriter
+    spec:
+      containers:
+        - name: ledgerwriter
+          image: gcr.io/bank-of-anthos-ci/ledgerwriter:v0.5.11
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: ENABLE_TRACING
+              value: "false"
+            - name: DB_URI
+              value: "jdbc:postgresql://ledger-db:5432/postgres"
+            - name: DB_USER
+              value: "postgres"
+            - name: DB_PASSWORD
+              value: "password"
+            - name: PUB_KEY_PATH
+              value: "/etc/jwt/jwtcert.pem"
+            - name: BALANCES_API_ADDR
+              value: "balancereader:8080"
+            - name: LOCAL_ROUTING_NUM
+              value: "883745000"
+          volumeMounts:
+            - name: jwt-key-vol
+              mountPath: "/etc/jwt"
+              readOnly: true
+      volumes:
+        - name: jwt-key-vol
+          secret:
+            secretName: jwt-key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ledgerwriter
+  namespace: {{ .Release.Namespace | default "default" }}
+spec:
+  type: ClusterIP
+  selector:
+    app: ledgerwriter
+  ports:
+    - port: 8080
+      targetPort: 8080

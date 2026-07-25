@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: balancereader
+  namespace: {{ .Release.Namespace | default "default" }}
+  labels:
+    app: balancereader
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: balancereader
+  template:
+    metadata:
+      labels:
+        app: balancereader
+    spec:
+      containers:
+        - name: balancereader
+          image: gcr.io/bank-of-anthos-ci/balancereader:v0.5.11
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: ENABLE_TRACING
+              value: "false"
+            - name: DB_URI
+              value: "jdbc:postgresql://ledger-db:5432/postgres"
+            - name: DB_USER
+              value: "postgres"
+            - name: DB_PASSWORD
+              value: "password"
+            - name: PUB_KEY_PATH
+              value: "/etc/jwt/jwtcert.pem"
+            - name: LOCAL_ROUTING_NUM
+              value: "883745000"
+          volumeMounts:
+            - name: jwt-key-vol
+              mountPath: "/etc/jwt"
+              readOnly: true
+      volumes:
+        - name: jwt-key-vol
+          secret:
+            secretName: jwt-key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: balancereader
+  namespace: {{ .Release.Namespace | default "default" }}
+spec:
+  type: ClusterIP
+  selector:
+    app: balancereader
+  ports:
+    - port: 8080
+      targetPort: 8080

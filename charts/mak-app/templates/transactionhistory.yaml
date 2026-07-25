@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transactionhistory
+  namespace: {{ .Release.Namespace | default "default" }}
+  labels:
+    app: transactionhistory
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transactionhistory
+  template:
+    metadata:
+      labels:
+        app: transactionhistory
+    spec:
+      containers:
+        - name: transactionhistory
+          image: gcr.io/bank-of-anthos-ci/transactionhistory:v0.5.11
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: ENABLE_TRACING
+              value: "false"
+            - name: DB_URI
+              value: "jdbc:postgresql://ledger-db:5432/postgres"
+            - name: DB_USER
+              value: "postgres"
+            - name: DB_PASSWORD
+              value: "password"
+            - name: PUB_KEY_PATH
+              value: "/etc/jwt/jwtcert.pem"
+          volumeMounts:
+            - name: jwt-key-vol
+              mountPath: "/etc/jwt"
+              readOnly: true
+      volumes:
+        - name: jwt-key-vol
+          secret:
+            secretName: jwt-key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transactionhistory
+  namespace: {{ .Release.Namespace | default "default" }}
+spec:
+  type: ClusterIP
+  selector:
+    app: transactionhistory
+  ports:
+    - port: 8080
+      targetPort: 8080
