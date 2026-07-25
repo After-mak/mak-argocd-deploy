@@ -1,0 +1,64 @@
+# =================================================================
+# 1. CNPG 백업 권한용 서비스 어카운트 (ServiceAccount)
+# =================================================================
+# 역할: 이 서비스 어카운트는 AWS IAM 역할(IRSA)과 연결되어, 
+# DB가 S3 버킷에 백업 데이터를 읽고 쓸 수 있는 권한을 얻게 해줍니다.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cnpg-sa
+  namespace: default
+  annotations:
+    # 테라폼(05-cnpg-backup.tf)에서 생성한 AWS IAM Role 주소 매핑
+    eks.amazonaws.com/role-arn: "arn:aws:iam::372666940978:role/project03-cnpg-s3-role"
+--- 
+# =================================================================
+# 2. CloudNativePG 데이터베이스 클러스터 설정 (Cluster)
+# =================================================================
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: project03-db
+  namespace: default # 앱(mak-app)과 같은 네임스페이스를 사용하여 통신을 편하게 함
+spec:
+  # DB 인스턴스 개수 (2로 설정하면 1대는 쓰기용 Primary, 1대는 읽기용 Standby로 자동 구성되어 고가용성을 확보합니다)
+  instances: 2 
+
+  # 위에서 만든 서비스 어카운트(cnpg-sa)를 DB Pod에 적용하여 AWS S3 접근 권한 부여
+  serviceAccountTemplate:
+    metadata:
+      annotations:
+        eks.amazonaws.com/role-arn: "arn:aws:iam::372666940978:role/project03-cnpg-s3-role"
+
+  # =========================================
+  # 노드 배치 제약 조건 (Affinity & Tolerations)
+  # =========================================
+  # EKS에 미리 생성해둔 DB 전용 노드(eks-db-node)에만 DB가 생성되도록 설정합니다.
+  affinity:
+    nodeSelector:
+      role: db
+    tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "db"
+      effect: "NoSchedule"
+      
+  # =========================================
+  # 스토리지(디스크) 설정
+  # =========================================
+  storage:
+    size: 20Gi # DB 데이터를 저장할 영구 볼륨 크기 (AWS EBS가 자동 생성됨)
+
+  # =========================================
+  # AWS S3 백업 설정 (WAL archiving)
+  # =========================================
+  # DB의 모든 변경 기록(WAL)을 주기적으로 S3에 압축해서 저장합니다.
+  # 특정 시점 복구(Point-in-Time Recovery)를 할 때 필수적인 설정입니다.
+  backup:
+    barmanObjectStore:
+      destinationPath: "s3://project03-cnpg-backup-kktry9/"
+      s3Credentials:
+        # 서비스어카운트(IRSA)에 부여된 IAM 권한을 그대로 상속받아 사용
+        inheritFromIAMRole: true
+      wal:
+        compression: gzip # 저장 용량을 아끼기 위해 압축해서 백업
