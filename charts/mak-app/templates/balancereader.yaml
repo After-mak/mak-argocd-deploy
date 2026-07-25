@@ -1,3 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: balancereader
+  namespace: {{ .Release.Namespace | default "default" }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: balancereader
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,58 +27,81 @@ spec:
         app: balancereader
     spec:
       containers:
-      - name: balancereader
-        image: gcr.io/bank-of-anthos-ci/balancereader:v0.5.11
-        ports:
-        - containerPort: 8080
-        env:
-        - name: SPRING_CLOUD_GCP_CORE_ENABLED
-          value: "false"
-        - name: SPRING_CLOUD_GCP_METRICS_ENABLED
-          value: "false"
-        - name: SPRING_CLOUD_GCP_TRACE_ENABLED
-          value: "false"
-        - name: PUB_KEY_PATH
-          value: "/etc/jwt/jwtcert.pem"
-        - name: LOCAL_ROUTING_NUM
-          value: "883745000"
-        - name: LEDGER_DB_ADDR
-          value: "ledger-db:5432"
-        - name: SPRING_DATASOURCE_URL
-          value: "jdbc:postgresql://ledger-db:5432/postgres"
-        - name: SPRING_DATASOURCE_USERNAME
-          value: "postgres"
-        - name: SPRING_DATASOURCE_PASSWORD
-          value: "password"
-        - name: VERSION
-          value: "v0.5.11"
-        - name: PORT
-          value: "8080"
-        - name: ENABLE_TRACING
-          value: "false"
-        envFrom:
-        - configMapRef:
-            name: environment-config
-        - configMapRef:
-            name: ledger-db-config
-        volumeMounts:
-        - name: jwt-key-vol
-          mountPath: "/etc/jwt"
-          readOnly: true
+        - name: balancereader
+          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/balancereader:v0.6.10@sha256:feae443c650786c253bbfa3447d0902dd1689122c13962f97ccc37068d73733b
+          ports:
+            - containerPort: 8080
+          env:
+            - name: VERSION
+              value: "v0.6.10"
+            - name: PORT
+              value: "8080"
+            - name: ENABLE_TRACING
+              value: "false"
+            - name: DISABLE_TRACING
+              value: "1"
+            - name: DISABLE_PROFILER
+              value: "1"
+            - name: ENABLE_METRICS
+              value: "true"
+            - name: POLL_MS
+              value: "100"
+            - name: CACHE_SIZE
+              value: "1000000"
+            - name: JVM_OPTS
+              value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Xms256m -Xmx512m"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          envFrom:
+            - configMapRef:
+                name: environment-config
+            - configMapRef:
+                name: ledger-db-config
+          livenessProbe:
+            httpGet:
+              path: /healthy
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 5
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 5
+            timeoutSeconds: 10
+          startupProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /healthy
+              port: 8080
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 500m
+              ephemeral-storage: 0.5Gi
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              ephemeral-storage: 0.5Gi
+              memory: 256Mi
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+            - mountPath: /tmp/.ssh
+              name: publickey
+              readOnly: true
       volumes:
-      - name: jwt-key-vol
-        secret:
-          secretName: jwt-key
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: balancereader
-  namespace: {{ .Release.Namespace | default "default" }}
-spec:
-  type: ClusterIP
-  selector:
-    app: balancereader
-  ports:
-  - port: 8080
-    targetPort: 8080
+        - name: tmp
+          emptyDir: {}
+        - name: publickey
+          secret:
+            secretName: jwt-key
+            items:
+              - key: jwtRS256.key.pub
+                path: publickey
