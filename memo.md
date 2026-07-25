@@ -10,10 +10,11 @@ cat public.pem
 
 
 # 직접 노출 꺼리면 쿠버네티스상에 secret으로 관리
+kubectl delete secret jwt-key -n default --ignore-not-found
 kubectl create secret generic jwt-key -n default \
-  --from-file=jwtkey.pem=./real_private_key.pem \
-  --from-file=jwtcert.pem=./real_public_key.pem \
-  --dry-run=client -o yaml | kubectl apply -f -
+  --from-file=jwtkey.pem=jwtkey.pem \
+  --from-file=jwtcert.pem=jwtcert.pem \
+  --from-file=jwtpubkey.pem=jwtcert.pem
 
 > 정상적으로 적용되면 secret/jwt-key configured (또는 created) 라는 문구
 
