@@ -27,7 +27,7 @@ spec:
               value: "v0.5.11"
             - name: ENABLE_TRACING
               value: "false"
-            - name: DB_URI
+            - name: SPRING_DATASOURCE_URL
               value: "jdbc:postgresql://ledger-db:5432/postgres"
             - name: DB_USER
               value: "postgres"
