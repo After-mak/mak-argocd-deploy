@@ -20,3 +20,4 @@ kubectl create secret generic jwt-key -n default \
 # 로컬의 임시 키 파일 삭제
 openssl genrsa -out jwtkey.pem 2048
 openssl rsa -in jwtkey.pem -pubout -out jwtcert.pem
+
