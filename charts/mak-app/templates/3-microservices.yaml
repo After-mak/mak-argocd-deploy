@@ -271,18 +271,18 @@ spec:
           volumeMounts:
             - mountPath: /tmp
               name: tmp
-            - mountPath: /tmp/.ssh
-              name: publickey
-              readOnly: true
+            # - mountPath: /tmp/.ssh
+            #   name: publickey
+            #   readOnly: true
       volumes:
         - emptyDir: {}
           name: tmp
-        - name: publickey
-          secret:
-            secretName: jwt-key
-            items:
-              - key: jwtRS256.key.pub
-                path: publickey
+        # - name: publickey
+        #   secret:
+        #     secretName: jwt-key
+        #     items:
+        #       - key: jwtRS256.key.pub
+        #         path: publickey
 ---
 apiVersion: v1
 kind: Service
