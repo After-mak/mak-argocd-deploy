@@ -29,7 +29,37 @@ spec:
     metadata:
       annotations:
         eks.amazonaws.com/role-arn: "arn:aws:iam::372666940978:role/project03-cnpg-s3-role"
+  # =========================================
+  # 데이터베이스 초기화(Bootstrap) 설정
+  # =========================================
+  bootstrap:
+    initdb:
+      database: app
+      owner: app
+      postInitApplicationSQL:
+        - |
+          CREATE TABLE IF NOT EXISTS users (
+              accountid VARCHAR(255) PRIMARY KEY,
+              username VARCHAR(255) UNIQUE NOT NULL,
+              passhash BYTEA NOT NULL,
+              firstname VARCHAR(255) NOT NULL,
+              lastname VARCHAR(255) NOT NULL,
+              birthday DATE NOT NULL,
+              timezone VARCHAR(255) NOT NULL,
+              address VARCHAR(255) NOT NULL,
+              state VARCHAR(255) NOT NULL,
+              zip VARCHAR(255) NOT NULL,
+              ssn VARCHAR(255) NOT NULL
+          );
 
+          CREATE TABLE IF NOT EXISTS contacts (
+              username VARCHAR(255) NOT NULL,
+              label VARCHAR(255) NOT NULL,
+              account_num VARCHAR(255) NOT NULL,
+              routing_num VARCHAR(255) NOT NULL,
+              is_external BOOLEAN NOT NULL
+          );
+          
   # =========================================
   # 노드 배치 제약 조건 (Affinity & Tolerations)
   # =========================================
