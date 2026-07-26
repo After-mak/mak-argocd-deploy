@@ -40,6 +40,8 @@ spec:
                 secretKeyRef:
                   name: project03-db-app
                   key: password
+            - name: DB_AUTO_CREATE
+              value: "True"
             # ============================
           envFrom:
             - configMapRef:
@@ -115,6 +117,8 @@ spec:
                 secretKeyRef:
                   name: project03-db-app
                   key: password
+            - name: DB_AUTO_CREATE
+              value: "True"
             # ============================
           envFrom:
             - configMapRef:
