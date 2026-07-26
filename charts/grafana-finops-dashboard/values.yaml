@@ -1,0 +1,8 @@
+namespace: prometheus
+
+dashboard:
+  name: grafana-dashboard-kubernetes-finops
+  label: grafana_dashboard
+  labelValue: "1"
+  folder: FinOps
+  fileName: kubernetes-finops-overview.json
