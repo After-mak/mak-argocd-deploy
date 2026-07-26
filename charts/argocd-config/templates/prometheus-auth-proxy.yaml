@@ -1,0 +1,131 @@
+{{- if .Values.prometheusAuth.enabled }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: prometheus-public-auth
+  namespace: prometheus
+type: Opaque
+stringData:
+  htpasswd: |
+    {{ .Values.prometheusAuth.username }}:{{ .Values.prometheusAuth.passwordHash }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-public-auth
+  namespace: prometheus
+data:
+  nginx.conf: |
+    events {}
+    http {
+      server {
+        listen 8080;
+
+        location = /healthz {
+          access_log off;
+          return 200 "ok\n";
+        }
+
+        location / {
+          auth_basic "Prometheus";
+          auth_basic_user_file /etc/nginx/auth/htpasswd;
+          proxy_pass http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090;
+          proxy_http_version 1.1;
+          proxy_set_header Host $host;
+          proxy_set_header X-Forwarded-Host $host;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header X-Real-IP $remote_addr;
+        }
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-public-auth
+  namespace: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus-public-auth
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: prometheus-public-auth
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        fsGroup: 101
+      containers:
+        - name: nginx
+          image: "{{ .Values.prometheusAuth.image.repository }}:{{ .Values.prometheusAuth.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+          volumeMounts:
+            - name: config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+            - name: auth
+              mountPath: /etc/nginx/auth
+              readOnly: true
+            - name: cache
+              mountPath: /var/cache/nginx
+            - name: run
+              mountPath: /var/run
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-public-auth
+        - name: auth
+          secret:
+            secretName: prometheus-public-auth
+        - name: cache
+          emptyDir: {}
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-public-auth
+  namespace: prometheus
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: prometheus-public-auth
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+{{- end }}

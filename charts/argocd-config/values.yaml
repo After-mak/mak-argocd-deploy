@@ -15,10 +15,19 @@ httpRoutes:
   - name: prometheus-route
     namespace: prometheus
     hostname: "prometheus.tuby.shop"
-    serviceName: "prometheus-stack-kube-prom-prometheus"
-    port: 9090
+    serviceName: "prometheus-public-auth"
+    port: 80
   - name: alertmanager-route
     namespace: prometheus
     hostname: "alertmanager.tuby.shop"
     serviceName: "prometheus-stack-kube-prom-alertmanager"
     port: 9093
+
+prometheusAuth:
+  enabled: true
+  username: admin
+  # Password: admin1234. Only the one-way hash is stored in Git.
+  passwordHash: "{SHA}e5Aub/Hbn1YEQ/IEiXT9fThpdbA="
+  image:
+    repository: nginx
+    tag: "1.27.5-alpine"

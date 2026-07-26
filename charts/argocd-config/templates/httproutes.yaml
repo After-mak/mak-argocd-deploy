@@ -9,6 +9,7 @@ spec:
   parentRefs:
     - name: {{ $.Values.gatewayName | default "my-gateway" }}
       namespace: {{ $.Values.gatewayNamespace | default "default" }}
+      sectionName: https
   hostnames:
     - {{ .hostname | quote }}
   rules:
@@ -16,3 +17,24 @@ spec:
         - name: {{ .serviceName }}
           port: {{ .port }}
 {{- end }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: public-http-to-https
+  namespace: default
+spec:
+  parentRefs:
+    - name: {{ .Values.gatewayName | default "my-gateway" }}
+      namespace: {{ .Values.gatewayNamespace | default "default" }}
+      sectionName: http
+  hostnames:
+    {{- range .Values.httpRoutes }}
+    - {{ .hostname | quote }}
+    {{- end }}
+  rules:
+    - filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            statusCode: 301
