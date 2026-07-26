@@ -27,7 +27,12 @@ spec:
               value: /tmp/.ssh/privatekey
           # === 이 부분을 추가해 주세요 ===
             - name: ACCOUNTS_DB_URI
-              value: "postgresql://app:$(DB_PASSWORD)@project03-db-rw.default.svc.cluster.local:5432/app"
+              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@project03-db-rw.default.svc.cluster.local:5432/app"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: project03-db-app
+                  key: username
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -95,7 +100,12 @@ spec:
               value: "8080"
             # === 이 부분을 추가해 주세요 ===
             - name: ACCOUNTS_DB_URI
-              value: "postgresql://app:$(DB_PASSWORD)@project03-db-rw.default.svc.cluster.local:5432/app"
+              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@project03-db-rw.default.svc.cluster.local:5432/app"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: project03-db-app
+                  key: username
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
