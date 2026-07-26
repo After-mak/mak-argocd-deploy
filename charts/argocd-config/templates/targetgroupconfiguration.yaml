@@ -14,4 +14,10 @@ spec:
     targetType: ip           
     protocol: HTTP
     protocolVersion: HTTP1
+    {{- with .healthCheck }}
+    healthCheckConfig:
+      healthCheckPath: {{ .path | quote }}
+      matcher:
+        httpCode: {{ .successCodes | quote }}
+    {{- end }}
 {{- end }}

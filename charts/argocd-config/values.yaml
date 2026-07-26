@@ -17,6 +17,9 @@ httpRoutes:
     hostname: "prometheus.tuby.shop"
     serviceName: "prometheus-public-auth"
     port: 80
+    healthCheck:
+      path: /healthz
+      successCodes: "200"
   - name: alertmanager-route
     namespace: prometheus
     hostname: "alertmanager.tuby.shop"
