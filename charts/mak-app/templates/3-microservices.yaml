@@ -26,8 +26,10 @@ spec:
             - name: PRIV_KEY_PATH
               value: /tmp/.ssh/privatekey
           # === 이 부분을 추가해 주세요 ===
-            - name: ACCOUNTS_DB_URI
-              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@project03-db-rw.default.svc.cluster.local:5432/app"
+            - name: DB_HOST
+              value: "project03-db-rw.default.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
@@ -99,8 +101,10 @@ spec:
             - name: PORT
               value: "8080"
             # === 이 부분을 추가해 주세요 ===
-            - name: ACCOUNTS_DB_URI
-              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@project03-db-rw.default.svc.cluster.local:5432/app"
+            - name: DB_HOST
+              value: "project03-db-rw.default.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
