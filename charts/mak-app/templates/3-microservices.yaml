@@ -26,22 +26,13 @@ spec:
             - name: PRIV_KEY_PATH
               value: /tmp/.ssh/privatekey
           # === 이 부분을 추가해 주세요 ===
-            - name: DB_HOST
-              value: "project03-db-rw.default.svc.cluster.local"
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: project03-db-app
-                  key: username
+            - name: ACCOUNTS_DB_URI
+              value: "postgresql://app:$(DB_PASSWORD)@project03-db-rw.default.svc.cluster.local:5432/app"
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: project03-db-app
                   key: password
-            - name: DB_AUTO_CREATE
-              value: "True"
             # ============================
           envFrom:
             - configMapRef:
@@ -103,22 +94,13 @@ spec:
             - name: PORT
               value: "8080"
             # === 이 부분을 추가해 주세요 ===
-            - name: DB_HOST
-              value: "project03-db-rw.default.svc.cluster.local"
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: project03-db-app
-                  key: username
+            - name: ACCOUNTS_DB_URI
+              value: "postgresql://app:$(DB_PASSWORD)@project03-db-rw.default.svc.cluster.local:5432/app"
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: project03-db-app
                   key: password
-            - name: DB_AUTO_CREATE
-              value: "True"
             # ============================
           envFrom:
             - configMapRef:
