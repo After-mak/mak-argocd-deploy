@@ -22,7 +22,7 @@ spec:
           values: ["t3"]
         - key: "{{ .Values.karpenter_modulename }}/instance-size"
           operator: In
-          values: ["small","medium"]
+          values: ["medium", "large"]
         - key: kubernetes.io/arch
           operator: In
           values: ["amd64"]
