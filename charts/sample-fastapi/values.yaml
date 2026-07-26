@@ -2,7 +2,6 @@ image:
   repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi
   tag: "v0.1.20"
   pullPolicy: IfNotPresent
-
 redis:
   # Terraform의 Argo CD Application이 실제 ElastiCache Endpoint로 덮어씁니다.
   host: ""
@@ -15,7 +14,6 @@ redis:
   socketTimeout: 5
   healthCheckInterval: 30
   retryAttempts: 2
-
 fastapi:
   replicaCount: 1
   service:
@@ -24,12 +22,11 @@ fastapi:
     port: 80
   resources:
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 150m
+      memory: 192Mi
     limits:
       cpu: 500m
       memory: 512Mi
-
 worker:
   replicaCount: 1
   processingSeconds: 0.25
@@ -53,7 +50,6 @@ worker:
     limits:
       cpu: 500m
       memory: 512Mi
-
 serviceMonitor:
   # Prometheus Operator CRD가 설치된 뒤 true로 변경합니다.
   enabled: true
