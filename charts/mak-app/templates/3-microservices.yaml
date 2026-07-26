@@ -176,16 +176,14 @@ spec:
             - name: PORT
               value: "8080"
             # === 이 부분을 추가해 주세요 ===
-            - name: DB_HOST
-              value: "project03-db-rw.default.svc.cluster.local"
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_USER
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://project03-db-rw.default.svc.cluster.local:5432/app"
+            - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: project03-db-app
                   key: username
-            - name: DB_PASSWORD
+            - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: project03-db-app
@@ -251,16 +249,14 @@ spec:
             - name: PORT
               value: "8080"       
             # === 이 부분을 추가해 주세요 ===
-            - name: DB_HOST
-              value: "project03-db-rw.default.svc.cluster.local"
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_USER
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://project03-db-rw.default.svc.cluster.local:5432/app"
+            - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: project03-db-app
                   key: username
-            - name: DB_PASSWORD
+            - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: project03-db-app
@@ -328,16 +324,14 @@ spec:
             - name: PORT
               value: "8080"
             # === 이 부분을 추가해 주세요 ===
-            - name: DB_HOST
-              value: "project03-db-rw.default.svc.cluster.local"
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_USER
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://project03-db-rw.default.svc.cluster.local:5432/app"
+            - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: project03-db-app
                   key: username
-            - name: DB_PASSWORD
+            - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: project03-db-app
