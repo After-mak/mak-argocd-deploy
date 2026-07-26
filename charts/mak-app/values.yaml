@@ -1,5 +1,5 @@
 # 기본 애플리케이션 설정
-replicaCount: 1
+replicaCount: 3
 image:
   repository: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/frontend
   tag: "v0.6.10"
