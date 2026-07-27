@@ -1,0 +1,21 @@
+name: FinOps Auto Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_tag:
+        description: 'Target Deployment Tag'
+        required: true
+        default: 'v1.2.0'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Update Helm values.yaml
+        run: |
+          echo "Deploying version: ${{ github.event.inputs.target_tag }}"
+          # 여기서 values.yaml 파일의 태그나 리소스 스펙(CPU/Memory)을 변경하고 git commit & push 하는 로직이 들어갑니다.
