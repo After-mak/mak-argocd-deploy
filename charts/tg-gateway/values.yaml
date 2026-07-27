@@ -1,6 +1,6 @@
 replicaCount: 1
 image:
-  repository: <YOUR_REGISTRY>/tg-gateway
+  repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/tg-gateway
   pullPolicy: Always
   tag: "v0.1.0"
 service:
