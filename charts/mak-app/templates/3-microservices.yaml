@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
         - name: userservice
-          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/userservice:v0.6.10
+          #image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/userservice:v0.6.10
+          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ecr:userservice-v0.6.10
           ports:
             - containerPort: 8080
           env:
@@ -92,7 +93,8 @@ spec:
     spec:
       containers:
         - name: contacts
-          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/contacts:v0.6.10
+          # image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/contacts:v0.6.10
+          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ecr:contacts-v0.6.10
           ports:
             - containerPort: 8080
           env:
@@ -163,7 +165,8 @@ spec:
     spec:
       containers:
         - name: balancereader
-          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/balancereader:v0.6.10
+          #image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/balancereader:v0.6.10
+          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ecr:balancereader-v0.6.10
           ports:
             - containerPort: 8080
           env:
@@ -236,7 +239,8 @@ spec:
     spec:
       containers:
         - name: ledgerwriter
-          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/ledgerwriter:v0.6.10
+          # image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/ledgerwriter:v0.6.10
+          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ecr:ledgerwriter-v0.6.10
           ports:
             - containerPort: 8080
           env:
@@ -311,7 +315,8 @@ spec:
     spec:
       containers:
         - name: transactionhistory
-          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/transactionhistory:v0.6.10
+          # image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/transactionhistory:v0.6.10
+          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ecr:transactionhistory-v0.6.10
           ports:
             - containerPort: 8080
           env:
