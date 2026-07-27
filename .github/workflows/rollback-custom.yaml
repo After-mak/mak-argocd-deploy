@@ -17,11 +17,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Apply Custom Tag
         run: |
-          sed -i "s/tag:.*/tag: \"${{ github.event.inputs.target_tag }}\"/g" values.yaml
+          # 1. 실제 Helm 차트 values.yaml 경로로 수정
+          sed -i "s/tag:.*/tag: \"${{ github.event.inputs.target_tag }}\"/g" charts/tg-gateway/values.yaml
+          
           git config --global user.name "FinOps Bot"
           git config --global user.email "bot@finops.local"
-          git add values.yaml
+          
+          # 2. git add 경로도 동일하게 수정
+          git add charts/tg-gateway/values.yaml
           git commit -m "rollback: revert to ${{ github.event.inputs.target_tag }}"
           git push origin ${{ github.event.inputs.target_branch }}
