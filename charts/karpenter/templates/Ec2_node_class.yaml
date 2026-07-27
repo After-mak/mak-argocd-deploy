@@ -16,3 +16,4 @@ spec:
   tags:
     Environment: "prod"
     ManagedBy: "karpenter"
+    Name: "eks-worker-node"
