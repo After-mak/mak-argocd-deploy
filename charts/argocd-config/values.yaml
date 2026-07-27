@@ -26,6 +26,11 @@ httpRoutes:
     serviceName: "prometheus-stack-kube-prom-alertmanager"
     port: 9093
 
+  - name: tg-gateway-route
+    namespace: default
+    hostname: "alarm.tuby.shop"
+    serviceName: "tg-gateway-service"
+    port: 8000
 prometheusAuth:
   enabled: true
   username: admin

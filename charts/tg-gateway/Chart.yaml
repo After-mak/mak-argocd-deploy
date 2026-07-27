@@ -1,0 +1,6 @@
+apiVersion: v2
+name: tg-gateway
+description: FinOps Telegram Alert Gateway (Alertmanager/FinOps/Rollouts 웹훅 수신 및 텔레그램 전송)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
