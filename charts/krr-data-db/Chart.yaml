@@ -1,0 +1,6 @@
+apiVersion: v1
+name: krr-data-db # K8s 및 ArgoCD에서 인식할 Helm 차트 이름
+description: Krr data farming cnpg cluster # 차트 설명: CNPG를 활용한 PostgreSQL DB 클러스터
+type: application
+version: 0.1.0 # 이 Helm 차트 자체의 버전 (코드 변경 시 버전을 올림)
+appVersion: "14" # 내부에 구동될 실제 애플리케이션(PostgreSQL)의 버전

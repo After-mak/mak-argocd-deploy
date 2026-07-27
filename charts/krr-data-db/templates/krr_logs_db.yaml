@@ -1,0 +1,57 @@
+# =================================================================
+# 운영/모니터링(FinOps & KRR Logs) 전용 CNPG DB 클러스터
+# =================================================================
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: krr-data-db
+  namespace: finops
+spec:
+  # 운영 데이터용이므로 1대 Pod로 경량화하여 구동
+  instances: 1
+  serviceAccountTemplate:
+    metadata:
+      annotations:
+        eks.amazonaws.com/role-arn: "arn:aws:iam::372666940978:role/project03-cnpg-s3-role"
+  # DB 초기화 및 KRR 전용 테이블 스키마 생성
+  bootstrap:
+    initdb:
+      database: krr_logs_db
+      owner: scott
+      postInitApplicationSQL:
+        - |
+          CREATE TABLE IF NOT EXISTS krr_logs (
+              id SERIAL PRIMARY KEY,
+              namespace VARCHAR(255) NOT NULL,
+              deployment_name VARCHAR(255) NOT NULL,
+              cpu_current VARCHAR(50),
+              cpu_recommended VARCHAR(50),
+              mem_current VARCHAR(50),
+              mem_recommended VARCHAR(50),
+              analyzed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
+  affinity:
+    nodeSelector:
+      role: db
+    tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "db"
+      effect: "NoSchedule"
+  # 스토리지 설정 (EBS 10GB 할당)
+  storage:
+    storageClass: gp2
+    size: 10Gi
+  # =========================================
+  # AWS S3 백업 설정 (WAL archiving)
+  # =========================================
+  # DB의 모든 변경 기록(WAL)을 주기적으로 S3에 압축해서 저장합니다.
+  # 특정 시점 복구(Point-in-Time Recovery)를 할 때 필수적인 설정입니다.
+  backup:
+    barmanObjectStore:
+      destinationPath: "s3://project03-cnpg-backup-kktry9/krr-data-db"
+      s3Credentials:
+        # 서비스어카운트(IRSA)에 부여된 IAM 권한을 그대로 상속받아 사용
+        inheritFromIAMRole: true
+      wal:
+        compression: gzip # 저장 용량을 아끼기 위해 압축해서 백업
