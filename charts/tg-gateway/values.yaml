@@ -17,7 +17,7 @@ env:
 #   2) values-secret.yaml.example을 values-secret.yaml로 복사해 실제 값을 채운 뒤
 #      helm install -f values.yaml -f values-secret.yaml 로 배포 (values-secret.yaml은 .gitignore 처리됨)
 secrets:
-  existingSecret: ""
+  existingSecret: "tg-gateway-secret"
   telegramBotToken: ""
   telegramChatId: ""
   gitopsToken: ""
