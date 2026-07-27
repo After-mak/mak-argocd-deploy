@@ -59,6 +59,12 @@ spec:
               routing_num VARCHAR(255) NOT NULL,
               is_external BOOLEAN NOT NULL
           );
+          -- 권한 부여 구문 추가
+          GRANT ALL PRIVILEGES ON DATABASE app TO app;
+          GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO app;
+          GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO app;
+          ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO app;
+          ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON SEQUENCES TO app;
           
   # =========================================
   # 노드 배치 제약 조건 (Affinity & Tolerations)
