@@ -1,9 +1,9 @@
-name: FinOps Auto Deploy
+name: Deploy Workflow
 
 on:
   workflow_dispatch:
     inputs:
-      target_tag:          # 👈 main.py에서 보내는 키 이름과 100% 일치해야 함!
+      target_tag:
         description: 'Target Tag'
         required: true
         default: 'v1.2.0'
@@ -14,5 +14,5 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Run Script
-        run: echo "Deploying ${{ github.event.inputs.target_tag }}"
+      - name: Run Deploy
+        run: echo "Deploying tag ${{ github.event.inputs.target_tag }}"
