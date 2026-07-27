@@ -28,9 +28,9 @@ spec:
             - name: GITHUB_REPO_NAME
               value: {{ .Values.env.githubRepoName | quote }}
             - name: TARGET_BRANCH
-              value: "main"  # 👈 하드코딩으로 main 지정!
+              value: {{ .Values.env.targetBranch | default "main" | quote }}
             - name: GITOPS_TARGET_BRANCH
-              value: "main"  # 👈 하드코딩으로 main 지정!
+              value: {{ .Values.env.targetBranch | default "main" | quote }}
             - name: FINOPS_URL
               value: {{ .Values.env.finopsUrl | quote }}
             - name: TELEGRAM_BOT_TOKEN   # 👈 복구된 부분!
