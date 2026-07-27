@@ -9,7 +9,7 @@ service:
 env:
   githubRepoOwner: "After-mak"
   githubRepoName: "mak-argocd-deploy"
-  targetBranch: "dev"
+  targetBranch: "main"
   finopsUrl: "http://finops-analyzer.finops.svc.cluster.local:8000"
 # 텔레그램 봇 토큰/챗ID, GitHub PAT는 여기에 평문으로 넣지 않습니다.
 # 아래 둘 중 하나를 사용하세요:
