@@ -93,7 +93,7 @@ spec:
   # 특정 시점 복구(Point-in-Time Recovery)를 할 때 필수적인 설정입니다.
   backup:
     barmanObjectStore:
-      destinationPath: "s3://project03-cnpg-backup-kktry9/"
+      destinationPath: "s3://project03-cnpg-backup-07l03u/"
       s3Credentials:
         # 서비스어카운트(IRSA)에 부여된 IAM 권한을 그대로 상속받아 사용
         inheritFromIAMRole: true
