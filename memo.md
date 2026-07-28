@@ -21,3 +21,7 @@ kubectl create secret generic jwt-key \
 openssl genrsa -out jwtkey.pem 2048
 openssl rsa -in jwtkey.pem -pubout -out jwtcert.pem
 
+### db 접속
+kubectl exec -it project03-db-1 -- psql -U postgres -d app
+SELECT * FROM users;
+
