@@ -59,6 +59,12 @@ spec:
               routing_num VARCHAR(255) NOT NULL,
               is_external BOOLEAN NOT NULL
           );
+
+          -- [추가] 처음 기동될 때 testuser가 없으면 자동으로 생성 (비밀번호: bankofanthos 대응 해시)
+          INSERT INTO users (accountid, username, passhash, firstname, lastname, birthday, timezone, address, state, zip, ssn)
+          VALUES ('1234567890', 'testuser', '\x243262243132246a3444647268436d596544714f666a4e55326f386f4f4d42305a6b6e4e784b4e5034706a597975593955494d4175503076484e6e47', 'Demo', 'User', '2000-01-01', '-5', '123 Main St', 'NY', '10001', '000-00-0000')
+          ON CONFLICT (username) DO NOTHING;
+          
           -- 권한 부여 구문 추가
           GRANT ALL PRIVILEGES ON DATABASE app TO app;
           GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO app;
