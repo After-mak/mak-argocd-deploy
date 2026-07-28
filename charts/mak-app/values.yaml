@@ -2,9 +2,9 @@
 replicaCount: 3
 image:
   # repository: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/frontend
-  # tag: "v1.1.0-stable"
+  # tag: "v0.6.10"
   repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ecr
-  tag: "v1.1.0-stable"
+  tag: "frontend-v0.6.10"
   pullPolicy: IfNotPresent
 # 💡 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
 resources:
