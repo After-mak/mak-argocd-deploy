@@ -30,6 +30,7 @@ spec:
               mem_recommended VARCHAR(50),
               analyzed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           );
+          ALTER TABLE krr_logs OWNER TO scott;
   affinity:
     nodeSelector:
       role: db
