@@ -59,11 +59,14 @@ spec:
               routing_num VARCHAR(255) NOT NULL,
               is_external BOOLEAN NOT NULL
           );
-
-          -- [추가] 처음 기동될 때 testuser가 없으면 자동으로 생성 (비밀번호: bankofanthos 대응 해시)
-          INSERT INTO users (accountid, username, passhash, firstname, lastname, birthday, timezone, address, state, zip, ssn)
-          VALUES ('1234567890', 'testuser', '\x243262243132246a3444647268436d596544714f666a4e55326f386f4f4d42305a6b6e4e784b4e5034706a597975593955494d4175503076484e6e47', 'Demo', 'User', '2000-01-01', '-5', '123 Main St', 'NY', '10001', '000-00-0000')
-          ON CONFLICT (username) DO NOTHING;
+          
+          -- (공식 데모 데이터 INSERT 구문)
+          INSERT INTO users VALUES
+          ('1011226111', 'testuser', '\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Test', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
+          ('1033623433', 'alice', '\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Alice', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
+          ('1055757655', 'bob', '\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Bob', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
+          ('1077441377', 'eve', '\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Eve', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333')
+          ON CONFLICT DO NOTHING;
           
           -- 권한 부여 구문 추가
           GRANT ALL PRIVILEGES ON DATABASE app TO app;
