@@ -27,6 +27,3 @@ redis:
 secrets:
   jwtPrivateKey: ""
   jwtPublicKey: ""
-namespace:
-  backend: "backend"
-  frontend: "frontend"
