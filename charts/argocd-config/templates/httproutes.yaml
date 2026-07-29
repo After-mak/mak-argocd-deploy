@@ -15,7 +15,6 @@ spec:
   rules:
     - backendRefs:
         - name: {{ .serviceName }}
-          namespace: frontend
           port: {{ .port }}
 {{- end }}
 {{- range .Values.httpRoutes }}
