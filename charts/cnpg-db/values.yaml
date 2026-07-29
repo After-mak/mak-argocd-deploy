@@ -1,7 +1,7 @@
 namespace:
   frontend: "frontend"
   backend: "backend"
-  
+
 db:
   username: "username"
   password: "password"
