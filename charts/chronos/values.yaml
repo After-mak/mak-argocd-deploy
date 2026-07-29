@@ -24,7 +24,7 @@ forecast:
   maxReplicas: "3"
   intervalSeconds: "60"
   ttlSeconds: "120"
-  modelId: amazon/chronos-t5-small
+  modelId: amazon/chronos-2
   # Fake Metric 계약 테스트에서만 "3"으로 설정하고 Shadow/Active 실모델에서는 비웁니다.
   fakeReplicas: ""
 
