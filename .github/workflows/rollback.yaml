@@ -1,4 +1,4 @@
-name: Rollback Custom Tag Pipeline
+name: Custom Tag Rollback Pipeline
 
 on:
   workflow_dispatch:
@@ -11,37 +11,48 @@ on:
         required: true
         default: 'main'
 
+permissions:
+  contents: write
+
 jobs:
   rollback-custom:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Update values.yaml via GitHub API
+        uses: actions/github-script@v7
         with:
-          # 💡 핵심: GITHUB_TOKEN 대신 관리자 권한을 가진 GITOPS_TOKEN 사용!
-          token: ${{ secrets.GITOPS_TOKEN }}
-          fetch-depth: 0
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const filePath = 'charts/tg-gateway/values.yaml';
+            const targetTag = '${{ github.event.inputs.target_tag }}';
+            const targetBranch = '${{ github.event.inputs.target_branch }}' || 'main';
 
-      - name: Clean Git and Apply Tag
-        run: |
-          git config --global user.name "FinOps Bot"
-          git config --global user.email "bot@finops.local"
+            // 1. 원격 저장소에서 values.yaml 정보 가져오기
+            const { data: fileData } = await github.rest.repos.getContent({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              path: filePath,
+              ref: targetBranch
+            });
 
-          # 1. 꼬여서 자꾸 커밋에 딸려 들어오는 .github/ 변경사항 완전히 원복
-          git checkout HEAD -- .github/ || true
+            // 2. 내용 치환
+            const currentContent = Buffer.from(fileData.content, 'base64').toString('utf8');
+            const updatedContent = currentContent.replace(/tag:.*/g, `tag: "${targetTag}"`);
 
-          # 2. values.yaml 태그 변경
-          sed -i "s/tag:.*/tag: \"${{ github.event.inputs.target_tag }}\"/g" charts/tg-gateway/values.yaml
+            if (currentContent === updatedContent) {
+              console.log(`⚠️ 이미 ${targetTag} 버전으로 설정되어 있습니다.`);
+              return;
+            }
 
-          # 3. values.yaml만 단독 add
-          git add charts/tg-gateway/values.yaml
+            // 3. API로 values.yaml만 직접 원격 커밋 (git push 미사용 -> 권한/Revert 에러 완벽 차단)
+            await github.rest.repos.createOrUpdateFileContents({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              path: filePath,
+              message: `rollback: revert to ${targetTag}`,
+              content: Buffer.from(updatedContent).toString('base64'),
+              sha: fileData.sha,
+              branch: targetBranch
+            });
 
-          # 4. 커밋 & Rebase & Push
-          if git diff --staged --quiet; then
-            echo "⚠️ [INFO] 이미 해당 태그로 설정되어 있어 변경사항이 없습니다."
-          else
-            git commit -m "rollback: revert to ${{ github.event.inputs.target_tag }}"
-            git pull --rebase origin ${{ github.event.inputs.target_branch }}
-            git push origin ${{ github.event.inputs.target_branch }}
-            echo "✅ [SUCCESS] 성공적으로 태그 변경 후 푸시되었습니다."
-          fi
+            console.log(`✅ [SUCCESS] 성공적으로 ${filePath}의 태그가 ${targetTag}(으)로 변경되었습니다.`);
