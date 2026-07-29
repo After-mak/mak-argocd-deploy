@@ -11,12 +11,20 @@ on:
         required: true
         default: 'main'
 
+# 💡 GitHub Actions 권한 명시
+permissions:
+  contents: write
+  workflows: write
+
 jobs:
   rollback-custom:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # 💡 GITOPS_TOKEN 또는 PAT 토큰을 사용하여 푸시 권한 확보
+          token: ${{ secrets.GITOPS_TOKEN || github.token }}
 
       - name: Apply Custom Tag
         run: |
@@ -26,10 +34,10 @@ jobs:
           git config --global user.name "FinOps Bot"
           git config --global user.email "bot@finops.local"
           
-          # 2. 변경사항(diff) 검사 후 커밋 및 푸시
+          # 2. 변경사항(diff) 검사 후 커밋 및 푸시 (values.yaml만 지정)
           git add charts/tg-gateway/values.yaml
           if git diff --staged --quiet; then
-            echo "⚠️ [INFO] 이미 해당 태그(${{ github.event.inputs.target_tag }})로 설정되어 있어 변경사항이 없습니다. 파이프라인을 성공으로 종료합니다."
+            echo "⚠️ [INFO] 이미 해당 태그(${{ github.event.inputs.target_tag }})로 설정되어 있어 변경사항이 없습니다."
           else
             git commit -m "rollback: revert to ${{ github.event.inputs.target_tag }}"
             git push origin ${{ github.event.inputs.target_branch }}
