@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/tg-gateway
   pullPolicy: Always
-  tag: "v1.1.0-stable"
+  tag: "v1.0.0"
 service:
   type: ClusterIP
   port: 8000
