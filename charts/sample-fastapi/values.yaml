@@ -33,16 +33,34 @@ worker:
   metricsPort: 9100
   autoscaling:
     enabled: true
+    # reactive: 실제 Redis Queue만 사용
+    # predictive: Queue Fallback과 Chronos 선제 예측을 함께 사용
+    mode: reactive
     minReplicaCount: 1
     maxReplicaCount: 15
+    predictiveMaxReplicaCount: 3
     pollingInterval: 5
     cooldownPeriod: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      periodSeconds: 60
     prometheus:
       serverAddress: http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090
       query: >-
         max(sample_queue_length{namespace="sample-fastapi",service="sample-fastapi"})
       threshold: "5"
       activationThreshold: "1"
+    chronos:
+      # Chronos 메트릭은 ServiceMonitor를 통해 같은 Prometheus에 수집됩니다.
+      serverAddress: http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090
+      query: >-
+        (
+          max(chronos_scaling_replicas{namespace="sample-fastapi",deployment="sample-worker"})
+          * max(chronos_forecast_valid{namespace="sample-fastapi",deployment="sample-worker"})
+          * max((time() - chronos_forecast_timestamp_seconds{namespace="sample-fastapi",deployment="sample-worker"}) < bool 120)
+        ) or vector(0)
+      threshold: "1"
+      activationThreshold: "0"
   resources:
     requests:
       cpu: 361m

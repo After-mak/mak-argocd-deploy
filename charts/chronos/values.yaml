@@ -1,0 +1,46 @@
+image:
+  repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/chronos-model
+  tag: "v0.1.0"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  port: 8000
+
+forecast:
+  mode: shadow
+  prometheusUrl: http://thanos-query.prometheus.svc.cluster.local:9090
+  targetNamespace: sample-fastapi
+  targetDeployment: sample-worker
+  podPattern: sample-worker-.*
+  container: worker
+  thresholdCores: "0.3"
+  capacityPerReplicaCores: "0.5"
+  lookbackHours: "2"
+  predictionLength: "12"
+  stepSeconds: "60"
+  minReplicas: "1"
+  maxReplicas: "3"
+  intervalSeconds: "60"
+  ttlSeconds: "120"
+  modelId: amazon/chronos-t5-small
+  # Fake Metric 계약 테스트에서만 "3"으로 설정하고 Shadow/Active 실모델에서는 비웁니다.
+  fakeReplicas: ""
+
+serviceMonitor:
+  enabled: true
+  interval: 15s
+  scrapeTimeout: 10s
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: "2"
+    memory: 4Gi
+
+podSecurityContext:
+  seccompProfile:
+    type: RuntimeDefault

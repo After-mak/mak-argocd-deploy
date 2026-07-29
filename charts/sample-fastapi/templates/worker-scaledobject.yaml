@@ -1,4 +1,8 @@
 {{- if .Values.worker.autoscaling.enabled }}
+{{- $mode := .Values.worker.autoscaling.mode | default "reactive" }}
+{{- if not (has $mode (list "reactive" "predictive")) }}
+{{- fail "worker.autoscaling.mode must be reactive or predictive" }}
+{{- end }}
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
@@ -13,12 +17,35 @@ spec:
   pollingInterval: {{ .Values.worker.autoscaling.pollingInterval }}
   cooldownPeriod: {{ .Values.worker.autoscaling.cooldownPeriod }}
   minReplicaCount: {{ .Values.worker.autoscaling.minReplicaCount }}
-  maxReplicaCount: {{ .Values.worker.autoscaling.maxReplicaCount }}
+  maxReplicaCount: {{ ternary .Values.worker.autoscaling.predictiveMaxReplicaCount .Values.worker.autoscaling.maxReplicaCount (eq $mode "predictive") }}
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          stabilizationWindowSeconds: {{ .Values.worker.autoscaling.scaleDown.stabilizationWindowSeconds }}
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: {{ .Values.worker.autoscaling.scaleDown.periodSeconds }}
   triggers:
+    # 실제 Queue는 반응형 모드의 주 Trigger이자 예측 실패 시 Fallback입니다.
     - type: prometheus
+      name: queue
+      metricType: AverageValue
       metadata:
         serverAddress: {{ required "worker.autoscaling.prometheus.serverAddress is required" .Values.worker.autoscaling.prometheus.serverAddress | quote }}
         query: {{ required "worker.autoscaling.prometheus.query is required" .Values.worker.autoscaling.prometheus.query | quote }}
         threshold: {{ required "worker.autoscaling.prometheus.threshold is required" .Values.worker.autoscaling.prometheus.threshold | quote }}
         activationThreshold: {{ required "worker.autoscaling.prometheus.activationThreshold is required" .Values.worker.autoscaling.prometheus.activationThreshold | quote }}
+    {{- if eq $mode "predictive" }}
+    # TTL과 valid를 PromQL에서도 검사해 Chronos Pod 중단 시 오래된 값이 남지 않게 합니다.
+    - type: prometheus
+      name: chronos
+      metricType: AverageValue
+      metadata:
+        serverAddress: {{ required "worker.autoscaling.chronos.serverAddress is required" .Values.worker.autoscaling.chronos.serverAddress | quote }}
+        query: {{ required "worker.autoscaling.chronos.query is required" .Values.worker.autoscaling.chronos.query | quote }}
+        threshold: {{ required "worker.autoscaling.chronos.threshold is required" .Values.worker.autoscaling.chronos.threshold | quote }}
+        activationThreshold: {{ required "worker.autoscaling.chronos.activationThreshold is required" .Values.worker.autoscaling.chronos.activationThreshold | quote }}
+    {{- end }}
 {{- end }}

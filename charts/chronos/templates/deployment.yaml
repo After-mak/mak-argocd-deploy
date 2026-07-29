@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chronos-model
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: chronos-model
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: chronos-model
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: chronos-model
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: chronos
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            - name: CHRONOS_MODE
+              value: {{ .Values.forecast.mode | quote }}
+            - name: PROM_URL
+              value: {{ .Values.forecast.prometheusUrl | quote }}
+            - name: CHRONOS_TARGET_NAMESPACE
+              value: {{ .Values.forecast.targetNamespace | quote }}
+            - name: CHRONOS_TARGET_DEPLOYMENT
+              value: {{ .Values.forecast.targetDeployment | quote }}
+            - name: CHRONOS_POD_PATTERN
+              value: {{ .Values.forecast.podPattern | quote }}
+            - name: CHRONOS_CONTAINER
+              value: {{ .Values.forecast.container | quote }}
+            - name: CHRONOS_THRESHOLD
+              value: {{ .Values.forecast.thresholdCores | quote }}
+            - name: CHRONOS_CAPACITY_PER_REPLICA
+              value: {{ .Values.forecast.capacityPerReplicaCores | quote }}
+            - name: CHRONOS_LOOKBACK_HOURS
+              value: {{ .Values.forecast.lookbackHours | quote }}
+            - name: CHRONOS_PREDICTION_LENGTH
+              value: {{ .Values.forecast.predictionLength | quote }}
+            - name: CHRONOS_STEP_SECONDS
+              value: {{ .Values.forecast.stepSeconds | quote }}
+            - name: CHRONOS_MIN_REPLICAS
+              value: {{ .Values.forecast.minReplicas | quote }}
+            - name: CHRONOS_MAX_REPLICAS
+              value: {{ .Values.forecast.maxReplicas | quote }}
+            - name: CHRONOS_FORECAST_INTERVAL_SECONDS
+              value: {{ .Values.forecast.intervalSeconds | quote }}
+            - name: CHRONOS_FORECAST_TTL_SECONDS
+              value: {{ .Values.forecast.ttlSeconds | quote }}
+            - name: CHRONOS_MODEL_ID
+              value: {{ .Values.forecast.modelId | quote }}
+            {{- if .Values.forecast.fakeReplicas }}
+            - name: CHRONOS_FAKE_REPLICAS
+              value: {{ .Values.forecast.fakeReplicas | quote }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            failureThreshold: 20
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: model-cache
+              mountPath: /tmp/huggingface
+      volumes:
+        - name: model-cache
+          emptyDir: {}

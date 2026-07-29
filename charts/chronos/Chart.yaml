@@ -1,0 +1,6 @@
+apiVersion: v2
+name: chronos
+description: Chronos predictive autoscaling service for Sample Worker
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
