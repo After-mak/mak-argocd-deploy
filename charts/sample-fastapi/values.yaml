@@ -35,7 +35,7 @@ worker:
     enabled: true
     # reactive: 실제 Redis Queue만 사용
     # predictive: Queue Fallback과 Chronos 선제 예측을 함께 사용
-    mode: predictive
+    mode: reactive
     minReplicaCount: 1
     maxReplicaCount: 15
     predictiveMaxReplicaCount: 3
