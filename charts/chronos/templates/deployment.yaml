@@ -28,6 +28,8 @@ spec:
             - name: http
               containerPort: 8000
           env:
+            - name: TMPDIR
+              value: /tmp/huggingface
             - name: CHRONOS_MODE
               value: {{ .Values.forecast.mode | quote }}
             - name: PROM_URL
