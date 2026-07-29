@@ -19,7 +19,7 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: project03-db
-  namespace: default # 앱(mak-app)과 같은 네임스페이스를 사용하여 통신을 편하게 함
+  namespace: {{ .Values.namespace.backend | default "default" }} # 앱(mak-app)과 같은 네임스페이스를 사용하여 통신을 편하게 함
 spec:
   # DB 인스턴스 개수 (2로 설정하면 1대는 쓰기용 Primary, 1대는 읽기용 Standby로 자동 구성되어 고가용성을 확보합니다)
   instances: 2 
