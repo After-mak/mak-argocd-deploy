@@ -18,29 +18,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.GITOPS_TOKEN || secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      - name: Apply Custom Tag
+      - name: Clean Git and Apply Tag
         run: |
           git config --global user.name "FinOps Bot"
           git config --global user.email "bot@finops.local"
 
-          # 1. values.yaml의 태그만 변경
+          # 1. 이전 꼬인 Git 인덱스 완벽 청소
+          git reset --hard HEAD
+          git clean -fd
+
+          # 2. values.yaml 안의 tag만 치환
           sed -i "s/tag:.*/tag: \"${{ github.event.inputs.target_tag }}\"/g" charts/tg-gateway/values.yaml
 
-          # 2. 🔥 중요: .github/ 폴더 안의 모든 변경사항/스테이징을 강제로 원복(Unstage & Restore)
-          git restore --staged .github/ || true
-          git checkout -- .github/ || true
-
-          # 3. 🔥 오직 values.yaml 지정 파일만 단독 스테이징
+          # 3. values.yaml 파일 단독 스테이징
           git add charts/tg-gateway/values.yaml
 
-          # 4. values.yaml만 체크하여 커밋 & 푸시
+          # 4. 커밋 및 푸시
           if git diff --staged --quiet; then
-            echo "⚠️ [INFO] 이미 해당 태그로 설정되어 있어 변경사항이 없습니다."
+            echo "⚠️ [INFO] 이미 해당 태그로 설정되어 있습니다."
           else
             git commit -m "rollback: revert to ${{ github.event.inputs.target_tag }}"
             git pull --rebase origin ${{ github.event.inputs.target_branch }}
             git push origin ${{ github.event.inputs.target_branch }}
-            echo "✅ [SUCCESS] 성공적으로 태그 변경 후 GitOps 저장소에 푸시되었습니다."
+            echo "✅ [SUCCESS] 성공적으로 태그 변경 후 푸시되었습니다."
           fi
