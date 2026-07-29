@@ -1,2 +1,5 @@
 namespace:
   backend: "backend"
+db:
+  username: "username"
+  password: "password"
