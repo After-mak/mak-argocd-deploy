@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: userservice
-  namespace: {{ .Release.Namespace | default "default" }}
+  namespace: {{ .Values.namespace.backend | default "default" }}
 spec:
   replicas: 1
   selector:
@@ -38,7 +38,7 @@ spec:
                   name: project03-db-app
                   key: password
             - name: ACCOUNTS_DB_URI
-              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@project03-db-rw.default.svc.cluster.local:5432/app"
+              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@project03-db-rw.backend.svc.cluster.local:5432/app"
             # ============================
           envFrom:
             - configMapRef:
@@ -67,7 +67,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: userservice
-  namespace: {{ .Release.Namespace | default "default" }}
+  namespace: {{ .Values.namespace.backend | default "default" }}
 spec:
   type: ClusterIP
   ports:
@@ -80,7 +80,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: contacts
-  namespace: {{ .Release.Namespace | default "default" }}
+  namespace: {{ .Values.namespace.backend | default "default" }}
 spec:
   replicas: 1
   selector:
@@ -112,7 +112,7 @@ spec:
                   name: project03-db-app
                   key: password
             - name: ACCOUNTS_DB_URI
-              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@project03-db-rw.default.svc.cluster.local:5432/app"
+              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@project03-db-rw.backend.svc.cluster.local:5432/app"
             # ============================
           envFrom:
             - configMapRef:
@@ -139,7 +139,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: contacts
-  namespace: {{ .Release.Namespace | default "default" }}
+  namespace: {{ .Values.namespace.backend | default "default" }}
 spec:
   type: ClusterIP
   ports:
@@ -152,7 +152,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: balancereader
-  namespace: {{ .Release.Namespace | default "default" }}
+  namespace: {{ .Values.namespace.backend | default "default" }}
 spec:
   replicas: 1
   selector:
@@ -176,7 +176,7 @@ spec:
               value: "8080"
             # === 이 부분을 추가해 주세요 ===
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://project03-db-rw.default.svc.cluster.local:5432/app"
+              value: "jdbc:postgresql://project03-db-rw.backend.svc.cluster.local:5432/app"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -213,7 +213,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: balancereader
-  namespace: {{ .Release.Namespace | default "default" }}
+  namespace: {{ .Values.namespace.backend | default "default" }}
 spec:
   type: ClusterIP
   ports:
@@ -226,7 +226,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ledgerwriter
-  namespace: {{ .Release.Namespace | default "default" }}
+  namespace: {{ .Values.namespace.backend | default "default" }}
 spec:
   replicas: 1
   selector:
@@ -250,7 +250,7 @@ spec:
               value: "8080"       
             # === 이 부분을 추가해 주세요 ===
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://project03-db-rw.default.svc.cluster.local:5432/app"
+              value: "jdbc:postgresql://project03-db-rw.backend.svc.cluster.local:5432/app"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -289,7 +289,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ledgerwriter
-  namespace: {{ .Release.Namespace | default "default" }}
+  namespace: {{ .Values.namespace.backend | default "default" }}
 spec:
   type: ClusterIP
   ports:
@@ -302,7 +302,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: transactionhistory
-  namespace: {{ .Release.Namespace | default "default" }}
+  namespace: {{ .Values.namespace.backend | default "default" }}
 spec:
   replicas: 1
   selector:
@@ -326,7 +326,7 @@ spec:
               value: "8080"
             # === 이 부분을 추가해 주세요 ===
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://project03-db-rw.default.svc.cluster.local:5432/app"
+              value: "jdbc:postgresql://project03-db-rw.backend.svc.cluster.local:5432/app"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -363,7 +363,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: transactionhistory
-  namespace: {{ .Release.Namespace | default "default" }}
+  namespace: {{ .Values.namespace.backend | default "default" }}
 spec:
   type: ClusterIP
   ports:
