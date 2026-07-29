@@ -1,4 +1,4 @@
-name: Rollback Pipeline
+name: 🏷️ [FinOps] Custom Tag Rollback
 
 on:
   workflow_dispatch:

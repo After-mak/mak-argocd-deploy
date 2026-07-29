@@ -1,4 +1,4 @@
-name: Rollback Pipeline
+name: ⏪ [Alertmanager] Direct Rollback (HEAD~1)
 
 on:
   workflow_dispatch:
