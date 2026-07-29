@@ -9,7 +9,7 @@ service:
   port: 8000
 
 forecast:
-  mode: shadow
+  mode: active
   prometheusUrl: http://thanos-query.prometheus.svc.cluster.local:9090
   targetNamespace: sample-fastapi
   targetDeployment: sample-worker
