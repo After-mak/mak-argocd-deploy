@@ -17,28 +17,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          persist-credentials: true # 💡 GitHub Actions가 저장소에 push할 수 있도록 기본 권한 유지
 
       - name: Apply Custom Tag
         run: |
-          git config --global user.name "FinOps Bot"
-          git config --global user.email "bot@finops.local"
-
-          # 1. Helm 차트 values.yaml 안의 tag 변경
           sed -i "s/tag:.*/tag: \"${{ github.event.inputs.target_tag }}\"/g" charts/tg-gateway/values.yaml
           
-          # 2. values.yaml 파일만 정확히 스테이징
-          git add charts/tg-gateway/values.yaml
-
-          # 3. .github 워크플로우 관련 잔여 변경사항은 확실히 격리/제거
-          git checkout -- .github/ || true
+          git config --global user.name "FinOps Bot"
+          git config --global user.email "bot@finops.local"
           
-          # 4. 💡 변경사항(diff)이 있는 경우에만 커밋 및 푸시 (exit code 1 에러 방지)
-          if git diff --staged --quiet; then
-            echo "⚠️ [INFO] 이미 해당 태그(${{ github.event.inputs.target_tag }})로 설정되어 있어 변경사항이 없습니다."
-          else
-            git commit -m "rollback: revert to ${{ github.event.inputs.target_tag }}"
-            git push origin ${{ github.event.inputs.target_branch }}
-            echo "✅ [SUCCESS] 성공적으로 태그 변경 후 GitOps 저장소에 푸시되었습니다."
-          fi
+          git add charts/tg-gateway/values.yaml
+          git commit -m "rollback: revert to ${{ github.event.inputs.target_tag }}" || echo "No changes"
+          git push origin ${{ github.event.inputs.target_branch }}
