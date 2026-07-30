@@ -1,11 +1,14 @@
 # 기본 애플리케이션 설정
 replicaCount: 3
-image:
-  # repository: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/frontend
-  # tag: "v0.6.10"
-  repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr
-  tag: "latest"
-  pullPolicy: IfNotPresent
+images:
+  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:latest"
+  userservice: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:latest"
+  contacts: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:latest"
+  balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:latest"
+  ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:latest"
+  transactionhistory: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:latest"
+
+pullPolicy: IfNotPresent
 # 💡 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
 resources:
   requests:
