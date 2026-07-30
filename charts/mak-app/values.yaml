@@ -2,7 +2,7 @@
 replicaCount: 3
 images:
   frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.4"
-  userservice: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:2.3"
+  userservice: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:2.5"
   contacts: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:2.4"
   balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:1.9"
   ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:1.9"
