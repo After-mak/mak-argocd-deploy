@@ -7,7 +7,7 @@ metadata:
 spec:
   parentRefs:
     - name: my-gateway
-      namespace: {{ .Release.Namespace | default "default" }}
+      namespace: default
   hostnames:
     - "tuby.shop"
   rules:
