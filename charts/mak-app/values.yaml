@@ -6,7 +6,7 @@ images:
   contacts: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:0.9"
   balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:0.8"
   ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:0.9"
-  transactionhistory: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:0.8"
+  transactionhistory: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:0.9"
 
 pullPolicy: IfNotPresent
 # 💡 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
