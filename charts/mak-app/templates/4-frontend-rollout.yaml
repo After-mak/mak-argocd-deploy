@@ -83,7 +83,7 @@ spec:
     spec:
       containers:
         - name: mak-container
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.images.frontend }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           ports:
             - containerPort: 8080
