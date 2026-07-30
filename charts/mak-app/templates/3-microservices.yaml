@@ -1,3 +1,4 @@
+{{- if .Values.components.backend -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -38,7 +39,7 @@ spec:
                   name: project03-db-app
                   key: password
             - name: ACCOUNTS_DB_URI
-              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@project03-db-rw.default.svc.cluster.local:5432/app"
+              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@project03-db-rw.backend.svc.cluster.local:5432/app"
             # ============================
           envFrom:
             - configMapRef:
@@ -112,7 +113,7 @@ spec:
                   name: project03-db-app
                   key: password
             - name: ACCOUNTS_DB_URI
-              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@project03-db-rw.default.svc.cluster.local:5432/app"
+              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@project03-db-rw.backend.svc.cluster.local:5432/app"
             # ============================
           envFrom:
             - configMapRef:
@@ -176,7 +177,7 @@ spec:
               value: "8080"
             # === 이 부분을 추가해 주세요 ===
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://project03-db-rw.default.svc.cluster.local:5432/app"
+              value: "jdbc:postgresql://project03-db-rw.backend.svc.cluster.local:5432/app"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -250,7 +251,7 @@ spec:
               value: "8080"       
             # === 이 부분을 추가해 주세요 ===
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://project03-db-rw.default.svc.cluster.local:5432/app"
+              value: "jdbc:postgresql://project03-db-rw.backend.svc.cluster.local:5432/app"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -326,7 +327,7 @@ spec:
               value: "8080"
             # === 이 부분을 추가해 주세요 ===
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://project03-db-rw.default.svc.cluster.local:5432/app"
+              value: "jdbc:postgresql://project03-db-rw.backend.svc.cluster.local:5432/app"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -371,3 +372,4 @@ spec:
       targetPort: 8080
   selector:
     app: transactionhistory
+{{- end -}}

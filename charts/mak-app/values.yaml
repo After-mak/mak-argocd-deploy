@@ -27,3 +27,6 @@ redis:
 secrets:
   jwtPrivateKey: ""
   jwtPublicKey: ""
+components:
+  backend: true
+  frontend: true
