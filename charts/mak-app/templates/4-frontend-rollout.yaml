@@ -117,20 +117,20 @@ spec:
                   name: redis-secret
                   key: REDIS_PASSWORD
             # === 외부 CNPG 데이터베이스 연동 계정 주입 ===
-            - name: DB_HOST
-              value: "project03-db-rw.backend.svc.cluster.local"
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: project03-db-app
-                  key: username
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: project03-db-app
-                  key: password
+            # - name: DB_HOST
+            #   value: "project03-db-rw.backend.svc.cluster.local"
+            # - name: DB_PORT
+            #   value: "5432"
+            # - name: DB_USER
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: project03-db-app
+            #       key: username
+            # - name: DB_PASSWORD
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: project03-db-app
+            #       key: password
             # ===
           envFrom:
             - configMapRef:
@@ -138,8 +138,8 @@ spec:
             - configMapRef:
                 name: service-api-config
             # === 추가
-            - configMapRef:
-                name: accounts-db-config
+            # - configMapRef:
+            #     name: accounts-db-config
             # ===
           volumeMounts:
             - mountPath: /tmp
