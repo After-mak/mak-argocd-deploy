@@ -11,10 +11,10 @@ service:
 forecast:
   mode: shadow
   prometheusUrl: http://thanos-query.prometheus.svc.cluster.local:9090
-  targetNamespace: sample-fastapi
-  targetDeployment: sample-worker
-  podPattern: sample-worker-.*
-  container: worker
+  targetNamespace: default
+  targetDeployment: frontend
+  podPattern: frontend-.*
+  container: front
   thresholdCores: "0.3"
   capacityPerReplicaCores: "0.5"
   lookbackHours: "2"
