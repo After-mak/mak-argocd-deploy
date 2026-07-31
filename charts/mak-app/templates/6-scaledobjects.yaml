@@ -1,0 +1,42 @@
+{{- if .Values.autoscaling.frontend.enabled }}
+# Bank of Anthos frontend에 Chronos AI 선제적 스케일링을 적용합니다.
+# frontend는 Deployment가 아닌 Argo Rollout이므로 scaleTargetRef에 Rollout 타입을 명시합니다.
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: frontend-chronos-scaler
+  namespace: {{ .Release.Namespace | default "default" }}
+  labels:
+    app: frontend
+    scaler: chronos-predictive
+spec:
+  scaleTargetRef:
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    name: mak-app-rollout
+  pollingInterval: {{ .Values.autoscaling.frontend.pollingInterval }}
+  cooldownPeriod: {{ .Values.autoscaling.frontend.cooldownPeriod }}
+  minReplicaCount: {{ .Values.autoscaling.frontend.minReplicas }}
+  maxReplicaCount: {{ .Values.autoscaling.frontend.maxReplicas }}
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          stabilizationWindowSeconds: {{ .Values.autoscaling.frontend.scaleDown.stabilizationWindowSeconds }}
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: {{ .Values.autoscaling.frontend.scaleDown.periodSeconds }}
+  triggers:
+    # Chronos AI 예측 기반 선제적 스케일링 트리거
+    # Chronos가 Prometheus 시계열을 분석하여 향후 CPU 수요를 예측하고,
+    # 필요한 replica 수를 chronos_scaling_replicas 메트릭으로 노출합니다.
+    - type: prometheus
+      name: chronos-predictive
+      metricType: AverageValue
+      metadata:
+        serverAddress: {{ .Values.autoscaling.frontend.chronos.serverAddress | quote }}
+        query: {{ .Values.autoscaling.frontend.chronos.query | quote }}
+        threshold: {{ .Values.autoscaling.frontend.chronos.threshold | quote }}
+        activationThreshold: {{ .Values.autoscaling.frontend.chronos.activationThreshold | quote }}
+{{- end }}
