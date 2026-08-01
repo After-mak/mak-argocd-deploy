@@ -33,4 +33,4 @@ secrets:
   jwtPublicKey: ""
 components:
   backend: true
-  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.7"
+  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.8"

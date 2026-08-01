@@ -66,11 +66,7 @@ spec:
               value: {{ .Values.redis.db | quote }}
             - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: redis-secret
-                  key: REDIS_PASSWORD
+
             - name: REDIS_QUEUE_KEY
               value: "bank-userservice-queue"
             - name: TARGET_URL
@@ -175,11 +171,7 @@ spec:
               value: {{ .Values.redis.db | quote }}
             - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: redis-secret
-                  key: REDIS_PASSWORD
+
             - name: REDIS_QUEUE_KEY
               value: "bank-contacts-queue"
             - name: TARGET_URL
@@ -284,11 +276,7 @@ spec:
               value: {{ .Values.redis.db | quote }}
             - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: redis-secret
-                  key: REDIS_PASSWORD
+
             - name: REDIS_QUEUE_KEY
               value: "bank-balancereader-queue"
             - name: TARGET_URL
@@ -394,11 +382,7 @@ spec:
               value: {{ .Values.redis.db | quote }}
             - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: redis-secret
-                  key: REDIS_PASSWORD
+
             - name: REDIS_QUEUE_KEY
               value: "bank-ledgerwriter-queue"
             - name: TARGET_URL
@@ -502,11 +486,7 @@ spec:
               value: {{ .Values.redis.db | quote }}
             - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: redis-secret
-                  key: REDIS_PASSWORD
+
             - name: REDIS_QUEUE_KEY
               value: "bank-transactionhistory-queue"
             - name: TARGET_URL
