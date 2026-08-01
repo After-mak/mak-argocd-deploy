@@ -7,6 +7,7 @@ images:
   balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:2.7"
   ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:2.7"
   transactionhistory: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:2.7"
+  worker: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.22"
 
 image:
   pullPolicy: IfNotPresent
@@ -26,7 +27,7 @@ redis:
   host: "master.project03-sample-redis.uuepdo.apn2.cache.amazonaws.com"
   port: 6379
   db: 0
-  password: "redis" # Redis 비밀번호
+  password: "" # Redis 비밀번호 (ElastiCache에 설정되지 않음)
   tlsEnabled: true # 로컬/K8s 내부는 false, ElastiCache TLS 사용 시 true
 secrets:
   jwtPrivateKey: ""

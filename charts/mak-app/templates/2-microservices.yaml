@@ -17,7 +17,7 @@ spec:
       containers:
         - name: userservice
           #image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/userservice:v0.6.10
-          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:latest
+          image: "{{ .Values.images.userservice }}"
           ports:
             - containerPort: 8080
           env:
@@ -54,7 +54,7 @@ spec:
               readOnly: true
               #########################################
         - name: worker
-          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.21
+          image: "{{ .Values.images.worker }}"
           command: ["python"]
           args: ["worker.py"]
           env:
@@ -129,7 +129,7 @@ spec:
       containers:
         - name: contacts
           # image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/contacts:v0.6.10
-          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:latest
+          image: "{{ .Values.images.contacts }}"
           ports:
             - containerPort: 8080
           env:
@@ -161,7 +161,7 @@ spec:
               name: publickey
               readOnly: true
         - name: worker
-          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.21
+          image: "{{ .Values.images.worker }}"
           command: ["python"]
           args: ["worker.py"]
           env:
@@ -233,7 +233,7 @@ spec:
       containers:
         - name: balancereader
           #image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/balancereader:v0.6.10
-          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:latest
+          image: "{{ .Values.images.balancereader }}"
           ports:
             - containerPort: 8080
           env:
@@ -268,7 +268,7 @@ spec:
               readOnly: true
               
         - name: worker
-          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.21
+          image: "{{ .Values.images.worker }}"
           command: ["python"]
           args: ["worker.py"]
           env:
@@ -340,7 +340,7 @@ spec:
       containers:
         - name: ledgerwriter
           # image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/ledgerwriter:v0.6.10
-          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:latest
+          image: "{{ .Values.images.ledgerwriter }}"
           ports:
             - containerPort: 8080
           env:
@@ -376,7 +376,7 @@ spec:
               name: publickey
               readOnly: true
         - name: worker
-          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.21
+          image: "{{ .Values.images.worker }}"
           command: ["python"]
           args: ["worker.py"]
           env:
@@ -448,7 +448,7 @@ spec:
       containers:
         - name: transactionhistory
           # image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/transactionhistory:v0.6.10
-          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:latest
+          image: "{{ .Values.images.transactionhistory }}"
           ports:
             - containerPort: 8080
           env:
@@ -482,7 +482,7 @@ spec:
               name: publickey
               readOnly: true
         - name: worker
-          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.21
+          image: "{{ .Values.images.worker }}"
           command: ["python"]
           args: ["worker.py"]
           env:
