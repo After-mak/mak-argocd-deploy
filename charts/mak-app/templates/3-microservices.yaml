@@ -66,6 +66,8 @@ spec:
               value: {{ .Values.redis.db | quote }}
             - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
+            - name: REDIS_PASSWORD
+              value: {{ .Values.redis.password | quote }}
 
             - name: REDIS_QUEUE_KEY
               value: "bank-userservice-queue"
@@ -171,6 +173,8 @@ spec:
               value: {{ .Values.redis.db | quote }}
             - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
+            - name: REDIS_PASSWORD
+              value: {{ .Values.redis.password | quote }}
 
             - name: REDIS_QUEUE_KEY
               value: "bank-contacts-queue"
@@ -276,6 +280,8 @@ spec:
               value: {{ .Values.redis.db | quote }}
             - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
+            - name: REDIS_PASSWORD
+              value: {{ .Values.redis.password | quote }}
 
             - name: REDIS_QUEUE_KEY
               value: "bank-balancereader-queue"
@@ -382,6 +388,8 @@ spec:
               value: {{ .Values.redis.db | quote }}
             - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
+            - name: REDIS_PASSWORD
+              value: {{ .Values.redis.password | quote }}
 
             - name: REDIS_QUEUE_KEY
               value: "bank-ledgerwriter-queue"
@@ -486,6 +494,8 @@ spec:
               value: {{ .Values.redis.db | quote }}
             - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
+            - name: REDIS_PASSWORD
+              value: {{ .Values.redis.password | quote }}
 
             - name: REDIS_QUEUE_KEY
               value: "bank-transactionhistory-queue"

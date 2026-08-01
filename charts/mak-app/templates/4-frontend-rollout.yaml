@@ -111,6 +111,8 @@ spec:
               value: {{ .Values.redis.db | quote }}
             - name: REDIS_TLS_ENABLED
               value: {{ .Values.redis.tlsEnabled | quote }}
+            - name: REDIS_PASSWORD
+              value: {{ .Values.redis.password | quote }}
 
             # === 외부 CNPG 데이터베이스 연동 계정 주입 ===
             # - name: DB_HOST
