@@ -5,7 +5,6 @@ metadata:
   name: userservice
   namespace: {{ .Release.Namespace | default "default" }}
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: userservice
@@ -117,7 +116,6 @@ metadata:
   name: contacts
   namespace: {{ .Release.Namespace | default "default" }}
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: contacts
@@ -221,7 +219,6 @@ metadata:
   name: balancereader
   namespace: {{ .Release.Namespace | default "default" }}
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: balancereader
@@ -328,7 +325,6 @@ metadata:
   name: ledgerwriter
   namespace: {{ .Release.Namespace | default "default" }}
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: ledgerwriter
@@ -436,7 +432,6 @@ metadata:
   name: transactionhistory
   namespace: {{ .Release.Namespace | default "default" }}
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: transactionhistory
