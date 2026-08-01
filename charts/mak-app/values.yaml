@@ -8,7 +8,7 @@ images:
   ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:2.7"
   transactionhistory: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:2.7"
   worker: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.22"
-
+  loadgen: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_loadgen_ecr:v0.6.10"
 image:
   pullPolicy: IfNotPresent
 # 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
