@@ -1,4 +1,4 @@
-{{- if .Values.autoscaling.enabled }}
+{{- if .Values.autoscaling.backend.enabled }}
 {{- $services := list "userservice" "contacts" "balancereader" "ledgerwriter" "transactionhistory" }}
 {{- range $serviceName := $services }}
 apiVersion: keda.sh/v1alpha1
@@ -11,10 +11,10 @@ metadata:
 spec:
   scaleTargetRef:
     name: {{ $serviceName }}
-  pollingInterval: {{ $.Values.autoscaling.pollingInterval }}
-  cooldownPeriod: {{ $.Values.autoscaling.cooldownPeriod }}
-  minReplicaCount: {{ $.Values.autoscaling.minReplicas }}
-  maxReplicaCount: {{ $.Values.autoscaling.maxReplicas }}
+  pollingInterval: {{ $.Values.autoscaling.backend.pollingInterval }}
+  cooldownPeriod: {{ $.Values.autoscaling.backend.cooldownPeriod }}
+  minReplicaCount: {{ $.Values.autoscaling.backend.minReplicas }}
+  maxReplicaCount: {{ $.Values.autoscaling.backend.maxReplicas }}
   advanced:
     horizontalPodAutoscalerConfig:
       behavior:
@@ -32,7 +32,7 @@ spec:
         # Terraform이 주입하는 ElastiCache 주소를 동적으로 사용
         address: {{ required "Redis host is required in values.yaml" $.Values.redis.host }}:{{ $.Values.redis.port }}
         listName: bank-{{ $serviceName }}-queue
-        listLength: {{ $.Values.autoscaling.redisListLength | quote }}
+        listLength: {{ $.Values.autoscaling.backend.redisListLength | quote }}
         enableTLS: {{ $.Values.redis.tlsEnabled | quote }}
         databaseIndex: {{ $.Values.redis.db | default "0" | quote }}
 ---
