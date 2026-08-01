@@ -1,0 +1,40 @@
+{{- if .Values.autoscaling.enabled }}
+{{- $services := list "userservice" "contacts" "balancereader" "ledgerwriter" "transactionhistory" }}
+{{- range $serviceName := $services }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ $serviceName }}-scaler
+  namespace: {{ $.Release.Namespace | default "default" }}
+  labels:
+    app: {{ $serviceName }}
+spec:
+  scaleTargetRef:
+    name: {{ $serviceName }}
+  pollingInterval: {{ $.Values.autoscaling.pollingInterval }}
+  cooldownPeriod: {{ $.Values.autoscaling.cooldownPeriod }}
+  minReplicaCount: {{ $.Values.autoscaling.minReplicas }}
+  maxReplicaCount: {{ $.Values.autoscaling.maxReplicas }}
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 60
+  triggers:
+    # 큐 길이를 통한 KEDA 사후 대응(반응형) 오토스케일링 전용
+    - type: redis
+      name: queue
+      metadata:
+        # Terraform이 주입하는 ElastiCache 주소를 동적으로 사용
+        address: {{ required "Redis host is required in values.yaml" $.Values.redis.host }}:{{ $.Values.redis.port }}
+        listName: bank-{{ $serviceName }}-queue
+        listLength: {{ $.Values.autoscaling.redisListLength | quote }}
+        enableTLS: {{ $.Values.redis.tlsEnabled | quote }}
+        databaseIndex: {{ $.Values.redis.db | default "0" | quote }}
+---
+{{- end }}
+{{- end }}
