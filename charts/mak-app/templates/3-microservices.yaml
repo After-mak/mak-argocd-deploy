@@ -52,6 +52,42 @@ spec:
             - mountPath: /tmp/.ssh
               name: keys
               readOnly: true
+              #########################################
+        - name: worker
+          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.21
+          command: ["python"]
+          args: ["worker.py"]
+          env:
+            - name: REDIS_HOST
+              value: {{ .Values.redis.host | quote }}
+            - name: REDIS_PORT
+              value: {{ .Values.redis.port | quote }}
+            - name: REDIS_DB
+              value: {{ .Values.redis.db | quote }}
+            - name: REDIS_TLS_ENABLED
+              value: {{ .Values.redis.tlsEnabled | quote }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: REDIS_PASSWORD
+            - name: REDIS_QUEUE_KEY
+              value: "bank-userservice-queue"
+            - name: TARGET_URL
+              value: "http://localhost:8080"
+            - name: WORKER_METRICS_PORT
+              value: "9100"
+          ports:
+            - name: metrics
+              containerPort: 9100
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+           #########################################
       volumes:
         - emptyDir: {}
           name: tmp
@@ -126,6 +162,40 @@ spec:
             - mountPath: /tmp/.ssh
               name: publickey
               readOnly: true
+        - name: worker
+          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.21
+          command: ["python"]
+          args: ["worker.py"]
+          env:
+            - name: REDIS_HOST
+              value: {{ .Values.redis.host | quote }}
+            - name: REDIS_PORT
+              value: {{ .Values.redis.port | quote }}
+            - name: REDIS_DB
+              value: {{ .Values.redis.db | quote }}
+            - name: REDIS_TLS_ENABLED
+              value: {{ .Values.redis.tlsEnabled | quote }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: REDIS_PASSWORD
+            - name: REDIS_QUEUE_KEY
+              value: "bank-contacts-queue"
+            - name: TARGET_URL
+              value: "http://localhost:8080"
+            - name: WORKER_METRICS_PORT
+              value: "9100"
+          ports:
+            - name: metrics
+              containerPort: 9100
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
       volumes:
         - emptyDir: {}
           name: tmp
@@ -200,6 +270,41 @@ spec:
             - mountPath: /tmp/.ssh
               name: publickey
               readOnly: true
+              
+        - name: worker
+          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.21
+          command: ["python"]
+          args: ["worker.py"]
+          env:
+            - name: REDIS_HOST
+              value: {{ .Values.redis.host | quote }}
+            - name: REDIS_PORT
+              value: {{ .Values.redis.port | quote }}
+            - name: REDIS_DB
+              value: {{ .Values.redis.db | quote }}
+            - name: REDIS_TLS_ENABLED
+              value: {{ .Values.redis.tlsEnabled | quote }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: REDIS_PASSWORD
+            - name: REDIS_QUEUE_KEY
+              value: "bank-balancereader-queue"
+            - name: TARGET_URL
+              value: "http://localhost:8080"
+            - name: WORKER_METRICS_PORT
+              value: "9100"
+          ports:
+            - name: metrics
+              containerPort: 9100
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
       volumes:
         - emptyDir: {}
           name: tmp
@@ -276,6 +381,40 @@ spec:
             - mountPath: /tmp/.ssh
               name: publickey
               readOnly: true
+        - name: worker
+          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.21
+          command: ["python"]
+          args: ["worker.py"]
+          env:
+            - name: REDIS_HOST
+              value: {{ .Values.redis.host | quote }}
+            - name: REDIS_PORT
+              value: {{ .Values.redis.port | quote }}
+            - name: REDIS_DB
+              value: {{ .Values.redis.db | quote }}
+            - name: REDIS_TLS_ENABLED
+              value: {{ .Values.redis.tlsEnabled | quote }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: REDIS_PASSWORD
+            - name: REDIS_QUEUE_KEY
+              value: "bank-ledgerwriter-queue"
+            - name: TARGET_URL
+              value: "http://localhost:8080"
+            - name: WORKER_METRICS_PORT
+              value: "9100"
+          ports:
+            - name: metrics
+              containerPort: 9100
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
       volumes:
         - emptyDir: {}
           name: tmp
@@ -350,6 +489,40 @@ spec:
             - mountPath: /tmp/.ssh
               name: publickey
               readOnly: true
+        - name: worker
+          image: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.21
+          command: ["python"]
+          args: ["worker.py"]
+          env:
+            - name: REDIS_HOST
+              value: {{ .Values.redis.host | quote }}
+            - name: REDIS_PORT
+              value: {{ .Values.redis.port | quote }}
+            - name: REDIS_DB
+              value: {{ .Values.redis.db | quote }}
+            - name: REDIS_TLS_ENABLED
+              value: {{ .Values.redis.tlsEnabled | quote }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: REDIS_PASSWORD
+            - name: REDIS_QUEUE_KEY
+              value: "bank-transactionhistory-queue"
+            - name: TARGET_URL
+              value: "http://localhost:8080"
+            - name: WORKER_METRICS_PORT
+              value: "9100"
+          ports:
+            - name: metrics
+              containerPort: 9100
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
       volumes:
         - emptyDir: {}
           name: tmp
