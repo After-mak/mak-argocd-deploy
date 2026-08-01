@@ -1,0 +1,34 @@
+{{- if .Values.components.frontend -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loadgen
+  namespace: {{ .Release.Namespace | default "default" }}
+  labels:
+    app: loadgen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loadgen
+  template:
+    metadata:
+      labels:
+        app: loadgen
+    spec:
+      containers:
+        - name: main
+          image: "{{ .Values.images.loadgen }}"
+          env:
+            - name: FRONTEND_ADDR
+              value: "mak-app-active:80"
+            - name: USERS
+              value: "10"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+{{- end -}}
