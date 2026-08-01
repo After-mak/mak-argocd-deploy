@@ -27,7 +27,7 @@ redis:
   port: 6379
   db: 0
   password: "redis" # Redis 비밀번호
-  tlsEnabled: false # 로컬/K8s 내부는 false, ElastiCache TLS 사용 시 true
+  tlsEnabled: true # 로컬/K8s 내부는 false, ElastiCache TLS 사용 시 true
 secrets:
   jwtPrivateKey: ""
   jwtPublicKey: ""
