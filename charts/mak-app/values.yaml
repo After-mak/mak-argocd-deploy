@@ -23,7 +23,7 @@ service:
   port: 80
 # Redis 연결 설정
 redis:
-  host: "redis" # K8s 내 Redis 서비스 이름 (또는 AWS ElastiCache 엔드포인트)
+  host: "master.project03-sample-redis.uuepdo.apn2.cache.amazonaws.com"
   port: 6379
   db: 0
   password: "redis" # Redis 비밀번호
