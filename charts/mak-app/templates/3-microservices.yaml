@@ -64,7 +64,7 @@ spec:
               value: {{ .Values.redis.port | quote }}
             - name: REDIS_DB
               value: {{ .Values.redis.db | quote }}
-            - name: REDIS_TLS_ENABLED
+            - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
             - name: REDIS_PASSWORD
               valueFrom:
@@ -173,7 +173,7 @@ spec:
               value: {{ .Values.redis.port | quote }}
             - name: REDIS_DB
               value: {{ .Values.redis.db | quote }}
-            - name: REDIS_TLS_ENABLED
+            - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
             - name: REDIS_PASSWORD
               valueFrom:
@@ -282,7 +282,7 @@ spec:
               value: {{ .Values.redis.port | quote }}
             - name: REDIS_DB
               value: {{ .Values.redis.db | quote }}
-            - name: REDIS_TLS_ENABLED
+            - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
             - name: REDIS_PASSWORD
               valueFrom:
@@ -392,7 +392,7 @@ spec:
               value: {{ .Values.redis.port | quote }}
             - name: REDIS_DB
               value: {{ .Values.redis.db | quote }}
-            - name: REDIS_TLS_ENABLED
+            - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
             - name: REDIS_PASSWORD
               valueFrom:
@@ -500,7 +500,7 @@ spec:
               value: {{ .Values.redis.port | quote }}
             - name: REDIS_DB
               value: {{ .Values.redis.db | quote }}
-            - name: REDIS_TLS_ENABLED
+            - name: REDIS_SSL
               value: {{ .Values.redis.tlsEnabled | quote }}
             - name: REDIS_PASSWORD
               valueFrom:
