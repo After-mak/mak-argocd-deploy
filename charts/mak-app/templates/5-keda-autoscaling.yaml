@@ -1,4 +1,4 @@
-{{- if .Values.autoscaling.backend.enabled }}
+{{- if and .Values.components.backend .Values.autoscaling.backend.enabled }}
 {{- $services := list "userservice" "contacts" "balancereader" "ledgerwriter" "transactionhistory" }}
 {{- range $serviceName := $services }}
 apiVersion: keda.sh/v1alpha1

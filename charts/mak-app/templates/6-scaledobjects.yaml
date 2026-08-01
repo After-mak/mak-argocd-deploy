@@ -1,4 +1,4 @@
-{{- if .Values.autoscaling.frontend.enabled }}
+{{- if and .Values.components.frontend .Values.autoscaling.frontend.enabled }}
 # Bank of Anthos frontend에 Chronos AI 선제적 스케일링을 적용합니다.
 # frontend는 Deployment가 아닌 Argo Rollout이므로 scaleTargetRef에 Rollout 타입을 명시합니다.
 apiVersion: keda.sh/v1alpha1
