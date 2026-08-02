@@ -23,7 +23,9 @@ spec:
             - name: FRONTEND_ADDR
               value: "mak-app-active:80"
             - name: USERS
-              value: "800"
+              value: "3000"
+            - name: LOCUST_SPAWN_RATE
+              value: "10"
           resources:
             requests:
               cpu: 500m
