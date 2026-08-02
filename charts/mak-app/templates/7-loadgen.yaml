@@ -15,15 +15,24 @@ spec:
     metadata:
       labels:
         app: loadgen
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
+      terminationGracePeriodSeconds: 5
+      restartPolicy: Always
       containers:
         - name: main
-          image: "{{ .Values.images.loadgen }}"
+          image: docker.io/yoonhakim/locust-tasks:latest
+          imagePullPolicy: IfNotPresent
           env:
-            - name: FRONTEND_ADDR
-              value: "mak-app-active:80"
-            - name: USERS
-              value: "800"
+            - name: LOCUST_USERS
+              value: "100"
+            - name: LOCUST_SPAWN_RATE
+              value: "50"
+            - name: LOCUST_HOST
+              value: http://frontend
+            - name: LOCUST_HEADLESS
+              value: "true"
           resources:
             requests:
               cpu: 500m
