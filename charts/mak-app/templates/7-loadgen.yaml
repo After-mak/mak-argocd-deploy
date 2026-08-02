@@ -23,7 +23,7 @@ spec:
             - name: FRONTEND_ADDR
               value: "mak-app-active:80"
             - name: USERS
-              value: "3000"
+              value: "800"
           resources:
             requests:
               cpu: 250m
