@@ -21,7 +21,7 @@ forecast:
   predictionLength: "12"
   stepSeconds: "60"
   minReplicas: "1"
-  maxReplicas: "3"
+  maxReplicas: "5"
   intervalSeconds: "60"
   ttlSeconds: "120"
   modelId: amazon/chronos-2
