@@ -15,8 +15,8 @@ forecast:
   targetDeployment: mak-app-rollout
   podPattern: mak-app-rollout-.*
   container: mak-container
-  thresholdCores: "0.3"
-  capacityPerReplicaCores: "0.5"
+  thresholdCores: "0.1"
+  capacityPerReplicaCores: "0.15"
   lookbackHours: "2"
   predictionLength: "12"
   stepSeconds: "60"
