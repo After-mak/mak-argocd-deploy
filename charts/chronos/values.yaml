@@ -4,6 +4,8 @@ image:
   pullPolicy: IfNotPresent
 
 replicaCount: 1
+nodeSelector:
+  role: management
 
 service:
   port: 8000
