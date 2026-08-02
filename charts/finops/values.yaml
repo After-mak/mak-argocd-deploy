@@ -1,4 +1,6 @@
 replicaCount: 1
+nodeSelector:
+  role: management
 
 image:
   # Replace with your container registry URI where the image is pushed
