@@ -26,7 +26,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: LOCUST_USERS
-              value: "100"
+              value: "800"
             - name: LOCUST_SPAWN_RATE
               value: "50"
             - name: LOCUST_HOST
