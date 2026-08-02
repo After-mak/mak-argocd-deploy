@@ -48,7 +48,7 @@ autoscaling:
       stabilizationWindowSeconds: 300
       periodSeconds: 60
     chronos:
-      serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
+      serverAddress: "http://thanos-query.prometheus.svc.cluster.local:9090"
       query: >-
         (
           max(chronos_scaling_replicas{deployment="mak-app-rollout"})
