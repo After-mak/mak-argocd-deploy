@@ -51,9 +51,9 @@ autoscaling:
       serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
       query: >-
         (
-          max(chronos_scaling_replicas{deployment="frontend"})
-          * max(chronos_forecast_valid{deployment="frontend"})
-          * max((time() - chronos_forecast_timestamp_seconds{deployment="frontend"}) < bool 120)
+          max(chronos_scaling_replicas{deployment="mak-app-rollout"})
+          * max(chronos_forecast_valid{deployment="mak-app-rollout"})
+          * max((time() - chronos_forecast_timestamp_seconds{deployment="mak-app-rollout"}) < bool 120)
         ) or vector(0)
       threshold: "1"
       activationThreshold: "0"
