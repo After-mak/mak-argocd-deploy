@@ -1,12 +1,12 @@
 # 기본 애플리케이션 설정
 replicaCount: 3
 images:
-  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:3.2"
-  userservice: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:2.7"
-  contacts: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:2.7"
-  balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:2.7"
-  ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:2.7"
-  transactionhistory: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:2.7"
+  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.8"
+  userservice: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:2.8"
+  contacts: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:2.8"
+  balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:2.8"
+  ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:2.8"
+  transactionhistory: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:2.8"
   worker: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.22"
   loadgen: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_loadgen_ecr:v0.6.10"
 image:
