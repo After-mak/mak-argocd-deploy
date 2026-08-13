@@ -1,7 +1,7 @@
 # 기본 애플리케이션 설정
 replicaCount: 3
 images:
-  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:3.2"
+  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.8"
   userservice: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:2.8"
   contacts: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:2.7"
   balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:2.7"
@@ -34,11 +34,11 @@ secrets:
   jwtPublicKey: ""
 components:
   backend: true
-  frontend: true
+  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.8"
 
 # KEDA 기반 오토스케일링 설정
 autoscaling:
-  frontend:
+  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.8"
     enabled: true
     minReplicas: 1
     maxReplicas: 10
