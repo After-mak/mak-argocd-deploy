@@ -52,7 +52,18 @@ spec:
         - name: k6
           image: {{ .Values.loadgen.image | quote }}
           imagePullPolicy: IfNotPresent
-          args: ["run", "/scripts/bank-of-anthos-long-run.js"]
+          args:
+            - run
+            - --tag
+            - {{ printf "testid=%s" $runId | quote }}
+            - --summary-export=/results/summary.json
+            - --out
+            - json=/results/raw.json
+            {{- if .Values.loadgen.prometheusRemoteWriteEnabled }}
+            - --out
+            - experimental-prometheus-rw
+            {{- end }}
+            - /scripts/bank-of-anthos-long-run.js
           env:
             - name: BASE_URL
               value: "http://mak-app-active:80"
@@ -103,8 +114,6 @@ spec:
                   key: {{ .Values.loadgen.credentialsSecret.recipientAccountKey | quote }}
                   optional: true
             {{- if .Values.loadgen.prometheusRemoteWriteEnabled }}
-            - name: K6_OUT
-              value: "experimental-prometheus-rw"
             - name: K6_PROMETHEUS_RW_SERVER_URL
               value: {{ .Values.loadgen.prometheusRemoteWriteUrl | quote }}
             - name: K6_PROMETHEUS_RW_TREND_STATS
