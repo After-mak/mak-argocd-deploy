@@ -17,6 +17,8 @@ spec:
         - name: userservice
           #image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/userservice:v0.6.10
           image: "{{ .Values.images.userservice }}"
+          resources:
+{{ toYaml .Values.resources.userservice.app | nindent 12 }}
           ports:
             - containerPort: 8080
           env:
@@ -78,12 +80,7 @@ spec:
             - name: metrics
               containerPort: 9100
           resources:
-            requests:
-              cpu: 250m
-              memory: 256Mi
-            limits:
-              cpu: 500m
-              memory: 512Mi
+{{ toYaml .Values.resources.userservice.worker | nindent 12 }}
            #########################################
       volumes:
         - emptyDir: {}
@@ -128,6 +125,8 @@ spec:
         - name: contacts
           # image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/contacts:v0.6.10
           image: "{{ .Values.images.contacts }}"
+          resources:
+{{ toYaml .Values.resources.contacts.app | nindent 12 }}
           ports:
             - containerPort: 8080
           env:
@@ -184,12 +183,7 @@ spec:
             - name: metrics
               containerPort: 9100
           resources:
-            requests:
-              cpu: 250m
-              memory: 256Mi
-            limits:
-              cpu: 500m
-              memory: 512Mi
+{{ toYaml .Values.resources.contacts.worker | nindent 12 }}
       volumes:
         - emptyDir: {}
           name: tmp
@@ -231,6 +225,8 @@ spec:
         - name: balancereader
           #image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/balancereader:v0.6.10
           image: "{{ .Values.images.balancereader }}"
+          resources:
+{{ toYaml .Values.resources.balancereader.app | nindent 12 }}
           ports:
             - containerPort: 8080
           env:
@@ -290,12 +286,7 @@ spec:
             - name: metrics
               containerPort: 9100
           resources:
-            requests:
-              cpu: 250m
-              memory: 256Mi
-            limits:
-              cpu: 500m
-              memory: 512Mi
+{{ toYaml .Values.resources.balancereader.worker | nindent 12 }}
       volumes:
         - emptyDir: {}
           name: tmp
@@ -337,6 +328,8 @@ spec:
         - name: ledgerwriter
           # image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/ledgerwriter:v0.6.10
           image: "{{ .Values.images.ledgerwriter }}"
+          resources:
+{{ toYaml .Values.resources.ledgerwriter.app | nindent 12 }}
           ports:
             - containerPort: 8080
           env:
@@ -397,12 +390,7 @@ spec:
             - name: metrics
               containerPort: 9100
           resources:
-            requests:
-              cpu: 250m
-              memory: 256Mi
-            limits:
-              cpu: 500m
-              memory: 512Mi
+{{ toYaml .Values.resources.ledgerwriter.worker | nindent 12 }}
       volumes:
         - emptyDir: {}
           name: tmp
@@ -444,6 +432,8 @@ spec:
         - name: transactionhistory
           # image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/transactionhistory:v0.6.10
           image: "{{ .Values.images.transactionhistory }}"
+          resources:
+{{ toYaml .Values.resources.transactionhistory.app | nindent 12 }}
           ports:
             - containerPort: 8080
           env:
@@ -502,12 +492,7 @@ spec:
             - name: metrics
               containerPort: 9100
           resources:
-            requests:
-              cpu: 250m
-              memory: 256Mi
-            limits:
-              cpu: 500m
-              memory: 512Mi
+{{ toYaml .Values.resources.transactionhistory.worker | nindent 12 }}
       volumes:
         - emptyDir: {}
           name: tmp
