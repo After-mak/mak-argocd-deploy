@@ -1,34 +1,132 @@
-{{- if .Values.components.frontend -}}
-apiVersion: apps/v1
-kind: Deployment
+{{- if and .Values.components.frontend .Values.loadgen.enabled -}}
+{{- $runId := required "loadgen.runId is required when loadgen.enabled=true" .Values.loadgen.runId -}}
+{{- if not (has .Values.loadgen.phase (list "pre" "post" "smoke" "pilot")) -}}
+{{- fail "loadgen.phase must be one of pre, post, smoke, pilot" -}}
+{{- end -}}
+{{- if and (eq .Values.loadgen.phase "smoke") (ne .Values.loadgen.profile "smoke") -}}
+{{- fail "loadgen.profile must be smoke when phase=smoke" -}}
+{{- end -}}
+{{- if and (has .Values.loadgen.phase (list "pre" "post" "pilot")) (ne .Values.loadgen.profile "long") -}}
+{{- fail "loadgen.profile must be long when phase is pre, post, or pilot" -}}
+{{- end -}}
+{{- $safeRunId := regexReplaceAll "[^a-z0-9-]" (lower $runId) "-" | trunc 32 | trimAll "-" -}}
+{{- $jobName := printf "bank-loadgen-%s-%s" .Values.loadgen.phase $safeRunId | trunc 63 | trimSuffix "-" -}}
+apiVersion: v1
+kind: ConfigMap
 metadata:
-  name: loadgen
+  name: {{ $jobName }}-script
   namespace: {{ .Release.Namespace | default "default" }}
   labels:
-    app: loadgen
+    app: bank-loadgen
+    run-id: {{ $safeRunId | quote }}
+data:
+  bank-of-anthos-long-run.js: |
+{{ .Files.Get "files/bank-of-anthos-long-run.js" | nindent 4 }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $jobName }}
+  namespace: {{ .Release.Namespace | default "default" }}
+  labels:
+    app: bank-loadgen
+    run-id: {{ $safeRunId | quote }}
+    phase: {{ .Values.loadgen.phase | quote }}
+  annotations:
+    bank-of-anthos/scenario: {{ .Values.loadgen.scenarioName | quote }}
+    bank-of-anthos/scenario-version: {{ .Values.loadgen.scenarioVersion | quote }}
+    bank-of-anthos/script-sha256: {{ .Files.Get "files/bank-of-anthos-long-run.js" | sha256sum | quote }}
 spec:
-  replicas: 0
-  selector:
-    matchLabels:
-      app: loadgen
+  backoffLimit: 0
+  activeDeadlineSeconds: {{ .Values.loadgen.activeDeadlineSeconds }}
   template:
     metadata:
       labels:
-        app: loadgen
+        app: bank-loadgen
+        run-id: {{ $safeRunId | quote }}
+        phase: {{ .Values.loadgen.phase | quote }}
     spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
       containers:
-        - name: main
-          image: "{{ .Values.images.loadgen }}"
+        - name: k6
+          image: {{ .Values.loadgen.image | quote }}
+          imagePullPolicy: IfNotPresent
+          args: ["run", "/scripts/bank-of-anthos-long-run.js"]
           env:
-            - name: FRONTEND_ADDR
-              value: "mak-app-active:80"
-            - name: USERS
-              value: "800"
+            - name: BASE_URL
+              value: "http://mak-app-active:80"
+            - name: RUN_ID
+              value: {{ $runId | quote }}
+            - name: PHASE
+              value: {{ .Values.loadgen.phase | quote }}
+            - name: SCENARIO_NAME
+              value: {{ .Values.loadgen.scenarioName | quote }}
+            - name: SCENARIO_VERSION
+              value: {{ .Values.loadgen.scenarioVersion | quote }}
+            - name: PROFILE
+              value: {{ .Values.loadgen.profile | quote }}
+            - name: TIME_SCALE
+              value: {{ .Values.loadgen.timeScale | quote }}
+            - name: CYCLES
+              value: {{ .Values.loadgen.cycles | quote }}
+            - name: LOW_RPS
+              value: {{ .Values.loadgen.lowRps | quote }}
+            - name: NORMAL_RPS
+              value: {{ .Values.loadgen.normalRps | quote }}
+            - name: PEAK_RPS
+              value: {{ .Values.loadgen.peakRps | quote }}
+            - name: SPIKE_RPS
+              value: {{ .Values.loadgen.spikeRps | quote }}
+            - name: RECOVERY_RPS
+              value: {{ .Values.loadgen.recoveryRps | quote }}
+            - name: MAX_VUS
+              value: {{ .Values.loadgen.maxVUs | quote }}
+            - name: PAYMENT_PERCENT
+              value: {{ .Values.loadgen.paymentPercent | quote }}
+            - name: PAYMENT_AMOUNT
+              value: {{ .Values.loadgen.paymentAmount | quote }}
+            - name: TEST_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.loadgen.credentialsSecret.name | quote }}
+                  key: {{ .Values.loadgen.credentialsSecret.usernameKey | quote }}
+            - name: TEST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.loadgen.credentialsSecret.name | quote }}
+                  key: {{ .Values.loadgen.credentialsSecret.passwordKey | quote }}
+            - name: TEST_RECIPIENT_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.loadgen.credentialsSecret.name | quote }}
+                  key: {{ .Values.loadgen.credentialsSecret.recipientAccountKey | quote }}
+                  optional: true
+            {{- if .Values.loadgen.prometheusRemoteWriteEnabled }}
+            - name: K6_OUT
+              value: "experimental-prometheus-rw"
+            - name: K6_PROMETHEUS_RW_SERVER_URL
+              value: {{ .Values.loadgen.prometheusRemoteWriteUrl | quote }}
+            - name: K6_PROMETHEUS_RW_TREND_STATS
+              value: "p(50),p(95),p(99),avg,max"
+            {{- end }}
           resources:
-            requests:
-              cpu: 500m
-              memory: 512Mi
-            limits:
-              cpu: 2000m
-              memory: 1Gi
+{{ toYaml .Values.loadgen.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+          volumeMounts:
+            - name: script
+              mountPath: /scripts
+              readOnly: true
+            - name: results
+              mountPath: /results
+      volumes:
+        - name: script
+          configMap:
+            name: {{ $jobName }}-script
+        - name: results
+          emptyDir: {}
 {{- end -}}
