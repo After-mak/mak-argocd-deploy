@@ -63,11 +63,13 @@ spec:
       app: frontend
   strategy:
     canary:
-      activeService: mak-app-active
-      previewService: mak-app-preview
+      stableService: mak-app-active
+      canaryService: mak-app-preview
       trafficRouting:
-        gateway:
-          httpRouteName: mak-app-route
+        plugins:
+          argoproj-labs/gatewayAPI:
+            httpRoute: mak-app-route
+            namespace: {{ .Release.Namespace | default "default" }}
       steps:
         - setWeight: 10
         - pause: {}
@@ -150,7 +152,7 @@ spec:
           name: tmp
         - name: publickey
           secret:
-            secretName: jwt-key
+            secretName: {{ required "secrets.existingSecret is required" .Values.secrets.existingSecret | quote }}
             items:
               - key: jwtRS256.key.pub
                 path: publickey

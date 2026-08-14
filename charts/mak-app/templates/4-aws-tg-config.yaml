@@ -13,15 +13,14 @@ spec:
     targetType: ip
     protocol: HTTP
     protocolVersion: HTTP1
-    healthCheck:
-      enabled: true
-      intervalSeconds: 15
-      timeoutSeconds: 5
+    healthCheckConfig:
+      healthCheckInterval: 15
+      healthCheckTimeout: 5
       healthyThresholdCount: 2
       unhealthyThresholdCount: 2
-      port: "8080"
-      path: "/version"
-      protocol: HTTP
+      healthCheckPort: "8080"
+      healthCheckPath: "/version"
+      healthCheckProtocol: HTTP
 ---
 apiVersion: gateway.k8s.aws/v1beta1
 kind: TargetGroupConfiguration
@@ -37,13 +36,12 @@ spec:
     targetType: ip
     protocol: HTTP
     protocolVersion: HTTP1
-    healthCheck:
-      enabled: true
-      intervalSeconds: 15
-      timeoutSeconds: 5
+    healthCheckConfig:
+      healthCheckInterval: 15
+      healthCheckTimeout: 5
       healthyThresholdCount: 2
       unhealthyThresholdCount: 2
-      port: "8080"
-      path: "/version"
-      protocol: HTTP
+      healthCheckPort: "8080"
+      healthCheckPath: "/version"
+      healthCheckProtocol: HTTP
 {{- end -}}
