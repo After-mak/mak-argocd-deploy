@@ -98,26 +98,7 @@ jobs:
           RESOURCES_PATH: ${{ steps.map.outputs.resources_path }}
         run: |
           set -euo pipefail
-
-          if [ ! -f "$VALUES_FILE" ]; then
-            echo "::error::${VALUES_FILE} 를 찾을 수 없습니다. '${DEPLOYMENT_NAME}'에 대한 차트 경로 매핑이"
-            echo "::error::잘못되었거나, 이 워크플로우 상단의 case 문에 아직 이 워크로드가 등록되지 않았습니다."
-            exit 1
-          fi
-
-          # 매핑된 경로에 resources.requests.cpu가 실제로 존재하는지 먼저 확인합니다.
-          # 없으면 엉뚱한 곳에 새 키를 만들어 "성공"으로 조용히 끝나버리는(실제로는 배포에
-          # 아무 영향도 주지 못하는) 상황을 막기 위함입니다.
-          if [ "$(yq "${RESOURCES_PATH}.cpu // \"MISSING\"" "$VALUES_FILE")" = "MISSING" ]; then
-            echo "::error::${VALUES_FILE}의 ${RESOURCES_PATH}.cpu 경로가 없습니다."
-            echo "::error::'${DEPLOYMENT_NAME}'의 실제 차트 구조에 맞게 이 워크플로우의 매핑을 수정한 뒤 다시 실행하세요."
-            exit 1
-          fi
-
-          yq -i "${RESOURCES_PATH}.cpu = strenv(CPU) | ${RESOURCES_PATH}.memory = strenv(MEMORY)" "$VALUES_FILE"
-
-          echo "=== [${NAMESPACE}/${DEPLOYMENT_NAME}] 수정된 ${VALUES_FILE} (${RESOURCES_PATH}) ==="
-          cat "$VALUES_FILE"
+          .github/scripts/update-resource-requests.sh
 
       - name: Commit and Push
         env:
