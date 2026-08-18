@@ -2,23 +2,55 @@
 replicaCount: 3
 images:
   frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.9"
-  userservice: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:2.7"
-  contacts: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:2.7"
-  balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:2.7"
-  ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:2.7"
-  transactionhistory: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:2.7"
+  userservice: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:2.9"
+  contacts: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:2.9"
+  balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:2.9"
+  ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:2.9"
+  transactionhistory: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:2.9"
   worker: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.22"
   loadgen: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_loadgen_ecr:v0.6.11"
 image:
   pullPolicy: IfNotPresent
 # 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
 resources:
-  requests:
-    cpu: "200m"
-    memory: "256Mi"
-  limits:
-    cpu: "500m"
-    memory: "512Mi"
+  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.9"
+    requests: { cpu: "200m", memory: "256Mi" }
+    limits: { cpu: "500m", memory: "512Mi" }
+  userservice: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:2.9"
+    app:
+      requests: { cpu: "200m", memory: "256Mi" }
+      limits: {}
+    worker:
+      requests: { cpu: "250m", memory: "256Mi" }
+      limits: { cpu: "500m", memory: "512Mi" }
+  contacts: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:2.9"
+    app:
+      requests: { cpu: "200m", memory: "256Mi" }
+      limits: {}
+    worker:
+      requests: { cpu: "250m", memory: "256Mi" }
+      limits: { cpu: "500m", memory: "512Mi" }
+  balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:2.9"
+    app:
+      requests: { cpu: "200m", memory: "256Mi" }
+      limits: {}
+    worker:
+      requests: { cpu: "250m", memory: "256Mi" }
+      limits: { cpu: "500m", memory: "512Mi" }
+  ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:2.9"
+    app:
+      requests: { cpu: "200m", memory: "256Mi" }
+      limits: {}
+    worker:
+      requests: { cpu: "250m", memory: "256Mi" }
+      limits: { cpu: "500m", memory: "512Mi" }
+  transactionhistory: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:2.9"
+    app:
+      requests: { cpu: "200m", memory: "256Mi" }
+      limits: {}
+    worker:
+      requests: { cpu: "250m", memory: "256Mi" }
+      limits: { cpu: "500m", memory: "512Mi" }
 service:
   type: ClusterIP
   port: 80
@@ -34,11 +66,11 @@ secrets:
   jwtPublicKey: ""
 components:
   backend: true
-  frontend: true
+  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.9"
 
 # KEDA 기반 오토스케일링 설정
 autoscaling:
-  frontend:
+  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.9"
     enabled: true
     minReplicas: 1
     maxReplicas: 10
@@ -51,12 +83,12 @@ autoscaling:
       stabilizationWindowSeconds: 300
       periodSeconds: 60
     chronos:
-      serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
+      serverAddress: "http://thanos-query.prometheus.svc.cluster.local:9090"
       query: >-
         (
-          max(chronos_scaling_replicas{deployment="frontend"})
-          * max(chronos_forecast_valid{deployment="frontend"})
-          * max((time() - chronos_forecast_timestamp_seconds{deployment="frontend"}) < bool 120)
+          max(chronos_scaling_replicas{deployment="mak-app-rollout"})
+          * max(chronos_forecast_valid{deployment="mak-app-rollout"})
+          * max((time() - chronos_forecast_timestamp_seconds{deployment="mak-app-rollout"}) < bool 120)
         ) or vector(0)
       threshold: "1"
       activationThreshold: "0"
@@ -72,3 +104,38 @@ autoscaling:
       serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
       threshold: "1"
       activationThreshold: "0"
+
+# 유한 시간 Bank of Anthos k6 Job. runId 변경이 재실행 키이며 기본값은 배포하지 않음.
+loadgen:
+  enabled: false
+  image: "grafana/k6:0.54.0"
+  runId: ""
+  phase: "smoke"
+  scenarioName: "boa-long-cycle-v1"
+  scenarioVersion: "v1"
+  profile: "smoke"
+  timeScale: "1"
+  cycles: "1"
+  lowRps: "1"
+  normalRps: "10"
+  peakRps: "25"
+  spikeRps: "40"
+  recoveryRps: "3"
+  maxVUs: "160"
+  paymentPercent: "0"
+  paymentAmount: "0.01"
+  prometheusRemoteWriteEnabled: false
+  prometheusRemoteWriteUrl: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090/api/v1/write"
+  activeDeadlineSeconds: 90000
+  credentialsSecret:
+    name: "bank-loadgen-credentials"
+    usernameKey: "username"
+    passwordKey: "password"
+    recipientAccountKey: "recipient-account"
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 1Gi

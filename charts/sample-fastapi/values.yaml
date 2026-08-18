@@ -55,6 +55,8 @@ worker:
       serverAddress: http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090
       query: >-
         (
+
+
           max(chronos_scaling_replicas{exported_namespace="sample-fastapi",deployment="sample-worker"})
           * max(chronos_forecast_valid{exported_namespace="sample-fastapi",deployment="sample-worker"})
           * max((time() - chronos_forecast_timestamp_seconds{exported_namespace="sample-fastapi",deployment="sample-worker"}) < bool 120)
@@ -63,7 +65,7 @@ worker:
       activationThreshold: "0"
   resources:
     requests:
-      cpu: 361m
+      cpu: 425m
       memory: 142Mi
     limits:
       cpu: 1000m

@@ -1,27 +1,29 @@
 image:
   repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/chronos-model
-  tag: "v0.1.4"
+  tag: "v0.1.5"
   pullPolicy: IfNotPresent
 
 replicaCount: 1
+nodeSelector:
+  role: management
 
 service:
   port: 8000
 
 forecast:
-  mode: shadow
+  mode: active
   prometheusUrl: http://thanos-query.prometheus.svc.cluster.local:9090
   targetNamespace: frontend
   targetDeployment: mak-app-rollout
   podPattern: mak-app-rollout-.*
   container: mak-container
-  thresholdCores: "0.3"
-  capacityPerReplicaCores: "0.5"
+  thresholdCores: "0.1"
+  capacityPerReplicaCores: "0.15"
   lookbackHours: "2"
   predictionLength: "12"
   stepSeconds: "60"
   minReplicas: "1"
-  maxReplicas: "3"
+  maxReplicas: "5"
   intervalSeconds: "60"
   ttlSeconds: "120"
   modelId: amazon/chronos-2
