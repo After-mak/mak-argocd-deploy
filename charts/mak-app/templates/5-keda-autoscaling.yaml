@@ -35,6 +35,14 @@ spec:
         listLength: {{ $.Values.autoscaling.backend.redisListLength | quote }}
         enableTLS: {{ $.Values.redis.tlsEnabled | quote }}
         databaseIndex: {{ $.Values.redis.db | default "0" | quote }}
+    - type: prometheus
+      name: chronos2-scaling
+      metricType: AverageValue
+      metadata:
+        serverAddress: {{ $.Values.autoscaling.backend.chronos.serverAddress | quote }}
+        query: >-
+          (max(chronos_scaling_replicas{deployment="{{ $serviceName }}"}) * max(chronos_forecast_valid{deployment="{{ $serviceName }}"}) * max((time() - chronos_forecast_timestamp_seconds{deployment="{{ $serviceName }}"}) < bool 120)) or vector(0)
+        threshold: {{ $.Values.autoscaling.backend.chronos.threshold | quote }}
+        activationThreshold: {{ $.Values.autoscaling.backend.chronos.activationThreshold | quote }}
 ---
-{{- end }}
 {{- end }}

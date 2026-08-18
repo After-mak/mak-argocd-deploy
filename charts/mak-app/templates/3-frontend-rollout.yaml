@@ -113,6 +113,12 @@ spec:
               value: {{ .Values.redis.tlsEnabled | quote }}
             - name: REDIS_PASSWORD
               value: {{ .Values.redis.password | quote }}
+            - name: SLOTS_PER_POD
+              value: {{ .Values.autoscaling.frontend.slotsPerPod | default "20" | quote }}
+            - name: USER_SESSION_TTL
+              value: {{ .Values.autoscaling.frontend.userSessionTtl | default "60" | quote }}
+            - name: ENABLE_WAITING_ROOM
+              value: "true"
 
             # === 외부 CNPG 데이터베이스 연동 계정 주입 ===
             # - name: DB_HOST
