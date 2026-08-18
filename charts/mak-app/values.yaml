@@ -1,7 +1,7 @@
 # 기본 애플리케이션 설정
 replicaCount: 3
 images:
-  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.8"
+  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.9"
   userservice: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:2.8"
   contacts: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:2.8"
   balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:2.8"
@@ -13,7 +13,7 @@ image:
   pullPolicy: IfNotPresent
 # 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
 resources:
-  frontend:
+  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.9"
     requests: { cpu: "200m", memory: "256Mi" }
     limits: { cpu: "500m", memory: "512Mi" }
   userservice:
@@ -66,11 +66,11 @@ secrets:
   jwtPublicKey: ""
 components:
   backend: true
-  frontend: true
+  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.9"
 
 # KEDA 기반 오토스케일링 설정
 autoscaling:
-  frontend:
+  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.9"
     enabled: true
     minReplicas: 1
     maxReplicas: 10
