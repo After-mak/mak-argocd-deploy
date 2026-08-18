@@ -46,3 +46,4 @@ spec:
         activationThreshold: {{ $.Values.autoscaling.backend.chronos.activationThreshold | quote }}
 ---
 {{- end }}
+{{- end }}
