@@ -13,38 +13,38 @@ image:
   pullPolicy: IfNotPresent
 # 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
 resources:
-  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.9"
+  frontend:
     requests: { cpu: "200m", memory: "256Mi" }
     limits: { cpu: "500m", memory: "512Mi" }
-  userservice: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:2.9"
+  userservice:
     app:
       requests: { cpu: "200m", memory: "256Mi" }
       limits: {}
     worker:
       requests: { cpu: "250m", memory: "256Mi" }
       limits: { cpu: "500m", memory: "512Mi" }
-  contacts: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:2.9"
+  contacts:
     app:
       requests: { cpu: "200m", memory: "256Mi" }
       limits: {}
     worker:
       requests: { cpu: "250m", memory: "256Mi" }
       limits: { cpu: "500m", memory: "512Mi" }
-  balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:2.9"
+  balancereader:
     app:
       requests: { cpu: "200m", memory: "256Mi" }
       limits: {}
     worker:
       requests: { cpu: "250m", memory: "256Mi" }
       limits: { cpu: "500m", memory: "512Mi" }
-  ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:2.9"
+  ledgerwriter:
     app:
       requests: { cpu: "200m", memory: "256Mi" }
       limits: {}
     worker:
       requests: { cpu: "250m", memory: "256Mi" }
       limits: { cpu: "500m", memory: "512Mi" }
-  transactionhistory: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:2.9"
+  transactionhistory:
     app:
       requests: { cpu: "200m", memory: "256Mi" }
       limits: {}
@@ -66,11 +66,11 @@ secrets:
   jwtPublicKey: ""
 components:
   backend: true
-  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.9"
+  frontend: true
 
 # KEDA 기반 오토스케일링 설정
 autoscaling:
-  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:2.9"
+  frontend:
     enabled: true
     minReplicas: 1
     maxReplicas: 10
