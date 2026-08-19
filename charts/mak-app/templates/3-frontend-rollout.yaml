@@ -156,11 +156,7 @@ spec:
           name: tmp
         - name: publickey
           secret:
-<<<<<<< HEAD
-            secretName: {{ .Values.secrets.existingSecret | default "jwt-key" }}
-=======
             secretName: {{ required "secrets.existingSecret is required" .Values.secrets.existingSecret | quote }}
->>>>>>> 26a7d0bd10a789a890fc6b09427db6461e0e46ec
             items:
               - key: jwtRS256.key.pub
                 path: publickey
