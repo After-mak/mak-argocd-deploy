@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasource-krr-logs
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  labels:
+    grafana_datasource: "1"
+data:
+  krr-logs-datasource.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: KRR-Logs
+        uid: krr-logs-postgres
+        type: grafana-postgresql-datasource
+        url: krr-data-db-rw.finops.svc.cluster.local:5432
+        user: $__env{KRR_DB_USER}
+        access: proxy
+        isDefault: false
+        jsonData:
+          database: krr_logs_db
+          sslmode: disable
+        secureJsonData:
+          password: $__env{KRR_DB_PASSWORD}
