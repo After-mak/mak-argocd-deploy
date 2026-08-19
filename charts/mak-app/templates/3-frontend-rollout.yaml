@@ -156,7 +156,7 @@ spec:
           name: tmp
         - name: publickey
           secret:
-            secretName: jwt-key
+            secretName: {{ required "secrets.existingSecret is required" .Values.secrets.existingSecret | quote }}
             items:
               - key: jwtRS256.key.pub
                 path: publickey
