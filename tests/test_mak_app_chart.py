@@ -91,3 +91,59 @@ def test_loadgen_rejects_phase_profile_mismatch():
     result = subprocess.run(command, check=False, capture_output=True, text=True)
     assert result.returncode != 0
     assert "loadgen.profile must be long" in result.stderr
+
+
+def pod_secret_volumes(workload: dict) -> dict[str, dict]:
+    pod_spec = workload["spec"]["template"]["spec"]
+    return {
+        item["name"]: item["secret"]
+        for item in pod_spec["volumes"]
+        if "secret" in item
+    }
+
+
+def test_bank_workloads_reference_external_jwt_secret_without_rendering_key_material():
+    secret_name = "bank-jwt-key-v2"
+    backend_docs = render(
+        "components.frontend=false",
+        f"secrets.existingSecret={secret_name}",
+        namespace="backend",
+    )
+    frontend_docs = render(
+        "components.backend=false",
+        f"secrets.existingSecret={secret_name}",
+        namespace="frontend",
+    )
+
+    rendered_secrets = [
+        item for item in backend_docs + frontend_docs if item.get("kind") == "Secret"
+    ]
+    assert all(item["metadata"]["name"] != secret_name for item in rendered_secrets)
+    assert all(item["metadata"]["name"] != "jwt-key" for item in rendered_secrets)
+
+    backend = deployments(backend_docs)
+    for name, deployment in backend.items():
+        jwt_volume = next(iter(pod_secret_volumes(deployment).values()))
+        assert jwt_volume["secretName"] == secret_name
+        keys = {item["key"] for item in jwt_volume["items"]}
+        expected = (
+            {"jwtRS256.key", "jwtRS256.key.pub"}
+            if name == "userservice"
+            else {"jwtRS256.key.pub"}
+        )
+        assert keys == expected
+
+    rollout = next(item for item in frontend_docs if item.get("kind") == "Rollout")
+    frontend_jwt_volume = pod_secret_volumes(rollout)["publickey"]
+    assert frontend_jwt_volume["secretName"] == secret_name
+    assert {item["key"] for item in frontend_jwt_volume["items"]} == {"jwtRS256.key.pub"}
+
+
+def test_bank_chart_rejects_empty_external_jwt_secret_name():
+    command = [
+        "helm", "template", "mak-app", str(CHART), "--namespace", "backend",
+        "--set", "components.frontend=false", "--set-string", "secrets.existingSecret=",
+    ]
+    result = subprocess.run(command, check=False, capture_output=True, text=True)
+    assert result.returncode != 0
+    assert "secrets.existingSecret is required" in result.stderr
