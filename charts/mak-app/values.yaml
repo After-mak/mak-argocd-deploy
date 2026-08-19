@@ -86,24 +86,6 @@ autoscaling:
       serverAddress: "http://thanos-query.prometheus.svc.cluster.local:9090"
       query: >-
         (
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
           max(chronos_scaling_replicas{deployment="mak-app-rollout"})
           * max(chronos_forecast_valid{deployment="mak-app-rollout"})
           * max((time() - chronos_forecast_timestamp_seconds{deployment="mak-app-rollout"}) < bool 120)
@@ -123,7 +105,7 @@ autoscaling:
       activationThreshold: "0"
 # 유한 시간 Bank of Anthos k6 Job. runId 변경이 재실행 키이며 기본값은 배포하지 않음.
 loadgen:
-  enabled: false
+  enabled: true
   image: "grafana/k6:0.54.0"
   runId: ""
   phase: "smoke"
