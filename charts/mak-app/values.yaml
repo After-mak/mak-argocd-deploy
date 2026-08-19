@@ -5,7 +5,7 @@ images:
   userservice: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:3.1"
   contacts: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:3.1"
   balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:3.0"
-  ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:3.0"
+  ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:3.1"
   transactionhistory: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:3.1"
   worker: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.22"
   loadgen: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_loadgen_ecr:v0.6.11"
@@ -86,6 +86,7 @@ autoscaling:
       serverAddress: "http://thanos-query.prometheus.svc.cluster.local:9090"
       query: >-
         (
+
 
 
 
