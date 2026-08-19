@@ -25,7 +25,7 @@
   "panels": [
     {
       "datasource": {
-        "type": "postgres",
+        "type": "grafana-postgresql-datasource",
         "uid": "krr-logs-postgres"
       },
       "fieldConfig": {
@@ -76,7 +76,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "postgres",
+            "type": "grafana-postgresql-datasource",
             "uid": "krr-logs-postgres"
           },
           "editorMode": "code",
@@ -91,7 +91,7 @@
     },
     {
       "datasource": {
-        "type": "postgres",
+        "type": "grafana-postgresql-datasource",
         "uid": "krr-logs-postgres"
       },
       "fieldConfig": {
@@ -150,7 +150,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "postgres",
+            "type": "grafana-postgresql-datasource",
             "uid": "krr-logs-postgres"
           },
           "editorMode": "code",
@@ -165,7 +165,7 @@
     },
     {
       "datasource": {
-        "type": "postgres",
+        "type": "grafana-postgresql-datasource",
         "uid": "krr-logs-postgres"
       },
       "fieldConfig": {
@@ -262,7 +262,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "postgres",
+            "type": "grafana-postgresql-datasource",
             "uid": "krr-logs-postgres"
           },
           "editorMode": "code",
@@ -277,7 +277,7 @@
     },
     {
       "datasource": {
-        "type": "postgres",
+        "type": "grafana-postgresql-datasource",
         "uid": "krr-logs-postgres"
       },
       "fieldConfig": {
@@ -542,7 +542,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "postgres",
+            "type": "grafana-postgresql-datasource",
             "uid": "krr-logs-postgres"
           },
           "editorMode": "code",
