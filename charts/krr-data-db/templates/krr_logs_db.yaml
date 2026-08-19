@@ -29,9 +29,16 @@ spec:
               cpu_recommended VARCHAR(50),
               mem_current VARCHAR(50),
               mem_recommended VARCHAR(50),
+              -- Grafana 전/후 비교·절감액·실사용률·안전성(OOM/Throttling) 시각화용 컬럼
+              cost_savings_pct DOUBLE PRECISION,
+              cost_savings_amount DOUBLE PRECISION,
+              current_cost DOUBLE PRECISION,
+              final_cost DOUBLE PRECISION,
+              cpu_utilization_pct DOUBLE PRECISION,
+              oom_killed BOOLEAN DEFAULT FALSE,
+              throttled BOOLEAN DEFAULT FALSE,
               analyzed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           );
-          ALTER TABLE krr_logs ADD COLUMN IF NOT EXISTS container_name VARCHAR(255) NOT NULL DEFAULT '';
           ALTER TABLE krr_logs OWNER TO scott;
   affinity:
     nodeSelector:

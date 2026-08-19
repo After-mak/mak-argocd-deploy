@@ -1,8 +1,16 @@
 namespace: prometheus
 
-dashboard:
-  name: grafana-dashboard-kubernetes-finops
-  label: grafana_dashboard
-  labelValue: "1"
-  folder: FinOps
-  fileName: kubernetes-finops-overview.json
+# 대시보드를 여러 개 배포할 수 있도록 리스트로 관리합니다. 항목을 추가하면
+# templates/dashboard-configmap.yaml이 각각을 별도 ConfigMap으로 만들어
+# Grafana 사이드카가 자동으로 읽어갑니다.
+dashboards:
+  - name: grafana-dashboard-kubernetes-finops
+    label: grafana_dashboard
+    labelValue: "1"
+    folder: FinOps
+    fileName: kubernetes-finops-overview.json
+  - name: grafana-dashboard-krr-cost-optimization
+    label: grafana_dashboard
+    labelValue: "1"
+    folder: FinOps
+    fileName: krr-cost-optimization.json
