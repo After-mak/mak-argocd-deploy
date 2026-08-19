@@ -121,7 +121,7 @@ loadgen:
   peakRps: "25"
   spikeRps: "40"
   recoveryRps: "3"
-  maxVUs: "160"
+  maxVUs: "1000"
   paymentPercent: "0"
   paymentAmount: "0.01"
   prometheusRemoteWriteEnabled: false
