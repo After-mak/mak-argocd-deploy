@@ -107,7 +107,7 @@ autoscaling:
 loadgen:
   enabled: true
   image: "grafana/k6:0.54.0"
-  runId: "1500"
+  runId: "1501"
   phase: "pilot"
   scenarioName: "boa-long-cycle-v1"
   scenarioVersion: "v1"
