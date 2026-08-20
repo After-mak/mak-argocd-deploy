@@ -107,11 +107,11 @@ autoscaling:
 loadgen:
   enabled: true
   image: "grafana/k6:0.54.0"
-  runId: "1501"
+  runId: "1502"
   phase: "pilot"
   scenarioName: "boa-long-cycle-v1"
   scenarioVersion: "v1"
-  profile: "long"
+  profile: "smoke"
   timeScale: "1"
   cycles: "1"
   lowRps: "100"
@@ -120,6 +120,7 @@ loadgen:
   spikeRps: "700"
   recoveryRps: "100"
   maxVUs: "2000"
+  runAsNonRoot: true
   paymentPercent: "50"
   paymentAmount: "0.01"
   prometheusRemoteWriteEnabled: false

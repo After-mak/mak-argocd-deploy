@@ -126,6 +126,7 @@ spec:
             capabilities:
               drop: ["ALL"]
             runAsNonRoot: true
+            runAsUser: 12345
           volumeMounts:
             - name: script
               mountPath: /scripts
