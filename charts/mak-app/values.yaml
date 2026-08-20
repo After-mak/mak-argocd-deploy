@@ -108,7 +108,7 @@ loadgen:
   enabled: true
   image: "grafana/k6:0.54.0"
   runId: "1502"
-  phase: "pilot"
+  phase: "smoke"
   scenarioName: "boa-long-cycle-v1"
   scenarioVersion: "v1"
   profile: "smoke"
