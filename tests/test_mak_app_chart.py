@@ -43,8 +43,9 @@ def test_all_bank_containers_render_explicit_requests_and_preserve_limits():
 
 
 def test_frontend_rollout_and_opt_in_load_job_render_expected_contract():
-    disabled = render("components.backend=false", namespace="frontend")
+    disabled = render("components.backend=false", "loadgen.enabled=false", namespace="frontend")
     assert not any(item.get("kind") == "Job" for item in disabled)
+    assert not any(item.get("kind") == "PersistentVolumeClaim" for item in disabled)
 
     docs = render(
         "components.backend=false",
@@ -59,16 +60,56 @@ def test_frontend_rollout_and_opt_in_load_job_render_expected_contract():
     frontend = rollout["spec"]["template"]["spec"]["containers"][0]
     assert frontend["name"] == "mak-container"
     assert frontend["resources"]["requests"] == {"cpu": "200m", "memory": "256Mi"}
+    frontend_env = {item["name"]: item for item in frontend["env"]}
+    assert frontend_env["ENABLE_WAITING_ROOM"]["value"] == "true"
+    scaled_object = next(item for item in docs if item.get("kind") == "ScaledObject")
+    assert {trigger["name"] for trigger in scaled_object["spec"]["triggers"]} == {
+        "chronos-predictive", "waiting-queue"
+    }
+
+    pvc = next(item for item in docs if item.get("kind") == "PersistentVolumeClaim")
+    assert pvc["metadata"]["name"] == "bank-loadgen-results"
+    assert pvc["metadata"]["annotations"]["argocd.argoproj.io/sync-options"] == "Prune=false"
+    assert pvc["metadata"]["annotations"]["argocd.argoproj.io/compare-options"] == "IgnoreExtraneous"
+    assert pvc["spec"]["storageClassName"] == "ebs-gp3"
+    assert pvc["spec"]["resources"]["requests"]["storage"] == "20Gi"
+    script_config_map = next(
+        item for item in docs
+        if item.get("kind") == "ConfigMap" and item["metadata"]["name"].endswith("-script")
+    )
+    script = script_config_map["data"]["bank-of-anthos-long-run.js"]
+    assert "summary-${SAFE_RUN_ID}.json" in script
 
     job = next(item for item in docs if item.get("kind") == "Job")
     assert job["metadata"]["name"] == "bank-loadgen-pre-boa-pre-001"
-    env = {
-        item["name"]: item for item in job["spec"]["template"]["spec"]["containers"][0]["env"]
-    }
+    pod_spec = job["spec"]["template"]["spec"]
+    assert pod_spec["securityContext"]["fsGroup"] == 12345
+    container = pod_spec["containers"][0]
+    assert "--summary-export=/results/k6-summary-boa-pre-001.json" in container["args"]
+    assert "json=/results/raw-boa-pre-001.json" in container["args"]
+    results_volume = next(item for item in pod_spec["volumes"] if item["name"] == "results")
+    assert results_volume["persistentVolumeClaim"]["claimName"] == "bank-loadgen-results"
+    env = {item["name"]: item for item in container["env"]}
     assert env["RUN_ID"]["value"] == "BOA-PRE-001"
     assert env["PHASE"]["value"] == "pre"
     assert "K6_OUT" not in env
     assert env["TEST_PASSWORD"]["valueFrom"]["secretKeyRef"]["name"] == "bank-loadgen-credentials"
+
+
+def test_frontend_waiting_room_can_be_disabled_for_krr_experiments():
+    docs = render(
+        "components.backend=false",
+        "waitingRoom.enabled=false",
+        namespace="frontend",
+    )
+    rollout = next(item for item in docs if item.get("kind") == "Rollout")
+    frontend = rollout["spec"]["template"]["spec"]["containers"][0]
+    env = {item["name"]: item for item in frontend["env"]}
+    assert env["ENABLE_WAITING_ROOM"]["value"] == "false"
+    scaled_object = next(item for item in docs if item.get("kind") == "ScaledObject")
+    assert [trigger["name"] for trigger in scaled_object["spec"]["triggers"]] == [
+        "chronos-predictive"
+    ]
 
 
 def test_finops_workflow_has_explicit_bank_mapping_and_fails_unknown_targets():

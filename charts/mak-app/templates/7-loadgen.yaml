@@ -1,4 +1,26 @@
 {{- if and .Values.components.frontend .Values.loadgen.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.loadgen.persistence.claimName | quote }}
+  namespace: {{ .Release.Namespace | default "default" }}
+  labels:
+    app: bank-loadgen
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    helm.sh/resource-policy: keep
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.loadgen.persistence.storageClassName | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.loadgen.persistence.size | quote }}
+---
+{{ end }}
+{{ if and .Values.components.frontend .Values.loadgen.enabled -}}
 {{- $runId := required "loadgen.runId is required when loadgen.enabled=true" .Values.loadgen.runId -}}
 {{- if not (has .Values.loadgen.phase (list "pre" "post" "smoke" "pilot")) -}}
 {{- fail "loadgen.phase must be one of pre, post, smoke, pilot" -}}
@@ -48,6 +70,9 @@ spec:
     spec:
       restartPolicy: Never
       automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 12345
+        fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: k6
           image: {{ .Values.loadgen.image | quote }}
@@ -56,9 +81,9 @@ spec:
             - run
             - --tag
             - {{ printf "testid=%s" $runId | quote }}
-            - --summary-export=/results/summary.json
+            - {{ printf "--summary-export=/results/k6-summary-%s.json" $safeRunId | quote }}
             - --out
-            - json=/results/raw.json
+            - {{ printf "json=/results/raw-%s.json" $safeRunId | quote }}
             {{- if .Values.loadgen.prometheusRemoteWriteEnabled }}
             - --out
             - experimental-prometheus-rw
@@ -138,5 +163,6 @@ spec:
           configMap:
             name: {{ $jobName }}-script
         - name: results
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: {{ .Values.loadgen.persistence.claimName | quote }}
 {{- end -}}

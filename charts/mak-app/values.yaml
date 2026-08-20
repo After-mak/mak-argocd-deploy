@@ -68,6 +68,9 @@ secrets:
 components:
   backend: true
   frontend: true
+# Frontend Waiting Room stays enabled by default and is disabled only for KRR experiments.
+waitingRoom:
+  enabled: true
 # KEDA 기반 오토스케일링 설정
 autoscaling:
   frontend:
@@ -114,17 +117,21 @@ loadgen:
   profile: "smoke"
   timeScale: "1"
   cycles: "1"
-  lowRps: "100"
-  normalRps: "300"
-  peakRps: "500"
-  spikeRps: "700"
-  recoveryRps: "100"
-  maxVUs: "2000"
-  paymentPercent: "50"
+  lowRps: "1"
+  normalRps: "10"
+  peakRps: "25"
+  spikeRps: "40"
+  recoveryRps: "3"
+  maxVUs: "1500"
+  paymentPercent: "0"
   paymentAmount: "0.01"
-  prometheusRemoteWriteEnabled: false
+  prometheusRemoteWriteEnabled: true
   prometheusRemoteWriteUrl: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090/api/v1/write"
   activeDeadlineSeconds: 90000
+  persistence:
+    claimName: "bank-loadgen-results"
+    storageClassName: "ebs-gp3"
+    size: "20Gi"
   credentialsSecret:
     name: "bank-loadgen-credentials"
     usernameKey: "username"
