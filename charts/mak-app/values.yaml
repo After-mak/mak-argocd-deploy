@@ -120,7 +120,6 @@ loadgen:
   spikeRps: "700"
   recoveryRps: "100"
   maxVUs: "2000"
-  runAsNonRoot: true
   paymentPercent: "50"
   paymentAmount: "0.01"
   prometheusRemoteWriteEnabled: false
