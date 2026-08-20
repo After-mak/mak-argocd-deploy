@@ -15,7 +15,12 @@ const RECOVERY_RPS = integerEnv('RECOVERY_RPS', 3, 1);
 const MAX_VUS = integerEnv('MAX_VUS', Math.max(100, SPIKE_RPS * 4), SPIKE_RPS);
 const PAYMENT_PERCENT = numberEnv('PAYMENT_PERCENT', 0, 0, 100);
 const PAYMENT_AMOUNT = __ENV.PAYMENT_AMOUNT || '0.01';
-const BASE_URL = (__ENV.BASE_URL || '').replace(/\/$/, '');
+const BASE_URL = (__ENV.BASE_URL || "").replace(/\/$/, "");
+const SAFE_RUN_ID = (__ENV.RUN_ID || "")
+  .toLowerCase()
+  .replace(/[^a-z0-9-]/g, "-")
+  .slice(0, 32)
+  .replace(/^-+|-+$/g, "");
 
 validateEnvironment();
 
@@ -267,5 +272,5 @@ export function handleSummary(data) {
     metrics: data.metrics,
   };
   const rendered = `${JSON.stringify(summary, null, 2)}\n`;
-  return { stdout: rendered, '/results/summary.json': rendered };
+  return { stdout: rendered, [`/results/summary-${SAFE_RUN_ID}.json`]: rendered };
 }

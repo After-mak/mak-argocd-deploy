@@ -39,6 +39,7 @@ spec:
         query: {{ .Values.autoscaling.frontend.chronos.query | quote }}
         threshold: {{ .Values.autoscaling.frontend.chronos.threshold | quote }}
         activationThreshold: {{ .Values.autoscaling.frontend.chronos.activationThreshold | quote }}
+    {{- if .Values.waitingRoom.enabled }}
     # Redis 대기열 길이 기반 반응형 스케일링 트리거
     - type: redis
       name: waiting-queue
@@ -48,5 +49,6 @@ spec:
         listLength: {{ .Values.autoscaling.frontend.redisListLength | quote }}
         enableTLS: {{ .Values.redis.tlsEnabled | quote }}
         databaseIndex: {{ .Values.redis.db | default "0" | quote }}
+    {{- end }}
 ---
 {{- end }}
