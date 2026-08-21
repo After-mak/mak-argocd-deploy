@@ -5,7 +5,7 @@ nodeSelector:
 image:
   repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/finops-analyzer
   pullPolicy: IfNotPresent
-  tag: "v0.1.37"
+  tag: "v0.1.38"
 
 service:
   type: ClusterIP
