@@ -111,8 +111,8 @@ autoscaling:
     cpu:
       enabled: true
       serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
-      threshold: "0.10"
-      activationThreshold: "0.02"
+      threshold: "0.05"
+      activationThreshold: "0.01"
   backend:
     enabled: true
     minReplicas: 2

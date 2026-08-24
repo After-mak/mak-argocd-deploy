@@ -121,7 +121,7 @@ def test_frontend_waiting_room_can_be_disabled_for_krr_experiments():
     assert set(triggers) == {"chronos-predictive", "frontend-http-cpu"}
     cpu = triggers["frontend-http-cpu"]
     assert cpu["metricType"] == "AverageValue"
-    assert cpu["metadata"]["threshold"] == "0.10"
+    assert cpu["metadata"]["threshold"] == "0.05"
     assert 'container="mak-container"' in cpu["metadata"]["query"]
 
 
