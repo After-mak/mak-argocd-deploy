@@ -75,7 +75,8 @@ waitingRoom:
 autoscaling:
   frontend:
     enabled: true
-    minReplicas: 1
+    # Sudden HTTP bursts must not start from a single frontend pod.
+    minReplicas: 2
     maxReplicas: 10
     pollingInterval: 10
     cooldownPeriod: 60
@@ -106,10 +107,16 @@ autoscaling:
         ) or vector(0)
       threshold: "1"
       activationThreshold: "0"
+    # Absolute CPU target keeps PRE/POST scaling behavior independent of KRR request changes.
+    cpu:
+      enabled: true
+      serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
+      threshold: "0.10"
+      activationThreshold: "0.02"
   backend:
     enabled: true
-    minReplicas: 1
-    maxReplicas: 5
+    minReplicas: 2
+    maxReplicas: 10
     pollingInterval: 5
     cooldownPeriod: 60
     redisListLength: "2"
@@ -117,6 +124,11 @@ autoscaling:
       serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
       threshold: "1"
       activationThreshold: "0"
+    cpu:
+      enabled: true
+      serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
+      threshold: "0.25"
+      activationThreshold: "0.05"
 # 유한 시간 Bank of Anthos k6 Job. runId 변경이 재실행 키이며 기본값은 배포하지 않음.
 loadgen:
   enabled: false
@@ -134,6 +146,7 @@ loadgen:
   spikeRps: "40"
   recoveryRps: "3"
   maxVUs: "1500"
+  requestTimeout: "10s"
   paymentPercent: "0"
   paymentAmount: "0.01"
   prometheusRemoteWriteEnabled: true

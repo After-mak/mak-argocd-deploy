@@ -65,7 +65,7 @@ def test_frontend_rollout_and_opt_in_load_job_render_expected_contract():
     assert frontend_env["ENABLE_WAITING_ROOM"]["value"] == "true"
     scaled_object = next(item for item in docs if item.get("kind") == "ScaledObject")
     assert {trigger["name"] for trigger in scaled_object["spec"]["triggers"]} == {
-        "chronos-predictive", "waiting-queue"
+        "chronos-predictive", "frontend-http-cpu", "waiting-queue"
     }
 
     pvc = next(item for item in docs if item.get("kind") == "PersistentVolumeClaim")
@@ -93,6 +93,7 @@ def test_frontend_rollout_and_opt_in_load_job_render_expected_contract():
     env = {item["name"]: item for item in container["env"]}
     assert env["RUN_ID"]["value"] == "BOA-PRE-001"
     assert env["PHASE"]["value"] == "pre"
+    assert env["REQUEST_TIMEOUT"]["value"] == "10s"
     assert "K6_OUT" not in env
     assert env["TEST_PASSWORD"]["valueFrom"]["secretKeyRef"]["name"] == "bank-loadgen-credentials"
 
@@ -108,9 +109,26 @@ def test_frontend_waiting_room_can_be_disabled_for_krr_experiments():
     env = {item["name"]: item for item in frontend["env"]}
     assert env["ENABLE_WAITING_ROOM"]["value"] == "false"
     scaled_object = next(item for item in docs if item.get("kind") == "ScaledObject")
-    assert [trigger["name"] for trigger in scaled_object["spec"]["triggers"]] == [
-        "chronos-predictive"
-    ]
+    triggers = {trigger["name"]: trigger for trigger in scaled_object["spec"]["triggers"]}
+    assert set(triggers) == {"chronos-predictive", "frontend-http-cpu"}
+    cpu = triggers["frontend-http-cpu"]
+    assert cpu["metricType"] == "AverageValue"
+    assert cpu["metadata"]["threshold"] == "0.10"
+    assert 'container="mak-container"' in cpu["metadata"]["query"]
+
+
+def test_backend_has_http_cpu_fallback_independent_of_queue_metrics():
+    docs = render("components.frontend=false", namespace="backend")
+    scaled_objects = [item for item in docs if item.get("kind") == "ScaledObject"]
+    assert len(scaled_objects) == 5
+    for scaled_object in scaled_objects:
+        workload = scaled_object["spec"]["scaleTargetRef"]["name"]
+        triggers = {item["name"]: item for item in scaled_object["spec"]["triggers"]}
+        assert set(triggers) == {"queue", "chronos2-scaling", "http-cpu"}
+        cpu = triggers["http-cpu"]
+        assert cpu["metricType"] == "AverageValue"
+        assert cpu["metadata"]["threshold"] == "0.25"
+        assert f'container="{workload}"' in cpu["metadata"]["query"]
 
 
 def test_finops_workflow_has_explicit_bank_mapping_and_fails_unknown_targets():

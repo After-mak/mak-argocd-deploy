@@ -39,6 +39,19 @@ spec:
         query: {{ .Values.autoscaling.frontend.chronos.query | quote }}
         threshold: {{ .Values.autoscaling.frontend.chronos.threshold | quote }}
         activationThreshold: {{ .Values.autoscaling.frontend.chronos.activationThreshold | quote }}
+    {{- if .Values.autoscaling.frontend.cpu.enabled }}
+    # Real HTTP traffic does not populate the waiting-room queue. Scale on absolute
+    # frontend CPU as a request-independent reactive fallback for KRR PRE/POST runs.
+    - type: prometheus
+      name: frontend-http-cpu
+      metricType: AverageValue
+      metadata:
+        serverAddress: {{ .Values.autoscaling.frontend.cpu.serverAddress | quote }}
+        query: >-
+          sum(rate(container_cpu_usage_seconds_total{namespace="{{ .Release.Namespace | default "default" }}",pod=~"mak-app-rollout-.*",container="mak-container"}[1m])) or vector(0)
+        threshold: {{ .Values.autoscaling.frontend.cpu.threshold | quote }}
+        activationThreshold: {{ .Values.autoscaling.frontend.cpu.activationThreshold | quote }}
+    {{- end }}
     {{- if .Values.waitingRoom.enabled }}
     # Redis 대기열 길이 기반 반응형 스케일링 트리거
     - type: redis

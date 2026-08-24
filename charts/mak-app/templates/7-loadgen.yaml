@@ -118,6 +118,8 @@ spec:
               value: {{ .Values.loadgen.recoveryRps | quote }}
             - name: MAX_VUS
               value: {{ .Values.loadgen.maxVUs | quote }}
+            - name: REQUEST_TIMEOUT
+              value: {{ .Values.loadgen.requestTimeout | quote }}
             - name: PAYMENT_PERCENT
               value: {{ .Values.loadgen.paymentPercent | quote }}
             - name: PAYMENT_AMOUNT
