@@ -35,7 +35,7 @@ resources:
       requests: {cpu: "200m", memory: "256Mi"}
       limits: {}
     worker:
-      requests: {cpu: "250m", memory: "256Mi"}
+      requests: {cpu: "285m", memory: "154Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   ledgerwriter:
     app:
@@ -89,6 +89,7 @@ autoscaling:
       serverAddress: "http://thanos-query.prometheus.svc.cluster.local:9090"
       query: >-
         (
+
           max(chronos_scaling_replicas{deployment="mak-app-rollout"})
           * max(chronos_forecast_valid{deployment="mak-app-rollout"})
           * max((time() - chronos_forecast_timestamp_seconds{deployment="mak-app-rollout"}) < bool 120)
@@ -103,7 +104,7 @@ autoscaling:
     cooldownPeriod: 60
     redisListLength: "2"
     chronos:
-      serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090" 
+      serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
       threshold: "1"
       activationThreshold: "0"
 # 유한 시간 Bank of Anthos k6 Job. runId 변경이 재실행 키이며 기본값은 배포하지 않음.
