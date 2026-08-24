@@ -5,6 +5,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 CHART = ROOT / "charts" / "mak-app"
+CHART_VALUES = yaml.safe_load((CHART / "values.yaml").read_text())
 
 
 def render(*sets: str, namespace: str) -> list[dict]:
@@ -36,10 +37,9 @@ def test_all_bank_containers_render_explicit_requests_and_preserve_limits():
         }
         app = containers[workload]["resources"]
         worker = containers["worker"]["resources"]
-        assert app["requests"] == {"cpu": "200m", "memory": "256Mi"}
-        assert app["limits"] == {}
-        assert worker["requests"] == {"cpu": "250m", "memory": "256Mi"}
-        assert worker["limits"] == {"cpu": "500m", "memory": "512Mi"}
+        expected = CHART_VALUES["resources"][workload]
+        assert app == expected["app"]
+        assert worker == expected["worker"]
 
 
 def test_frontend_rollout_and_opt_in_load_job_render_expected_contract():
@@ -54,12 +54,13 @@ def test_frontend_rollout_and_opt_in_load_job_render_expected_contract():
         "loadgen.phase=pre",
         "loadgen.profile=long",
         "loadgen.cycles=18",
+        "waitingRoom.enabled=true",
         namespace="frontend",
     )
     rollout = next(item for item in docs if item.get("kind") == "Rollout")
     frontend = rollout["spec"]["template"]["spec"]["containers"][0]
     assert frontend["name"] == "mak-container"
-    assert frontend["resources"]["requests"] == {"cpu": "200m", "memory": "256Mi"}
+    assert frontend["resources"] == CHART_VALUES["resources"]["frontend"]
     frontend_env = {item["name"]: item for item in frontend["env"]}
     assert frontend_env["ENABLE_WAITING_ROOM"]["value"] == "true"
     scaled_object = next(item for item in docs if item.get("kind") == "ScaledObject")

@@ -70,7 +70,7 @@ components:
   frontend: true
 # Frontend Waiting Room stays enabled by default and is disabled only for KRR experiments.
 waitingRoom:
-  enabled: true
+  enabled: false
 # KEDA 기반 오토스케일링 설정
 autoscaling:
   frontend:
@@ -119,9 +119,9 @@ autoscaling:
       activationThreshold: "0"
 # 유한 시간 Bank of Anthos k6 Job. runId 변경이 재실행 키이며 기본값은 배포하지 않음.
 loadgen:
-  enabled: false
+  enabled: true
   image: "grafana/k6:0.54.0"
-  runId: ""
+  runId: "boa-smoke-20260824-053733"
   phase: "smoke"
   scenarioName: "boa-long-cycle-v1"
   scenarioVersion: "v1"
