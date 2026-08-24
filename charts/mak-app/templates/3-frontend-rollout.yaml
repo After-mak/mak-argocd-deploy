@@ -88,15 +88,13 @@ spec:
           ports:
             - containerPort: 8080
           startupProbe:
-            httpGet:
-              path: /version
+            tcpSocket:
               port: 8080
             periodSeconds: 2
             timeoutSeconds: 1
             failureThreshold: 30
           readinessProbe:
-            httpGet:
-              path: /version
+            tcpSocket:
               port: 8080
             periodSeconds: 2
             timeoutSeconds: 1
