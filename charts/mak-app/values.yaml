@@ -39,7 +39,7 @@ resources:
       limits: {cpu: "500m", memory: "512Mi"}
   ledgerwriter:
     app:
-      requests: {cpu: "200m", memory: "256Mi"}
+      requests: {cpu: "140m", memory: "307Mi"}
       limits: {}
     worker:
       requests: {cpu: "306m", memory: "154Mi"}
@@ -89,6 +89,7 @@ autoscaling:
       serverAddress: "http://thanos-query.prometheus.svc.cluster.local:9090"
       query: >-
         (
+
 
 
 
