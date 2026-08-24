@@ -21,7 +21,7 @@ resources:
       requests: {cpu: "200m", memory: "256Mi"}
       limits: {}
     worker:
-      requests: {cpu: "250m", memory: "256Mi"}
+      requests: {cpu: "204m", memory: "154Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   contacts:
     app:
@@ -89,6 +89,7 @@ autoscaling:
       serverAddress: "http://thanos-query.prometheus.svc.cluster.local:9090"
       query: >-
         (
+
 
 
           max(chronos_scaling_replicas{deployment="mak-app-rollout"})
