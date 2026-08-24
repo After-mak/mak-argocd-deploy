@@ -52,6 +52,19 @@ spec:
         threshold: {{ .Values.autoscaling.frontend.cpu.threshold | quote }}
         activationThreshold: {{ .Values.autoscaling.frontend.cpu.activationThreshold | quote }}
     {{- end }}
+    {{- if .Values.autoscaling.frontend.network.enabled }}
+    # Network transmit rate follows successful HTTP response throughput and does
+    # not create the startup-CPU feedback loop of an aggressive CPU target.
+    - type: prometheus
+      name: frontend-http-network
+      metricType: AverageValue
+      metadata:
+        serverAddress: {{ .Values.autoscaling.frontend.network.serverAddress | quote }}
+        query: >-
+          sum(rate(container_network_transmit_bytes_total{namespace="{{ .Release.Namespace | default "default" }}",pod=~"mak-app-rollout-.*",interface!="lo"}[1m])) or vector(0)
+        threshold: {{ .Values.autoscaling.frontend.network.threshold | quote }}
+        activationThreshold: {{ .Values.autoscaling.frontend.network.activationThreshold | quote }}
+    {{- end }}
     {{- if .Values.waitingRoom.enabled }}
     # Redis 대기열 길이 기반 반응형 스케일링 트리거
     - type: redis

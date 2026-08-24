@@ -111,8 +111,13 @@ autoscaling:
     cpu:
       enabled: true
       serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
-      threshold: "0.05"
-      activationThreshold: "0.01"
+      threshold: "0.10"
+      activationThreshold: "0.02"
+    network:
+      enabled: true
+      serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
+      threshold: "180000"
+      activationThreshold: "30000"
   backend:
     enabled: true
     minReplicas: 2
@@ -131,7 +136,7 @@ autoscaling:
       activationThreshold: "0.05"
 # 유한 시간 Bank of Anthos k6 Job. runId 변경이 재실행 키이며 기본값은 배포하지 않음.
 loadgen:
-  enabled: true
+  enabled: false
   image: "grafana/k6:0.54.0"
   runId: "boa-smoke-30m-v2-20260824-072912"
   phase: "smoke"

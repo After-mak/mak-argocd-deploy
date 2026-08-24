@@ -69,7 +69,7 @@ def test_frontend_rollout_and_opt_in_load_job_render_expected_contract():
     assert frontend_env["ENABLE_WAITING_ROOM"]["value"] == "true"
     scaled_object = next(item for item in docs if item.get("kind") == "ScaledObject")
     assert {trigger["name"] for trigger in scaled_object["spec"]["triggers"]} == {
-        "chronos-predictive", "frontend-http-cpu", "waiting-queue"
+        "chronos-predictive", "frontend-http-cpu", "frontend-http-network", "waiting-queue"
     }
 
     pvc = next(item for item in docs if item.get("kind") == "PersistentVolumeClaim")
@@ -118,11 +118,15 @@ def test_frontend_waiting_room_can_be_disabled_for_krr_experiments():
     assert env["ENABLE_WAITING_ROOM"]["value"] == "false"
     scaled_object = next(item for item in docs if item.get("kind") == "ScaledObject")
     triggers = {trigger["name"]: trigger for trigger in scaled_object["spec"]["triggers"]}
-    assert set(triggers) == {"chronos-predictive", "frontend-http-cpu"}
+    assert set(triggers) == {"chronos-predictive", "frontend-http-cpu", "frontend-http-network"}
     cpu = triggers["frontend-http-cpu"]
     assert cpu["metricType"] == "AverageValue"
-    assert cpu["metadata"]["threshold"] == "0.05"
+    assert cpu["metadata"]["threshold"] == "0.10"
     assert 'container="mak-container"' in cpu["metadata"]["query"]
+    network = triggers["frontend-http-network"]
+    assert network["metricType"] == "AverageValue"
+    assert network["metadata"]["threshold"] == "180000"
+    assert "container_network_transmit_bytes_total" in network["metadata"]["query"]
 
 
 def test_backend_has_http_cpu_fallback_independent_of_queue_metrics():
