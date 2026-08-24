@@ -61,6 +61,13 @@ def test_frontend_rollout_and_opt_in_load_job_render_expected_contract():
     frontend = rollout["spec"]["template"]["spec"]["containers"][0]
     assert frontend["name"] == "mak-container"
     assert frontend["resources"] == CHART_VALUES["resources"]["frontend"]
+    assert frontend["startupProbe"]["httpGet"] == {"path": "/version", "port": 8080}
+    assert frontend["startupProbe"]["failureThreshold"] == 30
+    assert frontend["readinessProbe"]["httpGet"] == {
+        "path": "/version",
+        "port": 8080,
+    }
+    assert frontend["readinessProbe"]["periodSeconds"] == 2
     frontend_env = {item["name"]: item for item in frontend["env"]}
     assert frontend_env["ENABLE_WAITING_ROOM"]["value"] == "true"
     scaled_object = next(item for item in docs if item.get("kind") == "ScaledObject")

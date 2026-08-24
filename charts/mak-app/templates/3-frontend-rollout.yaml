@@ -87,6 +87,21 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           ports:
             - containerPort: 8080
+          startupProbe:
+            httpGet:
+              path: /version
+              port: 8080
+            periodSeconds: 2
+            timeoutSeconds: 1
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /version
+              port: 8080
+            periodSeconds: 2
+            timeoutSeconds: 1
+            failureThreshold: 3
+            successThreshold: 1
           resources:
             requests:
               cpu: {{ .Values.resources.frontend.requests.cpu | quote }}
