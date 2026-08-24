@@ -61,7 +61,7 @@ spec:
       metadata:
         serverAddress: {{ .Values.autoscaling.frontend.network.serverAddress | quote }}
         query: >-
-          sum(rate(container_network_transmit_bytes_total{namespace="{{ .Release.Namespace | default "default" }}",pod=~"mak-app-rollout-.*",interface!="lo"}[1m])) or vector(0)
+          sum(rate(container_network_transmit_bytes_total{namespace="{{ .Release.Namespace | default "default" }}",pod=~"mak-app-rollout-.*",interface!="lo"}[{{ .Values.autoscaling.frontend.network.window }}])) or vector(0)
         threshold: {{ .Values.autoscaling.frontend.network.threshold | quote }}
         activationThreshold: {{ .Values.autoscaling.frontend.network.activationThreshold | quote }}
     {{- end }}
