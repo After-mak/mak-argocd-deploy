@@ -120,6 +120,8 @@ spec:
               value: {{ .Values.loadgen.maxVUs | quote }}
             - name: REQUEST_TIMEOUT
               value: {{ .Values.loadgen.requestTimeout | quote }}
+            - name: AUTH_MODE
+              value: {{ .Values.loadgen.authMode | quote }}
             - name: PAYMENT_PERCENT
               value: {{ .Values.loadgen.paymentPercent | quote }}
             - name: PAYMENT_AMOUNT

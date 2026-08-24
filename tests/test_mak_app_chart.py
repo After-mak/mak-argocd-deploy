@@ -80,6 +80,9 @@ def test_frontend_rollout_and_opt_in_load_job_render_expected_contract():
     )
     script = script_config_map["data"]["bank-of-anthos-long-run.js"]
     assert "summary-${SAFE_RUN_ID}.json" in script
+    assert "export function setup()" in script
+    assert "installSharedToken(data)" in script
+    assert "scenario_schedule: SCENARIO_SCHEDULE" in script
 
     job = next(item for item in docs if item.get("kind") == "Job")
     assert job["metadata"]["name"] == "bank-loadgen-pre-boa-pre-001"
@@ -94,6 +97,7 @@ def test_frontend_rollout_and_opt_in_load_job_render_expected_contract():
     assert env["RUN_ID"]["value"] == "BOA-PRE-001"
     assert env["PHASE"]["value"] == "pre"
     assert env["REQUEST_TIMEOUT"]["value"] == "10s"
+    assert env["AUTH_MODE"]["value"] == "shared"
     assert "K6_OUT" not in env
     assert env["TEST_PASSWORD"]["valueFrom"]["secretKeyRef"]["name"] == "bank-loadgen-credentials"
 
