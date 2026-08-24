@@ -114,12 +114,14 @@ def test_frontend_waiting_room_can_be_disabled_for_krr_experiments():
 
 def test_finops_workflow_has_explicit_bank_mapping_and_fails_unknown_targets():
     workflow = (ROOT / ".github" / "workflows" / "finops-apply.yaml").read_text()
+    helper = (ROOT / ".github" / "scripts" / "update-resource-requests.sh").read_text()
     assert "container_name:" in workflow
     assert "frontend/mak-app-rollout/mak-container)" in workflow
     assert ".resources.${DEPLOYMENT_NAME}.worker.requests" in workflow
     assert "지원하지 않는 리소스 식별자" in workflow
-    assert 'if [ ! -f "$VALUES_FILE" ]' in workflow
-    assert '${RESOURCES_PATH}.cpu // \\"MISSING\\"' in workflow
+    assert ".github/scripts/update-resource-requests.sh" in workflow
+    assert 'if [[ ! -f "$VALUES_FILE" ]]' in helper
+    assert '${RESOURCES_PATH}.cpu // \\"MISSING\\"' in helper
 
 
 def test_loadgen_rejects_phase_profile_mismatch():
