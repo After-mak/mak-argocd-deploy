@@ -46,7 +46,7 @@ resources:
       limits: {cpu: "500m", memory: "512Mi"}
   transactionhistory:
     app:
-      requests: {cpu: "200m", memory: "256Mi"}
+      requests: {cpu: "140m", memory: "377Mi"}
       limits: {}
     worker:
       requests: {cpu: "250m", memory: "256Mi"}
@@ -89,6 +89,7 @@ autoscaling:
       serverAddress: "http://thanos-query.prometheus.svc.cluster.local:9090"
       query: >-
         (
+
 
 
 
