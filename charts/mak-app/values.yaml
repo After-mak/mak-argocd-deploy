@@ -15,7 +15,9 @@ image:
 resources:
   frontend:
     requests: {cpu: "200m", memory: "256Mi"}
-    limits: {cpu: "500m", memory: "512Mi"}
+    # Live POST에서 500m CFS quota의 p95 throttling이 30%까지 올라가
+    # request는 KRR 권장값으로 유지하고 burst용 limit만 완화한다.
+    limits: {cpu: "1000m", memory: "512Mi"}
   userservice:
     app:
       requests: {cpu: "200m", memory: "256Mi"}
@@ -71,6 +73,12 @@ components:
 # Frontend Waiting Room stays enabled by default and is disabled only for KRR experiments.
 waitingRoom:
   enabled: false
+# Java 서비스의 Hikari 기본 pool(10)이 6개 Pod에서 DB 연결 60개를
+# 상시 점유하므로 PostgreSQL max_connections=100 범위 안에서 여유를 둔다.
+databasePool:
+  java:
+    maximumPoolSize: "5"
+    minimumIdle: "1"
 # KEDA 기반 오토스케일링 설정
 autoscaling:
   frontend:

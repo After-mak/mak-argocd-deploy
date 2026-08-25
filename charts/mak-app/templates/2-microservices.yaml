@@ -247,6 +247,10 @@ spec:
                 secretKeyRef:
                   name: project03-db-app
                   key: password
+            - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+              value: {{ .Values.databasePool.java.maximumPoolSize | quote }}
+            - name: SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE
+              value: {{ .Values.databasePool.java.minimumIdle | quote }}
             # ============================
           envFrom:
             - configMapRef:
@@ -350,6 +354,10 @@ spec:
                 secretKeyRef:
                   name: project03-db-app
                   key: password
+            - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+              value: {{ .Values.databasePool.java.maximumPoolSize | quote }}
+            - name: SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE
+              value: {{ .Values.databasePool.java.minimumIdle | quote }}
             # ============================
           envFrom:
             - configMapRef:
@@ -454,6 +462,10 @@ spec:
                 secretKeyRef:
                   name: project03-db-app
                   key: password
+            - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+              value: {{ .Values.databasePool.java.maximumPoolSize | quote }}
+            - name: SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE
+              value: {{ .Values.databasePool.java.minimumIdle | quote }}
             # ============================
           envFrom:
             - configMapRef:
