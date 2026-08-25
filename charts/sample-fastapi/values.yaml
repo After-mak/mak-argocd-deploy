@@ -74,8 +74,8 @@ worker:
       activationThreshold: "0"
   resources:
     requests:
-      cpu: 1500m
-      memory: 200Mi
+      cpu: "1.27"
+      memory: 142Mi
     limits:
       cpu: 2000m
       memory: 512Mi
