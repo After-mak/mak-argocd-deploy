@@ -22,7 +22,7 @@ fastapi:
     port: 80
   resources:
     requests:
-      cpu: 70m
+      cpu: 49m
       memory: 100Mi
     limits:
       cpu: 500m
@@ -55,6 +55,7 @@ worker:
       serverAddress: http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090
       query: >-
         (
+
 
 
 
