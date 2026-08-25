@@ -22,7 +22,7 @@ fastapi:
     port: 80
   resources:
     requests:
-      cpu: 34m
+      cpu: 49m
       memory: 100Mi
     limits:
       cpu: 500m
