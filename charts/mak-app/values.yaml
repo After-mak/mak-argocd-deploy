@@ -21,35 +21,35 @@ resources:
       requests: {cpu: "10m", memory: "121Mi"}
       limits: {}
     worker:
-      requests: {cpu: "204m", memory: "154Mi"}
+      requests: {cpu: "250m", memory: "256Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   contacts:
     app:
       requests: {cpu: "63m", memory: "127Mi"}
       limits: {}
     worker:
-      requests: {cpu: "154m", memory: "154Mi"}
+      requests: {cpu: "250m", memory: "256Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   balancereader:
     app:
       requests: {cpu: "24m", memory: "413Mi"}
       limits: {}
     worker:
-      requests: {cpu: "285m", memory: "154Mi"}
+      requests: {cpu: "250m", memory: "256Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   ledgerwriter:
     app:
       requests: {cpu: "10m", memory: "316Mi"}
       limits: {}
     worker:
-      requests: {cpu: "306m", memory: "154Mi"}
+      requests: {cpu: "250m", memory: "256Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   transactionhistory:
     app:
       requests: {cpu: "24m", memory: "521Mi"}
       limits: {}
     worker:
-      requests: {cpu: "265m", memory: "154Mi"}
+      requests: {cpu: "250m", memory: "256Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
 service:
   type: ClusterIP
