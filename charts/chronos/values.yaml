@@ -1,48 +1,57 @@
 image:
   repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/chronos-model
-  tag: "v0.1.5"
+  tag: v0.1.5
   pullPolicy: IfNotPresent
-
 replicaCount: 1
 nodeSelector:
   role: management
-
 service:
   port: 8000
-
 forecast:
   mode: active
   prometheusUrl: http://thanos-query.prometheus.svc.cluster.local:9090
-  targetNamespace: frontend
-  targetDeployment: mak-app-rollout
-  podPattern: mak-app-rollout-.*
-  container: mak-container
-  thresholdCores: "0.1"
-  capacityPerReplicaCores: "0.15"
-  lookbackHours: "2"
-  predictionLength: "12"
-  stepSeconds: "60"
-  minReplicas: "1"
-  maxReplicas: "5"
-  intervalSeconds: "60"
-  ttlSeconds: "120"
+  targets:
+  - namespace: frontend
+    deployment: mak-app-rollout
+    pod_pattern: mak-app-rollout-.*
+    container: mak-container
+  - namespace: backend
+    deployment: userservice
+    container: userservice
+  - namespace: backend
+    deployment: contacts
+    container: contacts
+  - namespace: backend
+    deployment: balancereader
+    container: balancereader
+  - namespace: backend
+    deployment: ledgerwriter
+    container: ledgerwriter
+  - namespace: backend
+    deployment: transactionhistory
+    container: transactionhistory
+  thresholdCores: '0.1'
+  capacityPerReplicaCores: '0.15'
+  lookbackHours: '2'
+  predictionLength: '12'
+  stepSeconds: '60'
+  minReplicas: '1'
+  maxReplicas: '5'
+  intervalSeconds: '60'
+  ttlSeconds: '120'
   modelId: amazon/chronos-2
-  # Fake Metric 계약 테스트에서만 "3"으로 설정하고 Shadow/Active 실모델에서는 비웁니다.
-  fakeReplicas: ""
-
+  fakeReplicas: ''
 serviceMonitor:
   enabled: true
   interval: 15s
   scrapeTimeout: 10s
-
 resources:
   requests:
     cpu: 500m
     memory: 1Gi
   limits:
-    cpu: "2"
+    cpu: '2'
     memory: 4Gi
-
 podSecurityContext:
   seccompProfile:
     type: RuntimeDefault
