@@ -18,9 +18,6 @@ spec:
         app.kubernetes.io/component: api
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        # KRR 더미데이터/이력이 파드 이름에 묶여있어, Karpenter 노드 통합으로 파드가 자주
-        # 교체되면 이력이 계속 무효화됩니다. 유휴 상태에서 불필요한 통합을 막기 위해 부착.
-        karpenter.sh/do-not-disrupt: "true"
     spec:
       securityContext:
         seccompProfile:
