@@ -14,7 +14,7 @@ image:
 # 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
 resources:
   frontend:
-    requests: {cpu: "171m", memory: "137Mi"}
+    requests: {cpu: "237m", memory: "143Mi"}
     limits: {cpu: "500m", memory: "512Mi"}
   userservice:
     app:
@@ -90,6 +90,7 @@ autoscaling:
       serverAddress: "http://thanos-query.prometheus.svc.cluster.local:9090"
       query: >-
         (
+
 
 
 
