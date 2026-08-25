@@ -21,7 +21,7 @@ resources:
       requests: {cpu: "651m", memory: "137Mi"}
       limits: {}
     worker:
-      requests: {cpu: "250m", memory: "256Mi"}
+      requests: {cpu: "205m", memory: "154Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   contacts:
     app:
