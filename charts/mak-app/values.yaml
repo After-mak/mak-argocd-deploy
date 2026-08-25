@@ -34,21 +34,22 @@ resources:
       limits: {cpu: "500m", memory: "512Mi"}
   balancereader:
     app:
-      requests: {cpu: "300m", memory: "256Mi"}
+      # Java/Spring 서비스라 JVM 힙 기본 점유가 256Mi보다 높아(실측 p95 ~400Mi) memory도 함께 올림.
+      requests: {cpu: "300m", memory: "500Mi"}
       limits: {}
     worker:
       requests: {cpu: "400m", memory: "100Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   ledgerwriter:
     app:
-      requests: {cpu: "280m", memory: "256Mi"}
+      requests: {cpu: "280m", memory: "500Mi"}
       limits: {}
     worker:
       requests: {cpu: "420m", memory: "100Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   transactionhistory:
     app:
-      requests: {cpu: "350m", memory: "256Mi"}
+      requests: {cpu: "350m", memory: "500Mi"}
       limits: {}
     worker:
       requests: {cpu: "380m", memory: "100Mi"}
