@@ -18,7 +18,7 @@ resources:
     limits: {cpu: "500m", memory: "512Mi"}
   userservice:
     app:
-      requests: {cpu: "10m", memory: "121Mi"}
+      requests: {cpu: "651m", memory: "137Mi"}
       limits: {}
     worker:
       requests: {cpu: "250m", memory: "256Mi"}
@@ -90,6 +90,7 @@ autoscaling:
       serverAddress: "http://thanos-query.prometheus.svc.cluster.local:9090"
       query: >-
         (
+
 
 
 
