@@ -20,7 +20,7 @@ resources:
     limits: {cpu: "1000m", memory: "512Mi"}
   userservice:
     app:
-      requests: {cpu: "250m", memory: "256Mi"}
+      requests: {cpu: "175m", memory: "137Mi"}
       limits: {}
     worker:
       requests: {cpu: "300m", memory: "100Mi"}
