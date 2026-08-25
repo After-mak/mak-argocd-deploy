@@ -42,7 +42,7 @@ resources:
       limits: {cpu: "500m", memory: "512Mi"}
   ledgerwriter:
     app:
-      requests: {cpu: "280m", memory: "500Mi"}
+      requests: {cpu: "280m", memory: "387Mi"}
       limits: {}
     worker:
       requests: {cpu: "420m", memory: "100Mi"}
