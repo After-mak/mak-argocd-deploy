@@ -190,6 +190,21 @@ def test_smoke_stability_contract():
         assert scale_down["stabilizationWindowSeconds"] == 900
 
 
+def test_frontend_http_route_renders_controller_defaults_explicitly():
+    docs = render("components.backend=false", namespace="frontend")
+    route = next(item for item in docs if item.get("kind") == "HTTPRoute")
+    parent = route["spec"]["parentRefs"][0]
+    assert parent["group"] == "gateway.networking.k8s.io"
+    assert parent["kind"] == "Gateway"
+    rule = route["spec"]["rules"][0]
+    assert rule["matches"] == [
+        {"path": {"type": "PathPrefix", "value": "/"}}
+    ]
+    for backend in rule["backendRefs"]:
+        assert backend["group"] == ""
+        assert backend["kind"] == "Service"
+
+
 def test_finops_workflow_has_explicit_bank_mapping_and_fails_unknown_targets():
     workflow = (ROOT / ".github" / "workflows" / "finops-apply.yaml").read_text()
     helper = (ROOT / ".github" / "scripts" / "update-resource-requests.sh").read_text()

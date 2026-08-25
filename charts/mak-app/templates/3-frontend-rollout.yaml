@@ -6,16 +6,26 @@ metadata:
   namespace: {{ .Release.Namespace | default "default" }}
 spec:
   parentRefs:
-    - name: my-gateway
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: my-gateway
       namespace: default
   hostnames:
     - "tuby.shop"
   rules:
-    - backendRefs:
-        - name: mak-app-active
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: mak-app-active
           port: 80
           weight: 100
-        - name: mak-app-preview
+        - group: ""
+          kind: Service
+          name: mak-app-preview
           port: 80
           weight: 0
 ---
