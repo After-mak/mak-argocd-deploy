@@ -94,10 +94,6 @@ def test_frontend_rollout_and_opt_in_load_job_render_expected_contract():
         "karpenter.sh/do-not-disrupt": "true"
     }
     pod_spec = job["spec"]["template"]["spec"]
-    assert pod_spec["nodeSelector"] == {
-        "eks.amazonaws.com/capacityType": "ON_DEMAND",
-        "role": "worker",
-    }
     assert pod_spec["securityContext"]["fsGroup"] == 12345
     container = pod_spec["containers"][0]
     assert "--summary-export=/results/k6-summary-boa-pre-001.json" in container["args"]

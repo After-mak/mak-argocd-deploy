@@ -162,10 +162,6 @@ loadgen:
   # 장기 실행 중 Karpenter의 자발적 노드 통합으로 Job이 중단되지 않도록 보호한다.
   podAnnotations:
     karpenter.sh/do-not-disrupt: "true"
-  # Spot 회수 영향 없이 PRE/POST를 같은 조건에서 비교하도록 고정 워커 노드를 사용한다.
-  nodeSelector:
-    eks.amazonaws.com/capacityType: ON_DEMAND
-    role: worker
   persistence:
     claimName: "bank-loadgen-results"
     storageClassName: "ebs-gp3"
