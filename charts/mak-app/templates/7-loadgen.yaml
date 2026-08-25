@@ -67,9 +67,17 @@ spec:
         app: bank-loadgen
         run-id: {{ $safeRunId | quote }}
         phase: {{ .Values.loadgen.phase | quote }}
+      {{- with .Values.loadgen.podAnnotations }}
+      annotations:
+{{ toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       restartPolicy: Never
       automountServiceAccountToken: false
+      {{- with .Values.loadgen.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | nindent 8 }}
+      {{- end }}
       securityContext:
         fsGroup: 12345
         fsGroupChangePolicy: OnRootMismatch
