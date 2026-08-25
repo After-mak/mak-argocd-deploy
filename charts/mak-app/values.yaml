@@ -14,7 +14,7 @@ image:
 # 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
 resources:
   frontend:
-    requests: {cpu: "250m", memory: "256Mi"}
+    requests: {cpu: "175m", memory: "143Mi"}
     # Live POST에서 500m CFS quota의 p95 throttling이 30%까지 올라가
     # request는 KRR 권장값으로 유지하고 burst용 limit만 완화한다.
     limits: {cpu: "1000m", memory: "512Mi"}
