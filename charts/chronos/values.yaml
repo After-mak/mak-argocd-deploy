@@ -1,6 +1,6 @@
 image:
   repository: 372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/chronos-model
-  tag: "v0.1.6"
+  tag: "v0.1.7"
   pullPolicy: IfNotPresent
 replicaCount: 1
 nodeSelector:
