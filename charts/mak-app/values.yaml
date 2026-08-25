@@ -35,7 +35,7 @@ resources:
   balancereader:
     app:
       # Java/Spring 서비스라 JVM 힙 기본 점유가 256Mi보다 높아(실측 p95 ~400Mi) memory도 함께 올림.
-      requests: {cpu: "300m", memory: "500Mi"}
+      requests: {cpu: "300m", memory: "400Mi"}
       limits: {}
     worker:
       requests: {cpu: "400m", memory: "100Mi"}
@@ -77,7 +77,6 @@ waitingRoom:
 # 라이브 트래픽 검증 중 Karpenter의 자발적 노드 통합으로 서비스 Pod가 축출되지 않도록 보호한다.
 workloadPodAnnotations:
   karpenter.sh/do-not-disrupt: "true"
-
 # Java 서비스의 Hikari 기본 pool(10)이 6개 Pod에서 DB 연결 60개를
 # 상시 점유하므로 PostgreSQL max_connections=100 범위 안에서 여유를 둔다.
 databasePool:
@@ -103,6 +102,7 @@ autoscaling:
       serverAddress: "http://thanos-query.prometheus.svc.cluster.local:9090"
       query: >-
         (
+
 
 
 
