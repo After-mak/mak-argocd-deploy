@@ -14,42 +14,42 @@ image:
 # 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
 resources:
   frontend:
-    requests: {cpu: "237m", memory: "143Mi"}
+    requests: {cpu: "200m", memory: "256Mi"}
     limits: {cpu: "500m", memory: "512Mi"}
   userservice:
     app:
-      requests: {cpu: "10m", memory: "121Mi"}
+      requests: {cpu: "200m", memory: "256Mi"}
       limits: {}
     worker:
-      requests: {cpu: "250m", memory: "256Mi"}
+      requests: {cpu: "300m", memory: "100Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   contacts:
     app:
-      requests: {cpu: "63m", memory: "127Mi"}
+      requests: {cpu: "200m", memory: "256Mi"}
       limits: {}
     worker:
-      requests: {cpu: "250m", memory: "256Mi"}
+      requests: {cpu: "250m", memory: "100Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   balancereader:
     app:
-      requests: {cpu: "572m", memory: "413Mi"}
+      requests: {cpu: "200m", memory: "256Mi"}
       limits: {}
     worker:
-      requests: {cpu: "250m", memory: "256Mi"}
+      requests: {cpu: "400m", memory: "100Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   ledgerwriter:
     app:
-      requests: {cpu: "10m", memory: "316Mi"}
+      requests: {cpu: "200m", memory: "256Mi"}
       limits: {}
     worker:
-      requests: {cpu: "250m", memory: "256Mi"}
+      requests: {cpu: "420m", memory: "100Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   transactionhistory:
     app:
-      requests: {cpu: "24m", memory: "521Mi"}
+      requests: {cpu: "200m", memory: "256Mi"}
       limits: {}
     worker:
-      requests: {cpu: "250m", memory: "256Mi"}
+      requests: {cpu: "380m", memory: "100Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
 service:
   type: ClusterIP
