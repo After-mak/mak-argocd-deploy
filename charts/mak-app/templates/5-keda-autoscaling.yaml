@@ -16,6 +16,7 @@ spec:
   minReplicaCount: {{ $.Values.autoscaling.backend.minReplicas }}
   maxReplicaCount: {{ $.Values.autoscaling.backend.maxReplicas }}
   advanced:
+    scalingModifiers: {}
     horizontalPodAutoscalerConfig:
       behavior:
         scaleDown:
