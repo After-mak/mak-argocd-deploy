@@ -14,39 +14,39 @@ image:
 # 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
 resources:
   frontend:
-    requests: {cpu: "140m", memory: "143Mi"}
+    requests: {cpu: "171m", memory: "137Mi"}
     limits: {cpu: "500m", memory: "512Mi"}
   userservice:
     app:
-      requests: {cpu: "140m", memory: "124Mi"}
+      requests: {cpu: "10m", memory: "121Mi"}
       limits: {}
     worker:
       requests: {cpu: "204m", memory: "154Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   contacts:
     app:
-      requests: {cpu: "140m", memory: "119Mi"}
+      requests: {cpu: "63m", memory: "127Mi"}
       limits: {}
     worker:
       requests: {cpu: "154m", memory: "154Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   balancereader:
     app:
-      requests: {cpu: "140m", memory: "370Mi"}
+      requests: {cpu: "24m", memory: "413Mi"}
       limits: {}
     worker:
       requests: {cpu: "285m", memory: "154Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   ledgerwriter:
     app:
-      requests: {cpu: "140m", memory: "307Mi"}
+      requests: {cpu: "10m", memory: "316Mi"}
       limits: {}
     worker:
       requests: {cpu: "306m", memory: "154Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   transactionhistory:
     app:
-      requests: {cpu: "140m", memory: "377Mi"}
+      requests: {cpu: "24m", memory: "521Mi"}
       limits: {}
     worker:
       requests: {cpu: "265m", memory: "154Mi"}
