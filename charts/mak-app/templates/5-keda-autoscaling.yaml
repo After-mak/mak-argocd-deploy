@@ -19,11 +19,11 @@ spec:
     horizontalPodAutoscalerConfig:
       behavior:
         scaleDown:
-          stabilizationWindowSeconds: 300
+          stabilizationWindowSeconds: {{ $.Values.autoscaling.backend.scaleDown.stabilizationWindowSeconds }}
           policies:
             - type: Pods
               value: 1
-              periodSeconds: 60
+              periodSeconds: {{ $.Values.autoscaling.backend.scaleDown.periodSeconds }}
   triggers:
     # 큐 길이를 통한 KEDA 사후 대응(반응형) 오토스케일링 전용
     - type: redis

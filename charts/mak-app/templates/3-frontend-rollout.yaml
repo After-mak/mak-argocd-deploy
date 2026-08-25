@@ -57,7 +57,9 @@ metadata:
   name: mak-app-rollout
   namespace: {{ .Release.Namespace | default "default" }}
 spec:
+{{- if not .Values.autoscaling.frontend.enabled }}
   replicas: {{ .Values.replicaCount | default 3 }}
+{{- end }}
   selector:
     matchLabels:
       app: frontend
@@ -80,6 +82,8 @@ spec:
         application: bank-of-anthos
         team: frontend
         tier: web
+      annotations:
+{{ toYaml .Values.workloadPodAnnotations | nindent 8 }}
     spec:
       containers:
         - name: mak-container

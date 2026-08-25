@@ -12,6 +12,8 @@ spec:
     metadata:
       labels:
         app: userservice
+      annotations:
+{{ toYaml .Values.workloadPodAnnotations | nindent 8 }}
     spec:
       containers:
         - name: userservice
@@ -120,6 +122,8 @@ spec:
     metadata:
       labels:
         app: contacts
+      annotations:
+{{ toYaml .Values.workloadPodAnnotations | nindent 8 }}
     spec:
       containers:
         - name: contacts
@@ -220,6 +224,8 @@ spec:
     metadata:
       labels:
         app: balancereader
+      annotations:
+{{ toYaml .Values.workloadPodAnnotations | nindent 8 }}
     spec:
       containers:
         - name: balancereader
@@ -327,6 +333,8 @@ spec:
     metadata:
       labels:
         app: ledgerwriter
+      annotations:
+{{ toYaml .Values.workloadPodAnnotations | nindent 8 }}
     spec:
       containers:
         - name: ledgerwriter
@@ -435,6 +443,8 @@ spec:
     metadata:
       labels:
         app: transactionhistory
+      annotations:
+{{ toYaml .Values.workloadPodAnnotations | nindent 8 }}
     spec:
       containers:
         - name: transactionhistory

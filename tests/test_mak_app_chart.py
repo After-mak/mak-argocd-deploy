@@ -148,6 +148,48 @@ def test_backend_has_http_cpu_fallback_independent_of_queue_metrics():
         assert f'container="{workload}"' in cpu["metadata"]["query"]
 
 
+def test_smoke_stability_contract():
+    docs = render(namespace="frontend")
+    workloads = [
+        item
+        for item in docs
+        if item.get("kind") in {"Deployment", "Rollout"}
+        and item["metadata"]["name"]
+        in {
+            "userservice",
+            "contacts",
+            "balancereader",
+            "ledgerwriter",
+            "transactionhistory",
+            "mak-app-rollout",
+        }
+    ]
+    assert len(workloads) == 6
+    for workload in workloads:
+        assert workload["spec"]["template"]["metadata"]["annotations"] == (
+            CHART_VALUES["workloadPodAnnotations"]
+        )
+
+    rollout = next(item for item in docs if item.get("kind") == "Rollout")
+    assert "replicas" not in rollout["spec"]
+    static_docs = render(
+        "components.backend=false",
+        "autoscaling.frontend.enabled=false",
+        namespace="frontend",
+    )
+    static_rollout = next(item for item in static_docs if item.get("kind") == "Rollout")
+    assert static_rollout["spec"]["replicas"] == 3
+
+    scaled_objects = [item for item in docs if item.get("kind") == "ScaledObject"]
+    assert len(scaled_objects) == 6
+    for scaled_object in scaled_objects:
+        scale_down = (
+            scaled_object["spec"]["advanced"]["horizontalPodAutoscalerConfig"]
+            ["behavior"]["scaleDown"]
+        )
+        assert scale_down["stabilizationWindowSeconds"] == 900
+
+
 def test_finops_workflow_has_explicit_bank_mapping_and_fails_unknown_targets():
     workflow = (ROOT / ".github" / "workflows" / "finops-apply.yaml").read_text()
     helper = (ROOT / ".github" / "scripts" / "update-resource-requests.sh").read_text()
