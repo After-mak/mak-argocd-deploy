@@ -143,7 +143,7 @@ autoscaling:
 loadgen:
   enabled: true
   image: "grafana/k6:0.54.0"
-  runId: "boa-smoke-ys-0826-1227"
+  runId: "boa-smoke-pay-ys-0826-1247"
   phase: "smoke"
   scenarioName: "boa-long-cycle-v1"
   scenarioVersion: "v1"
@@ -159,7 +159,7 @@ loadgen:
   requestTimeout: "10s"
   authMode: "per-vu"
   # 잠시 per-vu로 변경
-  paymentPercent: "0"
+  paymentPercent: "15"
   paymentAmount: "0.01"
   prometheusRemoteWriteEnabled: true
   prometheusRemoteWriteUrl: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090/api/v1/write"
