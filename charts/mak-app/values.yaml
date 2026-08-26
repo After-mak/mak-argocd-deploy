@@ -73,7 +73,7 @@ components:
   frontend: true
 # Frontend Waiting Room stays enabled by default and is disabled only for KRR experiments.
 waitingRoom:
-  enabled: false
+  enabled: true
 # 라이브 트래픽 검증 중 Karpenter의 자발적 노드 통합으로 서비스 Pod가 축출되지 않도록 보호한다.
 workloadPodAnnotations:
   karpenter.sh/do-not-disrupt: "true"
