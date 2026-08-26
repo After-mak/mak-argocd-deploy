@@ -73,7 +73,7 @@ components:
   frontend: true
 # Frontend Waiting Room stays enabled by default and is disabled only for KRR experiments.
 waitingRoom:
-  enabled: true
+  enabled: false
 # 라이브 트래픽 검증 중 Karpenter의 자발적 노드 통합으로 서비스 Pod가 축출되지 않도록 보호한다.
 workloadPodAnnotations:
   karpenter.sh/do-not-disrupt: "true"
@@ -86,7 +86,7 @@ databasePool:
 # KEDA 기반 오토스케일링 설정
 autoscaling:
   frontend:
-    enabled: true
+    enabled: false
     # Sudden HTTP bursts must not start from a single frontend pod.
     minReplicas: 2
     maxReplicas: 10
@@ -110,18 +110,18 @@ autoscaling:
       activationThreshold: "0"
     # Absolute CPU target keeps PRE/POST scaling behavior independent of KRR request changes.
     cpu:
-      enabled: true
+      enabled: false
       serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
       threshold: "0.10"
       activationThreshold: "0.02"
     network:
-      enabled: true
+      enabled: false
       serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
       window: "1m"
       threshold: "150000"
       activationThreshold: "30000"
   backend:
-    enabled: true
+    enabled: false
     minReplicas: 2
     maxReplicas: 10
     pollingInterval: 5
@@ -135,13 +135,13 @@ autoscaling:
       threshold: "1"
       activationThreshold: "0"
     cpu:
-      enabled: true
+      enabled: false
       serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
       threshold: "0.25"
       activationThreshold: "0.05"
 # 유한 시간 Bank of Anthos k6 Job. runId 변경이 재실행 키이며 기본값은 배포하지 않음.
 loadgen:
-  enabled: true
+  enabled: false
   image: "grafana/k6:0.54.0"
   runId: "boa-smoke-final-ys-0826-1310"
   phase: "smoke"
