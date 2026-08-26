@@ -143,7 +143,7 @@ autoscaling:
 loadgen:
   enabled: true
   image: "grafana/k6:0.54.0"
-  runId: "boa-smoke-ys-0826-1142"
+  runId: "boa-smoke-ys-0826-1225"
   phase: "smoke"
   scenarioName: "boa-long-cycle-v1"
   scenarioVersion: "v1"
@@ -155,7 +155,7 @@ loadgen:
   peakRps: "700"
   spikeRps: "1100"
   recoveryRps: "350"
-  maxVUs: "1500"
+  maxVUs: "100"
   requestTimeout: "10s"
   authMode: "per-vu"
   # 잠시 per-vu로 변경
@@ -182,4 +182,4 @@ loadgen:
       memory: 512Mi
     limits:
       cpu: 2000m
-      memory: 1Gi
+      memory: 2Gi
