@@ -141,7 +141,7 @@ autoscaling:
       activationThreshold: "0.05"
 # 유한 시간 Bank of Anthos k6 Job. runId 변경이 재실행 키이며 기본값은 배포하지 않음.
 loadgen:
-  enabled: false
+  enabled: true
   image: "grafana/k6:0.54.0"
   runId: "boa-smoke-final-ys-0826-1310"
   phase: "smoke"
