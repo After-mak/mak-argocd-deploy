@@ -159,8 +159,9 @@ export function setup() {
       { redirects: 0, timeout: REQUEST_TIMEOUT, tags: { flow: 'setup_login' } },
     );
     const loc = response.headers.Location || '';
-    // 대기열로 리다이렉트된 경우 슬롯이 빌 때까지 재시도
-    if (response.status === 302 && !loc.includes('/home')) {
+    // Retry only an actual waiting-room response. Other redirects (for example,
+    // /login?msg=Login+Failed) are authentication contract failures.
+    if (response.status === 302 && loc.includes('/waiting')) {
       console.warn(`[setup] waiting-room redirect (attempt ${attempt}/${maxRetries}): ${loc}`);
       sleep(10);
       continue;
@@ -168,7 +169,10 @@ export function setup() {
     const tokenCookies = response.cookies && response.cookies.token;
     const token = tokenCookies && tokenCookies.length > 0 ? tokenCookies[0].value : null;
     if (response.status !== 302 || !loc.includes('/home') || !token) {
-      throw new Error(`shared authentication setup failed with status ${response.status}`);
+      const cookieNames = Object.keys(response.cookies || {}).join(',') || 'none';
+      throw new Error(
+        `shared authentication setup failed: status=${response.status}, location=${loc || 'none'}, cookies=${cookieNames}`,
+      );
     }
     return { token };
   }

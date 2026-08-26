@@ -157,8 +157,10 @@ loadgen:
   recoveryRps: "350"
   maxVUs: "1100"
   requestTimeout: "10s"
-  authMode: "per-vu"
-  # 잠시 per-vu로 변경
+  # Authenticate once in k6 setup and share the JWT across VUs. This keeps the
+  # configured arrival rate focused on overview/payment/queue processing instead
+  # of generating a per-VU login storm.
+  authMode: "shared"
   paymentPercent: "15"
   paymentAmount: "0.01"
   prometheusRemoteWriteEnabled: true
