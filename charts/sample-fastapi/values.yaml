@@ -68,6 +68,7 @@ worker:
 
 
 
+
           max(chronos_scaling_replicas{exported_namespace="sample-fastapi",deployment="sample-worker"})
           * max(chronos_forecast_valid{exported_namespace="sample-fastapi",deployment="sample-worker"})
           * max((time() - chronos_forecast_timestamp_seconds{exported_namespace="sample-fastapi",deployment="sample-worker"}) < bool 120)
@@ -76,8 +77,8 @@ worker:
       activationThreshold: "0"
   resources:
     requests:
-      cpu: "1.27"
-      memory: 142Mi
+      cpu: "298m"
+      memory: 100Mi
     limits:
       cpu: 2000m
       memory: 512Mi
