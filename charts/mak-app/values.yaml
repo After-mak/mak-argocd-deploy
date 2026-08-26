@@ -71,7 +71,7 @@ components:
 # KEDA 기반 오토스케일링 설정
 autoscaling:
   frontend:
-    enabled: false
+    enabled: true
     minReplicas: 1
     maxReplicas: 10
     pollingInterval: 10
@@ -105,7 +105,7 @@ autoscaling:
       activationThreshold: "0"
 # 유한 시간 Bank of Anthos k6 Job. runId 변경이 재실행 키이며 기본값은 배포하지 않음.
 loadgen:
-  enabled: true
+  enabled: false
   image: "grafana/k6:0.54.0"
   runId: "boa-smoke-check-ys-0826-quick"
   phase: "smoke"
