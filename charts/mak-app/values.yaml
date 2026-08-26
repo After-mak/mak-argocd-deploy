@@ -143,7 +143,7 @@ autoscaling:
 loadgen:
   enabled: true
   image: "grafana/k6:0.54.0"
-  runId: "boa-smoke-30m-irate-20260824-1813"
+  runId: "boa-smoke-30m-irate-20260826-1818"
   phase: "smoke"
   scenarioName: "boa-long-cycle-v1"
   scenarioVersion: "v1"
@@ -157,7 +157,8 @@ loadgen:
   recoveryRps: "350"
   maxVUs: "1500"
   requestTimeout: "10s"
-  authMode: "shared"
+  authMode: "none"
+  # 잠시 none 으로 변경
   paymentPercent: "0"
   paymentAmount: "0.01"
   prometheusRemoteWriteEnabled: true

@@ -1,5 +1,5 @@
 import http from 'k6/http';
-import { check } from 'k6';
+import { check, sleep } from 'k6';
 import { Counter, Rate, Trend } from 'k6/metrics';
 
 const REQUIRED_ENV = ['BASE_URL', 'RUN_ID', 'PHASE', 'SCENARIO_NAME', 'TEST_USERNAME', 'TEST_PASSWORD'];
@@ -151,17 +151,28 @@ export function buildScenarios() {
 
 export function setup() {
   if (AUTH_MODE !== 'shared') return {};
-  const response = http.post(
-    `${BASE_URL}/login`,
-    { username: __ENV.TEST_USERNAME, password: __ENV.TEST_PASSWORD },
-    { redirects: 0, timeout: REQUEST_TIMEOUT, tags: { flow: 'setup_login' } },
-  );
-  const tokenCookies = response.cookies && response.cookies.token;
-  const token = tokenCookies && tokenCookies.length > 0 ? tokenCookies[0].value : null;
-  if (response.status !== 302 || !(response.headers.Location || '').includes('/home') || !token) {
-    throw new Error(`shared authentication setup failed with status ${response.status}`);
+  const maxRetries = 30;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    const response = http.post(
+      `${BASE_URL}/login`,
+      { username: __ENV.TEST_USERNAME, password: __ENV.TEST_PASSWORD },
+      { redirects: 0, timeout: REQUEST_TIMEOUT, tags: { flow: 'setup_login' } },
+    );
+    const loc = response.headers.Location || '';
+    // 대기열로 리다이렉트된 경우 슬롯이 빌 때까지 재시도
+    if (response.status === 302 && !loc.includes('/home')) {
+      console.warn(`[setup] waiting-room redirect (attempt ${attempt}/${maxRetries}): ${loc}`);
+      sleep(10);
+      continue;
+    }
+    const tokenCookies = response.cookies && response.cookies.token;
+    const token = tokenCookies && tokenCookies.length > 0 ? tokenCookies[0].value : null;
+    if (response.status !== 302 || !loc.includes('/home') || !token) {
+      throw new Error(`shared authentication setup failed with status ${response.status}`);
+    }
+    return { token };
   }
-  return { token };
+  throw new Error('shared authentication setup failed: waiting-room timeout after 30 retries');
 }
 
 function installSharedToken(data) {
