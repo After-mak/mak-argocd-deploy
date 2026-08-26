@@ -143,7 +143,7 @@ autoscaling:
 loadgen:
   enabled: true
   image: "grafana/k6:0.54.0"
-  runId: "boa-smoke-30m-irate-20260824-1811"
+  runId: "boa-smoke-30m-irate-20260824-1812"
   phase: "smoke"
   scenarioName: "boa-long-cycle-v1"
   scenarioVersion: "v1"
