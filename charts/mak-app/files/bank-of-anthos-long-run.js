@@ -1,5 +1,5 @@
 import http from 'k6/http';
-import { check, sleep } from 'k6';
+import { check } from 'k6';
 import { Counter, Rate, Trend } from 'k6/metrics';
 
 const REQUIRED_ENV = ['BASE_URL', 'RUN_ID', 'PHASE', 'SCENARIO_NAME', 'TEST_USERNAME', 'TEST_PASSWORD'];
@@ -15,14 +15,7 @@ const RECOVERY_RPS = integerEnv('RECOVERY_RPS', 3, 1);
 const MAX_VUS = integerEnv('MAX_VUS', Math.max(100, SPIKE_RPS * 4), SPIKE_RPS);
 const PAYMENT_PERCENT = numberEnv('PAYMENT_PERCENT', 0, 0, 100);
 const PAYMENT_AMOUNT = __ENV.PAYMENT_AMOUNT || '0.01';
-const REQUEST_TIMEOUT = __ENV.REQUEST_TIMEOUT || '10s';
-const AUTH_MODE = (__ENV.AUTH_MODE || 'shared').toLowerCase();
-const BASE_URL = (__ENV.BASE_URL || "").replace(/\/$/, "");
-const SAFE_RUN_ID = (__ENV.RUN_ID || "")
-  .toLowerCase()
-  .replace(/[^a-z0-9-]/g, "-")
-  .slice(0, 32)
-  .replace(/^-+|-+$/g, "");
+const BASE_URL = (__ENV.BASE_URL || '').replace(/\/$/, '');
 
 validateEnvironment();
 
@@ -46,8 +39,6 @@ export const options = {
     version: __ENV.SCENARIO_VERSION || 'v1',
   },
 };
-
-const SCENARIO_SCHEDULE = scenarioSchedule(options.scenarios);
 
 function numberEnv(name, fallback, min, max = Number.POSITIVE_INFINITY) {
   const raw = __ENV[name];
@@ -76,9 +67,6 @@ function validateEnvironment() {
   }
   if (!['smoke', 'long'].includes(PROFILE)) {
     throw new Error(`PROFILE must be smoke or long; got '${PROFILE}'`);
-  }
-  if (!['shared', 'per-vu'].includes(AUTH_MODE)) {
-    throw new Error(`AUTH_MODE must be shared or per-vu; got '${AUTH_MODE}'`);
   }
   if (NORMAL_RPS < LOW_RPS || PEAK_RPS < NORMAL_RPS || SPIKE_RPS < PEAK_RPS) {
     throw new Error('RPS values must satisfy LOW <= NORMAL <= PEAK <= SPIKE');
@@ -148,46 +136,9 @@ export function buildScenarios() {
   return scenarios;
 }
 
-
-export function setup() {
-  if (AUTH_MODE !== 'shared') return {};
-  const maxRetries = 30;
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    const response = http.post(
-      `${BASE_URL}/login`,
-      { username: __ENV.TEST_USERNAME, password: __ENV.TEST_PASSWORD },
-      { redirects: 0, timeout: REQUEST_TIMEOUT, tags: { flow: 'setup_login' } },
-    );
-    const loc = response.headers.Location || '';
-    // Retry only an actual waiting-room response. Other redirects (for example,
-    // /login?msg=Login+Failed) are authentication contract failures.
-    if (response.status === 302 && loc.includes('/waiting')) {
-      console.warn(`[setup] waiting-room redirect (attempt ${attempt}/${maxRetries}): ${loc}`);
-      sleep(10);
-      continue;
-    }
-    const tokenCookies = response.cookies && response.cookies.token;
-    const token = tokenCookies && tokenCookies.length > 0 ? tokenCookies[0].value : null;
-    if (response.status !== 302 || !loc.includes('/home') || !token) {
-      const cookieNames = Object.keys(response.cookies || {}).join(',') || 'none';
-      throw new Error(
-        `shared authentication setup failed: status=${response.status}, location=${loc || 'none'}, cookies=${cookieNames}`,
-      );
-    }
-    return { token };
-  }
-  throw new Error('shared authentication setup failed: waiting-room timeout after 30 retries');
-}
-
-function installSharedToken(data) {
-  if (AUTH_MODE !== 'shared' || !data || !data.token) return;
-  const jar = http.cookieJar();
-  if (!jar.cookiesForURL(BASE_URL).token) jar.set(BASE_URL, 'token', data.token, { path: '/' });
-}
 function request(method, path, body, params, flow, classify4xx = "business") {
   offeredRequests.add(1, { flow });
   const response = http.request(method, `${BASE_URL}${path}`, body, {
-    timeout: REQUEST_TIMEOUT,
     ...params,
     tags: { ...(params && params.tags ? params.tags : {}), flow },
   });
@@ -279,9 +230,8 @@ function payment() {
   return ok;
 }
 
-export function bankFlow(data) {
+export function bankFlow() {
   offeredFlows.add(1, { flow: 'bank_flow' });
-  installSharedToken(data);
   const started = Date.now();
   let ok = ensureAuthenticated() && overview();
   if (ok && PAYMENT_PERCENT > 0 && Math.random() * 100 < PAYMENT_PERCENT) {
@@ -291,8 +241,8 @@ export function bankFlow(data) {
   flowSuccess.add(ok, { flow: 'bank_flow' });
 }
 
-function scenarioSchedule(scenarios) {
-  return Object.entries(scenarios).map(([name, item]) => ({
+function scenarioSchedule() {
+  return Object.entries(options.scenarios).map(([name, item]) => ({
     name,
     traffic_phase: item.tags.traffic_phase,
     start_time: item.startTime,
@@ -312,12 +262,10 @@ export function handleSummary(data) {
     profile: PROFILE,
     time_scale: TIME_SCALE,
     cycles: CYCLES,
-    request_timeout: REQUEST_TIMEOUT,
-    auth_mode: AUTH_MODE,
-    scenario_schedule: SCENARIO_SCHEDULE,
+    scenario_schedule: scenarioSchedule(),
     finished_at: new Date().toISOString(),
     metrics: data.metrics,
   };
   const rendered = `${JSON.stringify(summary, null, 2)}\n`;
-  return { stdout: rendered, [`/results/summary-${SAFE_RUN_ID}.json`]: rendered };
+  return { stdout: rendered, '/results/summary.json': rendered };
 }

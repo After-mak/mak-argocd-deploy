@@ -1,26 +1,4 @@
 {{- if and .Values.components.frontend .Values.loadgen.enabled -}}
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ .Values.loadgen.persistence.claimName | quote }}
-  namespace: {{ .Release.Namespace | default "default" }}
-  labels:
-    app: bank-loadgen
-    app.kubernetes.io/managed-by: Helm
-  annotations:
-    argocd.argoproj.io/sync-options: Prune=false
-    argocd.argoproj.io/compare-options: IgnoreExtraneous
-    helm.sh/resource-policy: keep
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: {{ .Values.loadgen.persistence.storageClassName | quote }}
-  resources:
-    requests:
-      storage: {{ .Values.loadgen.persistence.size | quote }}
----
-{{ end }}
-{{ if and .Values.components.frontend .Values.loadgen.enabled -}}
 {{- $runId := required "loadgen.runId is required when loadgen.enabled=true" .Values.loadgen.runId -}}
 {{- if not (has .Values.loadgen.phase (list "pre" "post" "smoke" "pilot")) -}}
 {{- fail "loadgen.phase must be one of pre, post, smoke, pilot" -}}
@@ -67,16 +45,9 @@ spec:
         app: bank-loadgen
         run-id: {{ $safeRunId | quote }}
         phase: {{ .Values.loadgen.phase | quote }}
-      {{- with .Values.loadgen.podAnnotations }}
-      annotations:
-{{ toYaml . | nindent 8 }}
-      {{- end }}
     spec:
       restartPolicy: Never
       automountServiceAccountToken: false
-      securityContext:
-        fsGroup: 12345
-        fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: k6
           image: {{ .Values.loadgen.image | quote }}
@@ -85,9 +56,9 @@ spec:
             - run
             - --tag
             - {{ printf "testid=%s" $runId | quote }}
-            - {{ printf "--summary-export=/results/k6-summary-%s.json" $safeRunId | quote }}
+            - --summary-export=/results/summary.json
             - --out
-            - {{ printf "json=/results/raw-%s.json" $safeRunId | quote }}
+            - json=/results/raw.json
             {{- if .Values.loadgen.prometheusRemoteWriteEnabled }}
             - --out
             - experimental-prometheus-rw
@@ -122,10 +93,6 @@ spec:
               value: {{ .Values.loadgen.recoveryRps | quote }}
             - name: MAX_VUS
               value: {{ .Values.loadgen.maxVUs | quote }}
-            - name: REQUEST_TIMEOUT
-              value: {{ .Values.loadgen.requestTimeout | quote }}
-            - name: AUTH_MODE
-              value: {{ .Values.loadgen.authMode | quote }}
             - name: PAYMENT_PERCENT
               value: {{ .Values.loadgen.paymentPercent | quote }}
             - name: PAYMENT_AMOUNT
@@ -171,6 +138,5 @@ spec:
           configMap:
             name: {{ $jobName }}-script
         - name: results
-          persistentVolumeClaim:
-            claimName: {{ .Values.loadgen.persistence.claimName | quote }}
+          emptyDir: {}
 {{- end -}}
