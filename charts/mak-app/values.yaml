@@ -143,11 +143,11 @@ autoscaling:
 loadgen:
   enabled: true
   image: "grafana/k6:0.54.0"
-  runId: "boa-long-pilot-ys-0826-0941"
-  phase: "pilot"
+  runId: "boa-smoke-ys-0826-1142"
+  phase: "smoke"
   scenarioName: "boa-long-cycle-v1"
   scenarioVersion: "v1"
-  profile: "long"
+  profile: "smoke"
   timeScale: "1"
   cycles: "1"
   lowRps: "1"
