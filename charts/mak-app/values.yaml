@@ -1,12 +1,12 @@
 # 기본 애플리케이션 설정
 replicaCount: 3
 images:
-  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:3.3"
-  userservice: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:3.3"
-  contacts: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:3.3"
-  balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:3.3"
-  ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:3.3"
-  transactionhistory: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:3.3"
+  frontend: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_frontend_ecr:3.2"
+  userservice: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_userservice_ecr:3.2"
+  contacts: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_contacts_ecr:3.2"
+  balancereader: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_balancereader_ecr:3.2"
+  ledgerwriter: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_ledgerwriter_ecr:3.2"
+  transactionhistory: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_transactionhistory_ecr:3.2"
   worker: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/sample-fastapi:v0.1.22"
   loadgen: "372666940978.dkr.ecr.ap-northeast-2.amazonaws.com/mak_loadgen_ecr:v0.6.11"
 image:
@@ -14,45 +14,42 @@ image:
 # 패턴 분석 결과에 따라 깃허브 액션이 변경할 자원 권장값 영역
 resources:
   frontend:
-    requests: {cpu: "175m", memory: "143Mi"}
-    # Live POST에서 500m CFS quota의 p95 throttling이 30%까지 올라가
-    # request는 KRR 권장값으로 유지하고 burst용 limit만 완화한다.
-    limits: {cpu: "1000m", memory: "512Mi"}
+    requests: {cpu: "200m", memory: "256Mi"}
+    limits: {cpu: "500m", memory: "512Mi"}
   userservice:
     app:
-      requests: {cpu: "175m", memory: "137Mi"}
+      requests: {cpu: "200m", memory: "256Mi"}
       limits: {}
     worker:
-      requests: {cpu: "300m", memory: "100Mi"}
+      requests: {cpu: "250m", memory: "256Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   contacts:
     app:
       requests: {cpu: "200m", memory: "256Mi"}
       limits: {}
     worker:
-      requests: {cpu: "250m", memory: "100Mi"}
+      requests: {cpu: "250m", memory: "256Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   balancereader:
     app:
-      # Java/Spring 서비스라 JVM 힙 기본 점유가 256Mi보다 높아(실측 p95 ~400Mi) memory도 함께 올림.
-      requests: {cpu: "300m", memory: "400Mi"}
+      requests: {cpu: "200m", memory: "256Mi"}
       limits: {}
     worker:
-      requests: {cpu: "400m", memory: "100Mi"}
+      requests: {cpu: "250m", memory: "256Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   ledgerwriter:
     app:
-      requests: {cpu: "280m", memory: "387Mi"}
+      requests: {cpu: "200m", memory: "256Mi"}
       limits: {}
     worker:
-      requests: {cpu: "420m", memory: "100Mi"}
+      requests: {cpu: "250m", memory: "256Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
   transactionhistory:
     app:
-      requests: {cpu: "350m", memory: "405Mi"}
+      requests: {cpu: "200m", memory: "256Mi"}
       limits: {}
     worker:
-      requests: {cpu: "380m", memory: "100Mi"}
+      requests: {cpu: "250m", memory: "256Mi"}
       limits: {cpu: "500m", memory: "512Mi"}
 service:
   type: ClusterIP
@@ -71,24 +68,11 @@ secrets:
 components:
   backend: true
   frontend: true
-# Frontend Waiting Room stays enabled by default and is disabled only for KRR experiments.
-waitingRoom:
-  enabled: false
-# 라이브 트래픽 검증 중 Karpenter의 자발적 노드 통합으로 서비스 Pod가 축출되지 않도록 보호한다.
-workloadPodAnnotations:
-  karpenter.sh/do-not-disrupt: "true"
-# Java 서비스의 Hikari 기본 pool(10)이 6개 Pod에서 DB 연결 60개를
-# 상시 점유하므로 PostgreSQL max_connections=100 범위 안에서 여유를 둔다.
-databasePool:
-  java:
-    maximumPoolSize: "2"
-    minimumIdle: "1"
 # KEDA 기반 오토스케일링 설정
 autoscaling:
   frontend:
-    enabled: false
-    # Sudden HTTP bursts must not start from a single frontend pod.
-    minReplicas: 2
+    enabled: true
+    minReplicas: 1
     maxReplicas: 10
     pollingInterval: 10
     cooldownPeriod: 60
@@ -96,7 +80,7 @@ autoscaling:
     slotsPerPod: "20" # pod 1개당 허용 동시 접속자 (frontend.py SLOTS_PER_POD과 동일하게 유지)
     userSessionTtl: "60" # 사용자 세션 TTL (초) - 이 시간 동안 활동 없으면 슬롯 반환
     scaleDown:
-      stabilizationWindowSeconds: 900
+      stabilizationWindowSeconds: 300
       periodSeconds: 60
     chronos:
       serverAddress: "http://thanos-query.prometheus.svc.cluster.local:9090"
@@ -108,69 +92,42 @@ autoscaling:
         ) or vector(0)
       threshold: "1"
       activationThreshold: "0"
-    # Absolute CPU target keeps PRE/POST scaling behavior independent of KRR request changes.
-    cpu:
-      enabled: false
-      serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
-      threshold: "0.10"
-      activationThreshold: "0.02"
-    network:
-      enabled: false
-      serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
-      window: "1m"
-      threshold: "150000"
-      activationThreshold: "30000"
   backend:
-    enabled: false
-    minReplicas: 2
-    maxReplicas: 10
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
     pollingInterval: 5
     cooldownPeriod: 60
     redisListLength: "2"
-    scaleDown:
-      stabilizationWindowSeconds: 900
-      periodSeconds: 60
     chronos:
-      serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
+      serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090" 
       threshold: "1"
       activationThreshold: "0"
-    cpu:
-      enabled: false
-      serverAddress: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090"
-      threshold: "0.25"
-      activationThreshold: "0.05"
 # 유한 시간 Bank of Anthos k6 Job. runId 변경이 재실행 키이며 기본값은 배포하지 않음.
 loadgen:
-  enabled: false
+  enabled: true
   image: "grafana/k6:0.54.0"
-  runId: "boa-smoke-final-ys-0826-1310"
+  runId: "boa-smoke-check-ys-0826-quick"
   phase: "smoke"
   scenarioName: "boa-long-cycle-v1"
   scenarioVersion: "v1"
   profile: "smoke"
-  timeScale: "1"
+  timeScale: "0.03"
   cycles: "1"
   lowRps: "1"
   normalRps: "500"
   peakRps: "700"
   spikeRps: "1100"
   recoveryRps: "350"
-  maxVUs: "1100"
-  requestTimeout: "10s"
-  authMode: "per-vu"
-  # 잠시 per-vu로 변경
-  paymentPercent: "15"
+  maxVUs: "2000"
+  paymentPercent: "50"
   paymentAmount: "0.01"
-  prometheusRemoteWriteEnabled: true
+  authMode: "shared"
+  prometheusRemoteWriteEnabled: false
   prometheusRemoteWriteUrl: "http://prometheus-stack-kube-prom-prometheus.prometheus.svc.cluster.local:9090/api/v1/write"
   activeDeadlineSeconds: 90000
-  # 장기 실행 중 Karpenter의 자발적 노드 통합으로 Job이 중단되지 않도록 보호한다.
   podAnnotations:
     karpenter.sh/do-not-disrupt: "true"
-  persistence:
-    claimName: "bank-loadgen-results"
-    storageClassName: "ebs-gp3"
-    size: "20Gi"
   credentialsSecret:
     name: "bank-loadgen-credentials"
     usernameKey: "username"

@@ -19,7 +19,6 @@ spec:
   minReplicaCount: {{ .Values.autoscaling.frontend.minReplicas }}
   maxReplicaCount: {{ .Values.autoscaling.frontend.maxReplicas }}
   advanced:
-    scalingModifiers: {}
     horizontalPodAutoscalerConfig:
       behavior:
         scaleDown:
@@ -40,33 +39,6 @@ spec:
         query: {{ .Values.autoscaling.frontend.chronos.query | quote }}
         threshold: {{ .Values.autoscaling.frontend.chronos.threshold | quote }}
         activationThreshold: {{ .Values.autoscaling.frontend.chronos.activationThreshold | quote }}
-    {{- if .Values.autoscaling.frontend.cpu.enabled }}
-    # Real HTTP traffic does not populate the waiting-room queue. Scale on absolute
-    # frontend CPU as a request-independent reactive fallback for KRR PRE/POST runs.
-    - type: prometheus
-      name: frontend-http-cpu
-      metricType: AverageValue
-      metadata:
-        serverAddress: {{ .Values.autoscaling.frontend.cpu.serverAddress | quote }}
-        query: >-
-          sum(rate(container_cpu_usage_seconds_total{namespace="{{ .Release.Namespace | default "default" }}",pod=~"mak-app-rollout-.*",container="mak-container"}[1m])) or vector(0)
-        threshold: {{ .Values.autoscaling.frontend.cpu.threshold | quote }}
-        activationThreshold: {{ .Values.autoscaling.frontend.cpu.activationThreshold | quote }}
-    {{- end }}
-    {{- if .Values.autoscaling.frontend.network.enabled }}
-    # Network transmit rate follows successful HTTP response throughput and does
-    # not create the startup-CPU feedback loop of an aggressive CPU target.
-    - type: prometheus
-      name: frontend-http-network
-      metricType: AverageValue
-      metadata:
-        serverAddress: {{ .Values.autoscaling.frontend.network.serverAddress | quote }}
-        query: >-
-          sum(irate(container_network_transmit_bytes_total{namespace="{{ .Release.Namespace | default "default" }}",pod=~"mak-app-rollout-.*",interface!="lo"}[{{ .Values.autoscaling.frontend.network.window }}])) or vector(0)
-        threshold: {{ .Values.autoscaling.frontend.network.threshold | quote }}
-        activationThreshold: {{ .Values.autoscaling.frontend.network.activationThreshold | quote }}
-    {{- end }}
-    {{- if .Values.waitingRoom.enabled }}
     # Redis 대기열 길이 기반 반응형 스케일링 트리거
     - type: redis
       name: waiting-queue
@@ -76,6 +48,5 @@ spec:
         listLength: {{ .Values.autoscaling.frontend.redisListLength | quote }}
         enableTLS: {{ .Values.redis.tlsEnabled | quote }}
         databaseIndex: {{ .Values.redis.db | default "0" | quote }}
-    {{- end }}
 ---
 {{- end }}

@@ -6,26 +6,16 @@ metadata:
   namespace: {{ .Release.Namespace | default "default" }}
 spec:
   parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: my-gateway
+    - name: my-gateway
       namespace: default
   hostnames:
     - "tuby.shop"
   rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: mak-app-active
+    - backendRefs:
+        - name: mak-app-active
           port: 80
           weight: 100
-        - group: ""
-          kind: Service
-          name: mak-app-preview
+        - name: mak-app-preview
           port: 80
           weight: 0
 ---
@@ -67,9 +57,7 @@ metadata:
   name: mak-app-rollout
   namespace: {{ .Release.Namespace | default "default" }}
 spec:
-{{- if not .Values.autoscaling.frontend.enabled }}
   replicas: {{ .Values.replicaCount | default 3 }}
-{{- end }}
   selector:
     matchLabels:
       app: frontend
@@ -92,8 +80,6 @@ spec:
         application: bank-of-anthos
         team: frontend
         tier: web
-      annotations:
-{{ toYaml .Values.workloadPodAnnotations | nindent 8 }}
     spec:
       containers:
         - name: mak-container
@@ -101,19 +87,6 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           ports:
             - containerPort: 8080
-          startupProbe:
-            tcpSocket:
-              port: 8080
-            periodSeconds: 2
-            timeoutSeconds: 1
-            failureThreshold: 30
-          readinessProbe:
-            tcpSocket:
-              port: 8080
-            periodSeconds: 2
-            timeoutSeconds: 1
-            failureThreshold: 3
-            successThreshold: 1
           resources:
             requests:
               cpu: {{ .Values.resources.frontend.requests.cpu | quote }}
@@ -145,7 +118,7 @@ spec:
             - name: USER_SESSION_TTL
               value: {{ .Values.autoscaling.frontend.userSessionTtl | default "60" | quote }}
             - name: ENABLE_WAITING_ROOM
-              value: {{ .Values.waitingRoom.enabled | quote }}
+              value: "true"
 
             # === 외부 CNPG 데이터베이스 연동 계정 주입 ===
             # - name: DB_HOST

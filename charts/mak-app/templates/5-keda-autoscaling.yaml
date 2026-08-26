@@ -16,15 +16,14 @@ spec:
   minReplicaCount: {{ $.Values.autoscaling.backend.minReplicas }}
   maxReplicaCount: {{ $.Values.autoscaling.backend.maxReplicas }}
   advanced:
-    scalingModifiers: {}
     horizontalPodAutoscalerConfig:
       behavior:
         scaleDown:
-          stabilizationWindowSeconds: {{ $.Values.autoscaling.backend.scaleDown.stabilizationWindowSeconds }}
+          stabilizationWindowSeconds: 300
           policies:
             - type: Pods
               value: 1
-              periodSeconds: {{ $.Values.autoscaling.backend.scaleDown.periodSeconds }}
+              periodSeconds: 60
   triggers:
     # 큐 길이를 통한 KEDA 사후 대응(반응형) 오토스케일링 전용
     - type: redis
@@ -45,19 +44,6 @@ spec:
           (max(chronos_scaling_replicas{deployment="{{ $serviceName }}"}) * max(chronos_forecast_valid{deployment="{{ $serviceName }}"}) * max((time() - chronos_forecast_timestamp_seconds{deployment="{{ $serviceName }}"}) < bool 120)) or vector(0)
         threshold: {{ $.Values.autoscaling.backend.chronos.threshold | quote }}
         activationThreshold: {{ $.Values.autoscaling.backend.chronos.activationThreshold | quote }}
-    {{- if $.Values.autoscaling.backend.cpu.enabled }}
-    # The Bank services are synchronous HTTP workloads; their Redis worker queues
-    # stay empty during read/login traffic, so use app-container CPU as fallback.
-    - type: prometheus
-      name: http-cpu
-      metricType: AverageValue
-      metadata:
-        serverAddress: {{ $.Values.autoscaling.backend.cpu.serverAddress | quote }}
-        query: >-
-          sum(rate(container_cpu_usage_seconds_total{namespace="{{ $.Release.Namespace | default "default" }}",pod=~"{{ $serviceName }}-.*",container="{{ $serviceName }}"}[1m])) or vector(0)
-        threshold: {{ $.Values.autoscaling.backend.cpu.threshold | quote }}
-        activationThreshold: {{ $.Values.autoscaling.backend.cpu.activationThreshold | quote }}
-    {{- end }}
 ---
 {{- end }}
 {{- end }}
