@@ -107,7 +107,7 @@ autoscaling:
 loadgen:
   enabled: true
   image: "grafana/k6:0.54.0"
-  runId: "boa-configD-queue-ys-0827-lowrps2"
+  runId: "boa-qfinal-ys-0827"
   phase: "smoke"
   scenarioName: "boa-long-cycle-v1"
   scenarioVersion: "v1"
