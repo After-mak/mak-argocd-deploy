@@ -107,7 +107,7 @@ autoscaling:
 loadgen:
   enabled: true
   image: "grafana/k6:0.54.0"
-  runId: "boa-configD-recheck-ys-0827-shared"
+  runId: "boa-configD-recheck-ys-0827-nowait"
   phase: "smoke"
   scenarioName: "boa-long-cycle-v1"
   scenarioVersion: "v1"
