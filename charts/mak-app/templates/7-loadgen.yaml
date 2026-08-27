@@ -41,6 +41,8 @@ spec:
   activeDeadlineSeconds: {{ .Values.loadgen.activeDeadlineSeconds }}
   template:
     metadata:
+      annotations:
+        karpenter.sh/do-not-disrupt: "true"
       labels:
         app: bank-loadgen
         run-id: {{ $safeRunId | quote }}
